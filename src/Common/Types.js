@@ -1,17 +1,45 @@
 // Each Type has its own enumeration
 
-// Tab Type - The string associated is the path to that tab
+// Tab Type - Information associated with each tab
 const TabType = {
-    HOME: "/",
-
+    // Tabs for the Headers
+    EXPLORE: {
+        name: "Explore",
+        route: "/",
+    },
+    SUBSCRIPTIONS: {
+        name: "Subscriptions",
+        route: "/subscriptions"
+    },
+    // Tabs for the drop down menu
+    VIEW_PROFILE: {
+        name: "View Profile",
+        route: "/profile"
+    },
+    LOGIN: {
+        name: "Login",
+        route: "/login"
+    },
+    LOGOUT: {
+        name: "Logout",
+        route: "/logout"
+    }
 };
 
-// Convenient Array of all the tabs
-// Note: Order of this array is the order of the tabs in the website
-const AllTabs = [TabType.HOME];
+// Types of authenitcation states - Essentially logged in and not
+const authType = {
+    LOGGEDIN: {
+        headerPages: [TabType.EXPLORE, TabType.SUBSCRIPTIONS],
+        menuPages: [TabType.VIEW_PROFILE, TabType.LOGOUT]
+    },
+    GUEST: {
+        headerPages: [TabType.EXPLORE],
+        menuPages: [TabType.LOGIN]
+    }
+};
 
 // Export
 export {
     TabType,
-    AllTabs
+    authType,
 };

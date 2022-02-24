@@ -1,7 +1,7 @@
 import { createContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { TabType } from '../Common/Types'
+import { TabType, authType } from '../Common/Types'
 
 export const GlobalStoreContext = createContext({});
 
@@ -19,6 +19,7 @@ function GlobalStoreContextProvider(props) {
     // The global store/state
     const [store, setStore] = useState({
         currTab: TabType.HOME,
+
     });
 
     const storeReducer = (action) => {
@@ -48,7 +49,7 @@ function GlobalStoreContextProvider(props) {
         switch (store.currTab) {
             default:
             case TabType.HOME:
-                navigate(TabType.HOME);
+                navigate(TabType.HOME.route);
                 break;
         }
     }, [store.currTab, navigate]);
@@ -61,6 +62,11 @@ function GlobalStoreContextProvider(props) {
             type: GlobalStoreActionType.SET_TAB,
             payload: tab
         });
+    }
+
+    // Get current tabs to display
+    store.getHeaderTabs = function () {
+
     }
 
     //Return the contect provider
