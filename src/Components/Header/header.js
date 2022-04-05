@@ -1,5 +1,5 @@
 import { useState, useContext } from 'react'
-import { GlobalStoreContext } from '../Store/index'
+import { GlobalStoreContext } from '../../Store'
 import {
     AppBar, Box, Toolbar, IconButton, Typography, Menu, Container,
     Avatar, Button, Tooltip, MenuItem
