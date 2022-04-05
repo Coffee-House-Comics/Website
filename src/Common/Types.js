@@ -3,17 +3,25 @@
 // Tab Type - Information associated with each tab
 const TabType = {
     // Tabs for the Headers
+    HOME: {
+        name: "Home",
+        route: "/explore",
+    },
     EXPLORE: {
         name: "Explore",
-        route: "/",
+        route: "/explore",
     },
     SUBSCRIPTIONS: {
         name: "Subscriptions",
         route: "/subscriptions"
     },
+    CONTENT: {
+        name: "Content",
+        route: "/content/?id"
+    },
     // Tabs for the drop down menu
-    VIEW_PROFILE: {
-        name: "View Profile",
+    PROFILE: {
+        name: "Profile",
         route: "/profile"
     },
     LOGIN: {

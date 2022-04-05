@@ -1,37 +1,27 @@
-import { createContext, useState } from 'react'
+import { createContext, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { TabType, authType } from '../Common/Types'
 
-export const GlobalStoreContext = createContext({});
+export const HomeStoreContext = createContext({});
 
-const GlobalStoreActionType = {
-    LOGIN_USER: "LOGIN_USER",
-    LOGOUT_USER: "LOGOUT_USER",
-    CHANGE_MODAL: "CHANGE_MODAL",
+const HomeStoreActionType = {
     CHANGE_CONTENT_MODE: "CHANGE_CONTENT_MODE"
 }
 
-// Setting up the Global Store
-function GlobalStoreContextProvider(props) {
-    // Global State
-
+//Setting up the Home Store
+function HomeStoreContextProvider(props) {
     // Current Path name
     const path = window.location.pathname;
 
     // The global store/state
     const [store, setStore] = useState({
-        app: "comic",
-        userId: null,
-        isLoggedIn: false,
-        modal: null,
-        contentMode: TabType.LOGIN //login, home
+        contentMode: TabType.EXPLORE //"explore", "profile", "viewing"
     });
 
     const storeReducer = (action) => {
         const { type, payload } = action;
         switch (type) {
-            // Sets loggedIn to true, sets userId, sets content mode to home
-            case GlobalStoreActionType.LOGIN_USER: {
+            case HomeStoreActionType.CHANGE_CONTENT_MODE: {
                 return setStore({
                     
                 });
@@ -52,11 +42,14 @@ function GlobalStoreContextProvider(props) {
     useEffect(() => {
         // Change the Page
         switch (store.contentMode) {
-            case TabType.HOME:
-                navigate(TabType.HOME.route);
+            case TabType.EXPLORE:
+                navigate(TabType.HOME.EXPLORE);
                 break;
-            case TabType.LOGIN:
-                navigate(TabType.LOGIN.route);
+            case TabType.PROFILE:
+                navigate(TabType.PROFILE.route);
+                break;
+            case TabType.CONTENT:
+                navigate(TabType.CONTENT.route);
                 break;
             default:
         }
@@ -82,6 +75,3 @@ function GlobalStoreContextProvider(props) {
         </GlobalStoreContext.Provider>
     );
 }
-
-export default GlobalStoreContext;
-export { GlobalStoreContextProvider };
