@@ -43,17 +43,20 @@ function Header(props) {
         setAnchorElUser(event.currentTarget);
     };
 
-    const handleCloseNavMenu = () => {
+    const handleCloseNavMenu = (routeName) => {
         setAnchorElNav(null);
+        Navigate(types.TabType.GENERATE_ROUTE(routeName));
     };
 
-    const handleCloseUserMenu = () => {
+    const handleCloseUserMenu = (routeName) => {
         setAnchorElUser(null);
+        Navigate(types.TabType.GENERATE_ROUTE(routeName));
     };
 
     return (
         <AppBar position="static" style={{
-            background: theme.palette.coffee.main
+            background: theme.palette.coffee.main,
+            color: theme.palette.ivory.main
         }} >
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
@@ -96,14 +99,11 @@ function Header(props) {
                             }}
                         >
                             {
-                                pages.map((page) => {
-                                    console.log(page);
-                                    const route = types.TabType.GENERATE_ROUTE(page.name);
-                                    console.log(route);
-                                    <MenuItem key={page.name} onClick={() => Navigate(types.TabType.GENERATE_ROUTE(page.name))}>
-                                        <Typography textAlign="center">{page.name}</Typography>
+                                pages.map((page) => (
+                                    <MenuItem key={page.name} onClick={() => handleCloseNavMenu(page.name)}>
+                                        <Typography sx={{ color: theme.palette.ivory.main }} textAlign="center">{page.name}</Typography>
                                     </MenuItem>
-                                })
+                                ))
                             }
                         </Menu>
                     </Box>
@@ -115,14 +115,14 @@ function Header(props) {
                     >
                         LOGO
                     </Typography>
-                    {/* <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+                    <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
                         {pages.map((page) => (
                             <Button
-                                key={page}
+                                key={page.name}
                                 onClick={handleCloseNavMenu}
-                                sx={{ my: 2, color: 'white', display: 'block' }}
+                                sx={{ my: 2, color: theme.palette.ivory.main, display: 'block' }}
                             >
-                                {page}
+                                {page.name}
                             </Button>
                         ))}
                     </Box>
@@ -149,13 +149,15 @@ function Header(props) {
                             open={Boolean(anchorElUser)}
                             onClose={handleCloseUserMenu}
                         >
-                            {settings.map((setting) => (
-                                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                                    <Typography textAlign="center">{setting}</Typography>
-                                </MenuItem>
-                            ))}
+                            {
+                                settings.map((setting) => (
+                                    <MenuItem key={setting.name} onClick={() => handleCloseUserMenu(setting.name)}>
+                                        <Typography textAlign="center">{setting.name}</Typography>
+                                    </MenuItem>)
+                                )
+                            }
                         </Menu>
-                    </Box> */}
+                    </Box>
                 </Toolbar>
             </Container>
         </AppBar >

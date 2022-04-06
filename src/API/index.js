@@ -84,10 +84,10 @@ AuthAPI.changeUserName = async function (oldUserName, newUserName) {
     */
 }
 
-unsubscribe(id) {
-    method: DELETE,
-        route: /comic/
-}
+// unsubscribe(id) {
+//     method: DELETE,
+//         route: /comic/
+// }
 
 
 
