@@ -1,16 +1,16 @@
 import { createContext, useEffect, useState } from "react";
-import { authType } from '../Common/Types'
+import types from '../Common/Types'
 
 const AuthContext = createContext();
 
 // THESE ARE ALL THE TYPES OF UPDATES TO OUR AUTH STATE THAT CAN BE PROCESSED
-export const AuthActionType = {
+const AuthActionType = {
     SET_LOGGED_IN: 0,
 }
 
 function AuthContextProvider(props) {
     const [auth, setAuth] = useState({
-        state: authType.GUEST
+        state: types.authType.GUEST
     });
 
     const authReducer = (action) => {
@@ -34,5 +34,7 @@ function AuthContextProvider(props) {
     );
 }
 
-export default AuthContext;
-export { AuthContextProvider };
+export {
+    AuthContext,
+    AuthContextProvider
+}

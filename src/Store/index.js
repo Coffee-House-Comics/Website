@@ -1,8 +1,11 @@
 import { createContext, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { TabType, authType } from '../Common/Types'
+import types from '../Common/Types'
 
-export const GlobalStoreContext = createContext({});
+import { ContentSwitch, AppSwitch } from '../Components';
+
+
+const GlobalStoreContext = createContext({});
 
 const GlobalStoreActionType = {
     LOGIN_USER: "LOGIN_USER",
@@ -24,7 +27,7 @@ function GlobalStoreContextProvider(props) {
         userId: null,
         isLoggedIn: false,
         modal: null,
-        contentMode: TabType.LOGIN //login, home
+        contentMode: types.TabType.APP //login, home
     });
 
     const storeReducer = (action) => {
@@ -33,7 +36,7 @@ function GlobalStoreContextProvider(props) {
             // Sets loggedIn to true, sets userId, sets content mode to home
             case GlobalStoreActionType.LOGIN_USER: {
                 return setStore({
-                    
+
                 });
             }
 
@@ -48,29 +51,39 @@ function GlobalStoreContextProvider(props) {
 
     // Store functions
 
-    // Once the state changes, now actually change the tab
-    useEffect(() => {
-        // Change the Page
-        switch (store.contentMode) {
-            case TabType.HOME:
-                navigate(TabType.HOME.route);
-                break;
-            case TabType.LOGIN:
-                navigate(TabType.LOGIN.route);
-                break;
-            default:
-        }
-    }, [store.contentMode, navigate]);
+    // // Once the state changes, now actually change the tab
+    // useEffect(() => {
+    //     // Change the Page
+    //     switch (store.contentMode) {
+    //         case types.TabType.APP:
+    //             navigate(types.TabType.APP.route);
+    //             break;
+    //         case types.TabType.LOGIN:
+    //             navigate(types.TabType.LOGIN.route);
+    //             break;
+    //         default:
+    //     }
+    // }, [store.contentMode, navigate]);
 
-    // Sets the current tab by changing the tab state variable
-    //      This does not actually change the route, instead the useEffect function
-    //      above does the actual routing once the state changes.
-    store.setTab = function (tab) {
-        storeReducer({
-            type: GlobalStoreActionType.CHANGE_CONTENT_MODE,
-            payload: tab
-        });
-    }
+    // // Sets the current tab by changing the tab state variable
+    // //      This does not actually change the route, instead the useEffect function
+    // //      above does the actual routing once the state changes.
+    // store.setTab = function (tab) {
+    //     // storeReducer({
+    //     //     type: GlobalStoreActionType.CHANGE_CONTENT_MODE,
+    //     //     payload: tab
+    //     // });
+
+    //     switch (tab) {
+    //         case types.TabType.APP:
+    //             navigate(types.TabType.APP.route);
+    //             break;
+    //         case types.TabType.LOGIN:
+    //             navigate(types.TabType.LOGIN.route);
+    //             break;
+    //         default:
+    //     }
+    // }
 
     //Return the context provider
 
@@ -83,5 +96,7 @@ function GlobalStoreContextProvider(props) {
     );
 }
 
-export default GlobalStoreContext;
-export { GlobalStoreContextProvider };
+export {
+    GlobalStoreContext,
+    GlobalStoreContextProvider
+}

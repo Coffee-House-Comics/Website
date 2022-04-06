@@ -1,16 +1,36 @@
 import { useState, useContext } from 'react'
 import { GlobalStoreContext } from '../../Store'
+import { AuthContext } from '../../Auth';
+import { useTheme } from '@mui/material/styles'
+import types from '../../Common/Types'
 import {
     AppBar, Box, Toolbar, IconButton, Typography, Menu, Container,
     Avatar, Button, Tooltip, MenuItem
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-
-const pages = ['Products', 'Pricing', 'Blog'];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+import { Navigate } from 'react-router-dom';
 
 function Header(props) {
     const { store } = useContext(GlobalStoreContext);
+    const { auth } = useContext(AuthContext);
+    const theme = useTheme();
+
+
+    const appTabs = types.TabType.APP;
+    const authTabs = types.TabType.AUTH;
+
+    let pages;
+    let settings;
+
+    // In the case of being logged in
+    if (auth.state == types.authType.GUEST) {
+        pages = [appTabs.children.EXPLORE];
+        settings = [appTabs.children.PROFILE, authTabs.children.REGISTER, authTabs.children.LOGIN];
+    }
+    else {
+        pages = [appTabs.children.EXPLORE, appTabs.children.SUBSCRIPTIONS];
+        settings = [appTabs.children.PROFILE, authTabs.children.LOGOUT];
+    }
 
 
     const [anchorElNav, setAnchorElNav] = useState(null);
@@ -32,7 +52,9 @@ function Header(props) {
     };
 
     return (
-        <AppBar position="static">
+        <AppBar position="static" style={{
+            background: theme.palette.coffee.main
+        }} >
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <Typography
@@ -73,11 +95,16 @@ function Header(props) {
                                 display: { xs: 'block', md: 'none' },
                             }}
                         >
-                            {pages.map((page) => (
-                                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                                    <Typography textAlign="center">{page}</Typography>
-                                </MenuItem>
-                            ))}
+                            {
+                                pages.map((page) => {
+                                    console.log(page);
+                                    const route = types.TabType.GENERATE_ROUTE(page.name);
+                                    console.log(route);
+                                    <MenuItem key={page.name} onClick={() => Navigate(types.TabType.GENERATE_ROUTE(page.name))}>
+                                        <Typography textAlign="center">{page.name}</Typography>
+                                    </MenuItem>
+                                })
+                            }
                         </Menu>
                     </Box>
                     <Typography
@@ -88,7 +115,7 @@ function Header(props) {
                     >
                         LOGO
                     </Typography>
-                    <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+                    {/* <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
                         {pages.map((page) => (
                             <Button
                                 key={page}
@@ -128,10 +155,10 @@ function Header(props) {
                                 </MenuItem>
                             ))}
                         </Menu>
-                    </Box>
+                    </Box> */}
                 </Toolbar>
             </Container>
-        </AppBar>
+        </AppBar >
     );
 }
 
