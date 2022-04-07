@@ -1,6 +1,5 @@
 import { useState, useContext } from 'react'
 import { GlobalStoreContext } from '../../Store'
-import { AuthContext } from '../../Auth';
 import { useTheme } from '@mui/material/styles'
 import types from '../../Common/Types'
 import {
@@ -8,13 +7,13 @@ import {
     Avatar, Button, Tooltip, MenuItem
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import { Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function Header(props) {
-    const { store } = useContext(GlobalStoreContext);
-    const { auth } = useContext(AuthContext);
-    const theme = useTheme();
+    const Navigate = useNavigate();
 
+    const { store } = useContext(GlobalStoreContext);
+    const theme = useTheme();
 
     const appTabs = types.TabType.APP;
     const authTabs = types.TabType.AUTH;
@@ -23,7 +22,7 @@ function Header(props) {
     let settings;
 
     // In the case of being logged in or not
-    if (auth.state == types.authType.GUEST) {
+    if (store.isLoggedIn === false) {
         pages = [appTabs.children.EXPLORE];
         settings = [appTabs.children.PROFILE, authTabs.children.REGISTER, authTabs.children.LOGIN];
     }
@@ -45,24 +44,12 @@ function Header(props) {
 
     const handleCloseNavMenu = (routeName) => {
         setAnchorElNav(null);
-
-        if (routeName) {
-            console.log(routeName)
-            const route = types.TabType.GENERATE_ROUTE(routeName);
-            if (route)
-                Navigate(route);
-        }
-
+        store.reRoute(routeName);
     };
 
     const handleCloseUserMenu = (routeName) => {
         setAnchorElUser(null);
-
-        if (routeName) {
-            const route = types.TabType.GENERATE_ROUTE(routeName);
-            if (route)
-                Navigate(route);
-        }
+        store.reRoute(routeName);
     };
 
     return (
@@ -105,7 +92,7 @@ function Header(props) {
                                 pages.map((page) => (
                                     <MenuItem
                                         key={page.name}
-                                        onClick={() => handleCloseNavMenu(page.name)}
+                                        onClick={() => handleCloseNavMenu(page.fullRoute)}
                                     >
                                         <Typography sx={{ color: theme.palette.olive_drab_7.main }} textAlign="center">{page.name}</Typography>
                                     </MenuItem>
@@ -118,7 +105,7 @@ function Header(props) {
                             pages.map((page) => (
                                 <Button
                                     key={page.name}
-                                    onClick={handleCloseNavMenu}
+                                    onClick={() => handleCloseNavMenu(page.fullRoute)}
                                     sx={{ my: 2, color: theme.palette.ivory.main, display: 'block' }}
                                 >
                                     {page.name}
@@ -128,7 +115,7 @@ function Header(props) {
                     </Box>
 
                     <Box sx={{ flexGrow: 0 }}>
-                        <Tooltip title="Open settings">
+                        <Tooltip title="Click to open">
                             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                                 <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
                             </IconButton>
@@ -151,7 +138,7 @@ function Header(props) {
                         >
                             {
                                 settings.map((setting) => (
-                                    <MenuItem key={setting.name} onClick={() => handleCloseUserMenu(setting.name)}>
+                                    <MenuItem key={setting.name} onClick={() => handleCloseUserMenu(setting.fullRoute)}>
                                         <Typography textAlign="center" sx={{ color: theme.palette.olive_drab_7.main }}>
                                             {setting.name}
                                         </Typography>

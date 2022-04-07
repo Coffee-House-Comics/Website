@@ -4,22 +4,37 @@ const types = {};
 
 // Tab Type - Information associated with each tab
 types.TabType = {
+    DEFAULT: {
+        name: "Default",
+        route: "/",
+        fullRoute: "/"
+    },
+    
     AUTH: {
         name: "Auth",
-        route: "/auth",
+        route: "auth",
+        fullRoute: "/auth",
 
         children: {
             REGISTER: {
                 name: "Register",
-                route: "register"
+                route: "register",
+                fullRoute: "/auth/register",
             },
             LOGIN: {
                 name: "Login",
-                route: "login"
+                route: "login",
+                fullRoute: "/auth/login"
             },
-            LOGOUT: {
-                name: "Logout",
-                route: "logout"
+            FORGOTPASSWORD: {
+                name: "Forgot Password",
+                route: "forgot-password",
+                fullRoute: "/auth/forgot-password"
+            },
+            RESETPASSWORD: {
+                name: "Reset Password",
+                route: "reset-password",
+                fullRoute: "/auth/reset-password"
             }
         }
     },
@@ -32,53 +47,31 @@ types.TabType = {
             EXPLORE: {
                 name: "Explore",
                 route: "explore",
+                fullRoute: "/app/explore",
             },
             SUBSCRIPTIONS: {
                 name: "Subscriptions",
-                route: "subscriptions"
+                route: "subscriptions",
+                fullRoute: "/app/subscriptions"
             },
-            CONTENT: {
-                name: "Content",
-                route: "content/:id"
+            // Used for viewing a published story or comic
+            VIEW: {
+                name: "View",
+                route: "view/:id",
+                fullRoute: "/app/content/:id"
+            },
+            // Used for editing an unpublished story or comic you own,
+            EDIT: {
+                name: "Edit",
+                route: "edit/:id",
+                fullRoute: "/app/edit/:id"
             },
             PROFILE: {
                 name: "Profile",
-                route: "profile"
+                route: "profile/:id",
+                fullRoute: "/app/profile/:id",
             },
         }
-    },
-
-    GENERATE_ROUTE: function (name) {
-        // Because we aint in typescript D:
-        if (!(name instanceof String))
-            return null;
-
-        console.log("GENERATE_ROUTE:", name);
-        const evalKey = function (val) {
-            if (name == val.name){
-                console.log("MATCH with:", val.name);
-                return val.route;
-            }
-                
-            if (val.children) {
-                Object.values(val.children).forEach( function (val) {
-                    const res = evalKey(val);
-                    if (res != null)
-                        return res;
-                })
-            }
-
-            return null;
-        }
-
-        Object.values(this).forEach(function (val) {
-            const res = evalKey(val);
-            if (res != null) {
-                return res;
-            }
-
-            return null;
-        });
     }
 };
 

@@ -10,13 +10,11 @@ import { Theme } from './Common/Theme';
 ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>
-      <AuthContextProvider>
         <GlobalStoreContextProvider>
           <ThemeProvider theme={Theme}>
             <App />
           </ThemeProvider>
         </GlobalStoreContextProvider>
-      </AuthContextProvider>
     </BrowserRouter>
   </React.StrictMode>,
   document.getElementById('root')

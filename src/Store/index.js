@@ -14,20 +14,20 @@ const GlobalStoreActionType = {
     CHANGE_CONTENT_MODE: "CHANGE_CONTENT_MODE"
 }
 
+const AuthActionType = {
+    SET_LOGGED_IN: 0,
+}
+
 // Setting up the Global Store
 function GlobalStoreContextProvider(props) {
     // Global State
 
-    // Current Path name
-    const path = window.location.pathname;
-
     // The global store/state
     const [store, setStore] = useState({
         app: "comic",
-        userId: null,
+        user: null,
         isLoggedIn: false,
         modal: null,
-        contentMode: types.TabType.APP //login, home
     });
 
     const storeReducer = (action) => {
@@ -51,39 +51,12 @@ function GlobalStoreContextProvider(props) {
 
     // Store functions
 
-    // // Once the state changes, now actually change the tab
-    // useEffect(() => {
-    //     // Change the Page
-    //     switch (store.contentMode) {
-    //         case types.TabType.APP:
-    //             navigate(types.TabType.APP.route);
-    //             break;
-    //         case types.TabType.LOGIN:
-    //             navigate(types.TabType.LOGIN.route);
-    //             break;
-    //         default:
-    //     }
-    // }, [store.contentMode, navigate]);
-
-    // // Sets the current tab by changing the tab state variable
-    // //      This does not actually change the route, instead the useEffect function
-    // //      above does the actual routing once the state changes.
-    // store.setTab = function (tab) {
-    //     // storeReducer({
-    //     //     type: GlobalStoreActionType.CHANGE_CONTENT_MODE,
-    //     //     payload: tab
-    //     // });
-
-    //     switch (tab) {
-    //         case types.TabType.APP:
-    //             navigate(types.TabType.APP.route);
-    //             break;
-    //         case types.TabType.LOGIN:
-    //             navigate(types.TabType.LOGIN.route);
-    //             break;
-    //         default:
-    //     }
-    // }
+    
+    store.reRoute = function (fullRoute) {
+        console.log("Store reroute:", fullRoute);
+        if (fullRoute)
+            navigate(fullRoute, { replace: true });
+    }
 
     //Return the context provider
 
