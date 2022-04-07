@@ -11,15 +11,15 @@ types.TabType = {
         children: {
             REGISTER: {
                 name: "Register",
-                route: "register"
+                route: "/auth/register"
             },
             LOGIN: {
                 name: "Login",
-                route: "login"
+                route: "/auth/login"
             },
             LOGOUT: {
                 name: "Logout",
-                route: "logout"
+                route: "/auth/logout"
             }
         }
     },
@@ -31,25 +31,25 @@ types.TabType = {
         children: {
             EXPLORE: {
                 name: "Explore",
-                route: "explore",
+                route: "/app/explore",
             },
             SUBSCRIPTIONS: {
                 name: "Subscriptions",
-                route: "subscriptions"
+                route: "/app/subscriptions"
             },
             CONTENT: {
                 name: "Content",
-                route: "content/:id"
+                route: "/app/content/:id"
             },
             PROFILE: {
                 name: "Profile",
-                route: "profile"
+                route: "/app/profile"
             },
         }
     },
 
     GENERATE_ROUTE: function (name) {
-        // Because we aint in typescript D:
+        // Because we ain't in typescript D:
         if (!(name instanceof String))
             return null;
 

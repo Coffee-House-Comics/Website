@@ -1,3 +1,4 @@
+import { SoapTwoTone } from '@mui/icons-material';
 import { createContext, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import types from '../Common/Types'
@@ -14,6 +15,10 @@ const GlobalStoreActionType = {
     CHANGE_CONTENT_MODE: "CHANGE_CONTENT_MODE"
 }
 
+const AuthActionType = {
+    SET_LOGGED_IN: 0,
+}
+
 // Setting up the Global Store
 function GlobalStoreContextProvider(props) {
     // Global State
@@ -24,7 +29,7 @@ function GlobalStoreContextProvider(props) {
     // The global store/state
     const [store, setStore] = useState({
         app: "comic",
-        userId: null,
+        user: null,
         isLoggedIn: false,
         modal: null,
         contentMode: types.TabType.APP //login, home
@@ -50,6 +55,10 @@ function GlobalStoreContextProvider(props) {
     const navigate = useNavigate();
 
     // Store functions
+
+
+
+
 
     // // Once the state changes, now actually change the tab
     // useEffect(() => {
