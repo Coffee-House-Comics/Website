@@ -20,7 +20,7 @@ export default function ProfileCard(props) {
                 <Typography>{beans}</Typography>
             </Grid>
             <Grid item>
-                <PersonIcon></PersonIcon>
+                <PersonIcon sx={{marginLeft: '10px'}}></PersonIcon>
             </Grid>
             <Grid>
                 <Typography>{subscribers}</Typography>
@@ -29,22 +29,24 @@ export default function ProfileCard(props) {
 
     return (
         <div style={{ border: "3px solid black", borderRadius: "5px", overflow: "hidden", boxShadow: "1px 3px 10px grey", width: "max-content"}}>
-            <Grid container direction="column" justifyContent="space-around" alignItems="center" spacing={3} width="250px">
+            <Grid container direction="column" justifyContent="space-around" alignItems="center" width="250px">
                 <Grid item>
                     {/* TODO Change this to profile picture image */}
                     <Avatar alt="profilePicture" src="coverphoto.jpg" sx={{ width:72, height:72, marginTop: '10px' }}></Avatar> 
                 </Grid>
                 <Grid item>
-                    <Typography> Dr. Suess </Typography>
-                    <Typography>@dr.suess</Typography>
+                    <Typography variant="h6" sx={{fontWeight: 'bold', marginTop: '10px'}}> Dr. Suess </Typography>
                 </Grid>
                 <Grid item>
-                    <div style={{ paddingRight: 2, paddingLeft: 2}}>
+                    <Typography>@dsuess</Typography>
+                </Grid>
+                <Grid item>
+                    <div style={{ paddingRight: 2, paddingLeft: 2, marginTop:'15px'}}>
                         {profileStatistics}
                     </div>
                 </Grid>
                 <Grid item>
-                    <Typography>{description}</Typography>
+                    <Typography sx={{marginTop: '10px'}}>{description}</Typography>
                 </Grid>
             </Grid>
         </div>
