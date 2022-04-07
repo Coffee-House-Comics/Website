@@ -13,7 +13,7 @@ function App() {
         <Header />
       </div>
       <div>
-        {/* <ContentSwitch /> */}
+        <ContentSwitch />
       </div>
     </div>
   );

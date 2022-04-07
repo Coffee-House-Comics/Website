@@ -1,10 +1,11 @@
-import loginScreen from './Screens/LoginScreen';
-import forgotPasswordScreen from './Screens/ForgotPasswordScreen';
-import registerScreen from './Screens/RegisterScreen';
-import resetPasswordScreen from './Screens/ForgotPasswordScreen';
+import LoginScreen from './Screens/LoginScreen';
+import ForgotPasswordScreen from './Screens/ForgotPasswordScreen';
+import RegisterScreen from './Screens/RegisterScreen';
+import ResetPasswordScreen from './Screens/ForgotPasswordScreen';
 
-function LoginSwitch() {
-    return (<div>Shadow is very cute</div>)
+export {
+    LoginScreen,
+    ForgotPasswordScreen,
+    RegisterScreen,
+    ResetPasswordScreen
 }
-
-export default LoginSwitch;
