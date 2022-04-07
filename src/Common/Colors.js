@@ -53,13 +53,9 @@ const Theme = createTheme({
         grey: {
             main: Colors.grey
         }
-    },
-    typography: {
-        button: {
-            textTransform: "none"
-        }
     }
-});
+},
+);
 
 export {
     Colors,

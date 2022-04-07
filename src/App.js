@@ -13,6 +13,7 @@ function App() {
         <Header />
       </div>
       <div>
+        <ContentSwitch />
       </div>
     </div>
   );
