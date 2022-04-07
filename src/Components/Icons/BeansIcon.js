@@ -4,7 +4,7 @@ import React from 'react'
 export default function BeansIcon(props) {
   return (
     <Icon {...props}>
-      <img alt="beans" src="Images/Icons/beans.svg"/>
+      <img alt="beans" src="/Images/Icons/beans.svg"/>
     </Icon>
   )
 }
