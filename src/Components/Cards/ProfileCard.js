@@ -29,7 +29,7 @@ export default function ProfileCard(props) {
 
     return (
         <div style={{ border: "3px solid black", borderRadius: "5px", overflow: "hidden", boxShadow: "1px 3px 10px grey", width: "max-content"}}>
-            <Grid container direction="column" justifyContent="space-around" alignItems="center" width="250px">
+            <Grid container direction="column" justifyContent="space-around" alignItems="center" width="250px" marginBottom="10px">
                 <Grid item>
                     {/* TODO Change this to profile picture image */}
                     <Avatar alt="profilePicture" src="coverphoto.jpg" sx={{ width:72, height:72, marginTop: '10px' }}></Avatar> 
@@ -46,7 +46,7 @@ export default function ProfileCard(props) {
                     </div>
                 </Grid>
                 <Grid item>
-                    <Typography sx={{marginTop: '10px'}}>{description}</Typography>
+                    <Typography sx={{marginTop: '10px', marginLeft: '10px', marginRight: '10px'}}>{description}</Typography>
                 </Grid>
             </Grid>
         </div>
