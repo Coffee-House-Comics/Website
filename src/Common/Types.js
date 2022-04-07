@@ -4,6 +4,12 @@ const types = {};
 
 // Tab Type - Information associated with each tab
 types.TabType = {
+    DEFAULT: {
+        name: "Default",
+        route: "/",
+        fullRoute: "/"
+    },
+    
     AUTH: {
         name: "Auth",
         route: "auth",
@@ -48,15 +54,22 @@ types.TabType = {
                 route: "subscriptions",
                 fullRoute: "/app/subscriptions"
             },
-            CONTENT: {
-                name: "Content",
-                route: "content/:id",
+            // Used for viewing a published story or comic
+            VIEW: {
+                name: "View",
+                route: "view/:id",
                 fullRoute: "/app/content/:id"
+            },
+            // Used for editing an unpublished story or comic you own,
+            EDIT: {
+                name: "Edit",
+                route: "edit/:id",
+                fullRoute: "/app/edit/:id"
             },
             PROFILE: {
                 name: "Profile",
-                route: "profile",
-                fullRoute: "/app/profile"
+                route: "profile/:id",
+                fullRoute: "/app/profile/:id",
             },
         }
     }

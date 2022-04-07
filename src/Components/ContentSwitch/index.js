@@ -11,7 +11,10 @@ import {
 } from './LoginSwitch';
 
 import {
-    Explore
+    Explore,
+    Profile,
+    Subscriptions,
+    View
 } from './AppSwitch';
 
 function ContentSwitch() {
@@ -30,8 +33,10 @@ function ContentSwitch() {
                 </Route>
                 <Route path={types.TabType.APP.route}>
                     <Route path={appChildren.EXPLORE.route} element={<Explore />} />
+                    <Route path={appChildren.SUBSCRIPTIONS.route} element={<Subscriptions />} />
+                    <Route path={appChildren.VIEW.route} element={<View />} />
+                    <Route path={appChildren.PROFILE.route} element={<Profile />} />
                 </Route>
-
             </Routes>
         </div>
     );
