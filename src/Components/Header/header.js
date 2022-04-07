@@ -1,6 +1,5 @@
 import { useState, useContext } from 'react'
 import { GlobalStoreContext } from '../../Store'
-import { AuthContext } from '../../Auth';
 import { useTheme } from '@mui/material/styles'
 import types from '../../Common/Types'
 import {
@@ -8,13 +7,13 @@ import {
     Avatar, Button, Tooltip, MenuItem
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import { Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function Header(props) {
+    const Navigate = useNavigate();
+    
     const { store } = useContext(GlobalStoreContext);
-    const { auth } = useContext(AuthContext);
     const theme = useTheme();
-
 
     const appTabs = types.TabType.APP;
     const authTabs = types.TabType.AUTH;
@@ -23,7 +22,7 @@ function Header(props) {
     let settings;
 
     // In the case of being logged in or not
-    if (auth.state == types.authType.GUEST) {
+    if (store.isLoggedIn === false) {
         pages = [appTabs.children.EXPLORE];
         settings = [appTabs.children.PROFILE, authTabs.children.REGISTER, authTabs.children.LOGIN];
     }
@@ -49,8 +48,10 @@ function Header(props) {
         if (routeName) {
             console.log(routeName)
             const route = types.TabType.GENERATE_ROUTE(routeName);
-            if (route)
+            if (route) {
+                console.log();
                 Navigate(route);
+            }
         }
 
     };
