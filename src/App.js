@@ -3,7 +3,7 @@ import { React } from 'react';
 import {
   Header,
   ContentSwitch,
-  AppSwitch
+  Modal
 } from './Components/index'
 
 function App() {
@@ -14,6 +14,7 @@ function App() {
       </div>
       <div>
         <ContentSwitch />
+        <Modal />
       </div>
     </div>
   );
