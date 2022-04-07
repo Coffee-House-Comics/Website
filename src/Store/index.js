@@ -56,7 +56,11 @@ function GlobalStoreContextProvider(props) {
 
     // Store functions
 
-
+    store.reRoute = function (fullRoute) {
+        console.log("Store reroute:", fullRoute);
+        if (fullRoute)
+            navigate(fullRoute, { replace: true });
+    }
 
 
 

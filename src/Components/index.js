@@ -3,10 +3,8 @@
 
 import Header from "./Header/header";
 import ContentSwitch from "./ContentSwitch";
-import AppSwitch from "./ContentSwitch/AppSwitch";
 
 export {
     Header,
     ContentSwitch,
-    AppSwitch
 }

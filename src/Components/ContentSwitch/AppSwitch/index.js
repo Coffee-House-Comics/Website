@@ -1,5 +1,5 @@
-function AppSwitch() {
+import Explore from './Screens/Explore'
 
-}
-
-export default AppSwitch;
+export {
+    Explore
+};

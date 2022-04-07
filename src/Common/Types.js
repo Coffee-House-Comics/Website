@@ -6,20 +6,29 @@ const types = {};
 types.TabType = {
     AUTH: {
         name: "Auth",
-        route: "/auth",
+        route: "auth",
+        fullRoute: "/auth",
 
         children: {
             REGISTER: {
                 name: "Register",
-                route: "/auth/register"
+                route: "register",
+                fullRoute: "/auth/register",
             },
             LOGIN: {
                 name: "Login",
-                route: "/auth/login"
+                route: "login",
+                fullRoute: "/auth/login"
             },
-            LOGOUT: {
-                name: "Logout",
-                route: "/auth/logout"
+            FORGOTPASSWORD: {
+                name: "Forgot Password",
+                route: "forgot-password",
+                fullRoute: "/auth/forgot-password"
+            },
+            RESETPASSWORD: {
+                name: "Reset Password",
+                route: "reset-password",
+                fullRoute: "/auth/reset-password"
             }
         }
     },
@@ -31,54 +40,25 @@ types.TabType = {
         children: {
             EXPLORE: {
                 name: "Explore",
-                route: "/app/explore",
+                route: "explore",
+                fullRoute: "/app/explore",
             },
             SUBSCRIPTIONS: {
                 name: "Subscriptions",
-                route: "/app/subscriptions"
+                route: "subscriptions",
+                fullRoute: "/app/subscriptions"
             },
             CONTENT: {
                 name: "Content",
-                route: "/app/content/:id"
+                route: "content/:id",
+                fullRoute: "/app/content/:id"
             },
             PROFILE: {
                 name: "Profile",
-                route: "/app/profile"
+                route: "profile",
+                fullRoute: "/app/profile"
             },
         }
-    },
-
-    GENERATE_ROUTE: function (name) {
-        // Because we ain't in typescript D:
-        if (!(name instanceof String))
-            return null;
-
-        console.log("GENERATE_ROUTE:", name);
-        const evalKey = function (val) {
-            if (name == val.name){
-                console.log("MATCH with:", val.name);
-                return val.route;
-            }
-                
-            if (val.children) {
-                Object.values(val.children).forEach( function (val) {
-                    const res = evalKey(val);
-                    if (res != null)
-                        return res;
-                })
-            }
-
-            return null;
-        }
-
-        Object.values(this).forEach(function (val) {
-            const res = evalKey(val);
-            if (res != null) {
-                return res;
-            }
-
-            return null;
-        });
     }
 };
 
