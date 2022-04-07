@@ -7,7 +7,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import AuthorButton from '../Buttons/AuthorButton';
 import BeansButtonPanel from '../Buttons/BeansButtonPanel';
 
-
+export const PostCardHeight = 335;
 export default function PostCard(props) {
     const post = props.post;
 
@@ -28,7 +28,6 @@ export default function PostCard(props) {
     //TODO
     const handleAuthorClick = function () {
         console.log("Author click");
-
     }
 
     //TODO
@@ -47,10 +46,10 @@ export default function PostCard(props) {
     }
 
     const metaPanel =
-        <Grid container direction="column" justifyContent="space-around" alignItems="flex-start">
+        <Grid container direction="column" justifyContent="space-between" alignItems="flex-start" height="100%">
             {/* Title, Series, and Author */}
             {/* Title */}
-            <Typography noWrap={true} variant="subtitle1">
+            <Typography noWrap={true} variant="h6">
                 {post.name}
             </Typography>
 
@@ -87,22 +86,22 @@ export default function PostCard(props) {
         </Grid>
 
     return (
-        <div style={{ border: "3px solid black", borderRadius: "5px", overflow: "hidden", boxShadow: "1px 3px 10px grey", width: "max-content"}}>
+        <div style={{ border: "3px solid black", borderRadius: "5px", overflow: "hidden", boxShadow: "1px 3px 10px grey", width: "max-content", height: PostCardHeight }}>
             <Grid container direction="column" justifyContent="flex-start" alignItems="flex-start" width="200px">
                 {/* Cover image */}
                 <Grid item>
                     {/* TODO Change this to cover image */}
-                    <img src="coverphoto.jpg" height="250px" width="200px" />
+                    <img src="/Images/coffee.jpg" height="250px" width="200px" />
                 </Grid>
                 <Grid container direction="row" justifyContent="space-between">
                     {/* Metadata panel */}
                     <Grid item xs="auto">
-                        <div style={{ paddingLeft: 4 }}>
+                        <div style={{ paddingLeft: 8, height: "100%", width: "100%"}}>
                             {metaPanel}
                         </div>
                     </Grid>
                     <Grid item>
-                        <div style={{ paddingRight: 0 }}>
+                        <div style={{ paddingRight: 2, height: "100%", width: "100%" }}>
                             {buttonPanel}
                         </div>
                     </Grid>
