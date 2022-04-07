@@ -13,7 +13,8 @@ const Colors = {
     forest_green_crayola: "#72AD7D",
     cg_blue: "#247BA0",
     cadet_blue: "#61A0AF",
-    olive_drab_7: "#3D3522"
+    olive_drab_7: "#3D3522",
+    grey: "#989898"
 }
 
 // Colors MUI style
@@ -49,6 +50,9 @@ const Theme = createTheme({
         olive_drab_7: {
             main: Colors.olive_drab_7
         },
+        grey: {
+            main: Colors.grey
+        }
     }
 },
 );

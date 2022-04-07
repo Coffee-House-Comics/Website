@@ -22,7 +22,7 @@ function Header(props) {
     let pages;
     let settings;
 
-    // In the case of being logged in
+    // In the case of being logged in or not
     if (auth.state == types.authType.GUEST) {
         pages = [appTabs.children.EXPLORE];
         settings = [appTabs.children.PROFILE, authTabs.children.REGISTER, authTabs.children.LOGIN];
@@ -45,12 +45,24 @@ function Header(props) {
 
     const handleCloseNavMenu = (routeName) => {
         setAnchorElNav(null);
-        Navigate(types.TabType.GENERATE_ROUTE(routeName));
+
+        if (routeName) {
+            console.log(routeName)
+            const route = types.TabType.GENERATE_ROUTE(routeName);
+            if (route)
+                Navigate(route);
+        }
+
     };
 
     const handleCloseUserMenu = (routeName) => {
         setAnchorElUser(null);
-        Navigate(types.TabType.GENERATE_ROUTE(routeName));
+
+        if (routeName) {
+            const route = types.TabType.GENERATE_ROUTE(routeName);
+            if (route)
+                Navigate(route);
+        }
     };
 
     return (
@@ -60,15 +72,6 @@ function Header(props) {
         }} >
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
-                    <Typography
-                        variant="h6"
-                        noWrap
-                        component="div"
-                        sx={{ mr: 2, display: { xs: 'none', md: 'flex' } }}
-                    >
-                        LOGO
-                    </Typography>
-
                     <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
                         <IconButton
                             size="large"
@@ -100,31 +103,28 @@ function Header(props) {
                         >
                             {
                                 pages.map((page) => (
-                                    <MenuItem key={page.name} onClick={() => handleCloseNavMenu(page.name)}>
-                                        <Typography sx={{ color: theme.palette.ivory.main }} textAlign="center">{page.name}</Typography>
+                                    <MenuItem
+                                        key={page.name}
+                                        onClick={() => handleCloseNavMenu(page.name)}
+                                    >
+                                        <Typography sx={{ color: theme.palette.olive_drab_7.main }} textAlign="center">{page.name}</Typography>
                                     </MenuItem>
                                 ))
                             }
                         </Menu>
                     </Box>
-                    <Typography
-                        variant="h6"
-                        noWrap
-                        component="div"
-                        sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}
-                    >
-                        LOGO
-                    </Typography>
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-                        {pages.map((page) => (
-                            <Button
-                                key={page.name}
-                                onClick={handleCloseNavMenu}
-                                sx={{ my: 2, color: theme.palette.ivory.main, display: 'block' }}
-                            >
-                                {page.name}
-                            </Button>
-                        ))}
+                        { // The Buttons that appear in the app bar in full screen
+                            pages.map((page) => (
+                                <Button
+                                    key={page.name}
+                                    onClick={handleCloseNavMenu}
+                                    sx={{ my: 2, color: theme.palette.ivory.main, display: 'block' }}
+                                >
+                                    {page.name}
+                                </Button>
+                            ))
+                        }
                     </Box>
 
                     <Box sx={{ flexGrow: 0 }}>
@@ -152,7 +152,9 @@ function Header(props) {
                             {
                                 settings.map((setting) => (
                                     <MenuItem key={setting.name} onClick={() => handleCloseUserMenu(setting.name)}>
-                                        <Typography textAlign="center">{setting.name}</Typography>
+                                        <Typography textAlign="center" sx={{ color: theme.palette.olive_drab_7.main }}>
+                                            {setting.name}
+                                        </Typography>
                                     </MenuItem>)
                                 )
                             }
