@@ -4,7 +4,7 @@ import registerScreen from './Screens/RegisterScreen';
 import resetPasswordScreen from './Screens/ForgotPasswordScreen';
 
 function LoginSwitch() {
-    return (<div>Shadow is very</div>)
+    return (<div>Shadow is very cute</div>)
 }
 
 export default LoginSwitch;

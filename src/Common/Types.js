@@ -49,6 +49,10 @@ types.TabType = {
     },
 
     GENERATE_ROUTE: function (name) {
+        // Because we aint in typescript D:
+        if (!(name instanceof String))
+            return null;
+
         console.log("GENERATE_ROUTE:", name);
         const evalKey = function (val) {
             if (name == val.name){
