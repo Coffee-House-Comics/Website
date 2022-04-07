@@ -20,7 +20,7 @@ export default function BeansButtonPanel(props) {
     let downIcon = (props.currentVote == -1) ? <DownArrowIcon color="fuzzy_wuzzy" fontSize="small" /> : <DownArrowIcon fontSize="small" />
 
     return (
-        <Grid container direction="row" justifyContent="center" alignItems="center" wrap="nowrap">
+        <Grid container direction="row" justifyContent="center" alignItems="center" wrap="nowrap" width="max-content">
                 <IconButton onClick={props.onUpvote} sx={{ marginInline: -1 }}>
                     {upIcon}
                 </IconButton>

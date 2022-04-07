@@ -8,10 +8,21 @@ import PostsSection from "../../../Cards/PostsSection";
 function Explore() {
 
     //TODO
-    let recentPosts = testStories;
-
-    //TODO
-    let popularPosts = testStories;
+    /**
+     * Type:
+     *  [{
+     *      posts: [PostMetadata],
+     *      name: String
+     *  }]
+     */
+    console.log("Explore")
+    let postSets = [{
+        posts: testStories,
+        name: "Recent Releases"
+    }, {
+        posts: testStories,
+        name: "Popular Posts"
+    },]
 
     //Build PostCards
     const paddingBtwnCards = 5;
@@ -22,14 +33,17 @@ function Explore() {
             </div>
         });
     }
-    let recentPostCards = buildCards(recentPosts);
-    let popularPostCards = buildCards(popularPosts);
 
+    //Build PostSections
+    let postSections = []
+    for(let postSet of postSets){
+        let postCards = buildCards(postSet.posts);
+        postSections.push(<PostsSection posts={postCards} name={postSet.name}/>)
+    }
 
     return (
         <div style={{padding: 40, paddingInline: 25}}>
-            <PostsSection posts={recentPostCards} name="Recent Releases" />
-            <PostsSection posts={popularPostCards} name="Popular Posts" />
+            {postSections}
         </div>
     );
 }

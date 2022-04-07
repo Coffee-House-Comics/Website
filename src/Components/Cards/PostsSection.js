@@ -11,7 +11,7 @@ import { PostCardHeight } from './PostCard'
 export default function PostsSection(props) {
   return (
     <div>
-        <Typography variant="h4">
+        <Typography variant="h4" sx={{marginBottom: "5px", marginTop: "20px"}}>
             {props.name}
         </Typography>
         <HorizontalScroll style={{ width: "100%", height: PostCardHeight * 1.1 }}>
