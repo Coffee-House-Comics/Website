@@ -11,11 +11,11 @@ export const testStories = generateTestPosts(20);
 
 function App() {
   return (
-    <div>
-      <div>
+    <div id="App">
+      <div id="header-wrapper">
         <Header />
       </div>
-      <div>
+      <div id="content-wrapper">
         <ContentSwitch />
         <Modal />
       </div>

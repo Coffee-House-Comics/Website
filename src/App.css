@@ -9,22 +9,42 @@
   --swatch-grey                : 989898;
 }
 
-.App {
-  text-align: center;
+#App {
+  width : 100%;
+  left  : 0px;
+  height: 100%;
+  top   : 0px;
 }
 
 #root {
   font-family: "Lexend Exa";
-  color: var(--swatch-olive_drab_7);
-  position: absolute;
-  width: 100%;
-  left: 0px;
-  height: 100%;
-  top: 0px;
-  overflow-x: hidden;
-  overflow-y: visible;
+  color      : var(--swatch-olive_drab_7);
+  position   : absolute;
+  width      : 100%;
+  left       : 0px;
+  height     : 100%;
+  top        : 0px;
+  overflow-x : hidden;
+  overflow-y : visible;
 }
 
 body {
   background-color: var(--swatch-ivory);
+}
+
+#header-wrapper {
+  padding-bottom: 40px;
+  position      : relative;
+}
+
+#content-wrapper {
+  height  : 100%;
+  width   : 95%;
+  left    : 2.5%;
+  position: relative;
+}
+
+#Content-Switch {
+  height: 95%;
+  width : 100%;
 }
