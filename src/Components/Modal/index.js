@@ -22,7 +22,7 @@ function GlobalModal() {
         left: '50%',
         transform: 'translate(-50%, -50%)',
         width: 600,
-        bgcolor: "rgba(255, 255, 255, 0.8)",
+        bgcolor: "rgba(255, 255, 255, 0.9)",
         border: '5px solid ' + theme.palette.olive_drab_7.main,
         borderRadius: "10px",
         // boxShadow: 24,
@@ -31,7 +31,6 @@ function GlobalModal() {
 
     if (!store.modal)
         return (<div></div>);
-
 
     const onClose = function () {
         store.closeModal();

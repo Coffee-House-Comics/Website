@@ -2,14 +2,11 @@ import { GlobalStoreContext } from '../../../../Store';
 import { useContext, useState } from 'react';
 import { useTheme } from '@mui/material/styles';
 import {
-    Button,
     Typography,
     Grid,
-    TextField
 } from '@mui/material';
 import SmallTextField from '../../../TextFields/SmallTextField';
 import SubmitButton from '../../../Buttons/SubmitButton';
-
 
 function ResetPasswordScreen() {
     const { store } = useContext(GlobalStoreContext);
@@ -21,7 +18,7 @@ function ResetPasswordScreen() {
 
     const style = {
         position: 'absolute',
-        top: '50%',
+        top: '55%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
         width: 600,
@@ -31,18 +28,6 @@ function ResetPasswordScreen() {
         boxShadow: 24,
         p: 4
     };
-
-    const onFinish = function () {
-        const modalInfo = {
-            title: "Password Reset",
-            body: "Are you sure you want to reset your password?",
-            action: "Yes, reset it."
-        };
-
-        store.createModal(modalInfo, function () {
-            console.log("Modal Closed");
-        });
-    }
 
     const handleOldPassChange = function (event) {
         setOldPass(event.target.value);
@@ -59,74 +44,80 @@ function ResetPasswordScreen() {
     const onSubmit = function () {
         console.log("Reset Pass submit pressed...");
         console.log("->", oldPass, newPass, confirmNewPass);
+
+        const modalInfo = {
+            title: "Password Reset",
+            body: "Are you sure you want to reset your password?",
+            action: "Yes, reset it."
+        };
+
+        store.createModal(modalInfo, function () {
+            console.log("Modal Closed");
+        });
     }
 
     return (
-        <div>
-            reset password screen
-            <Grid container spacing={2} sx={style}>
-                <Grid item xs={12} sx={{
-                    textAlign: "center",
-                    color: "black"
-                }}>
-                    <Typography id="modal-title" variant="h4">
-                        Password Reset
-                    </Typography>
-                </Grid>
-                <Grid item xs={12} sx={{
-                    textAlign: "center",
-                    color: "black"
-                }}>
-                    <Typography id="modal-title" sx={{
-                    }}>
-                        Enter your new password below.
-                    </Typography>
-                </Grid>
-                <Grid item xs={12}>
-                    <SmallTextField
-                        fieldName={"Old Password"}
-                        helperText={"Please Enter your old password."}
-                        onChange={handleOldPassChange}
-                        sx={{
-                            width: "100%"
-                        }}
-                    />
-                </Grid>
-                <Grid item xs={12}>
-                    <SmallTextField
-                        fieldName={"New Password"}
-                        helperText={"Please Enter your new password."}
-                        onChange={handleNewPassChnage}
-                        sx={{
-                            width: "100%"
-                        }}
-                    />
-                </Grid>
-                <Grid item xs={12}>
-                    <SmallTextField
-                        fieldName={"Confirm New Password"}
-                        helperText={"Please re-enter your new password."}
-                        onChange={handleNewPassConfirmChange}
-                        sx={{
-                            width: "100%"
-                        }}
-                    />
-                </Grid>
-                <Grid item xs={12} sx={{
-                    textAlign: "center"
-                }}>
-                    <SubmitButton
-                        onClick={onSubmit}
-                        sx={{
-                            width: "100%"
-                        }}
-                        text={"Reset Password"}
-                    />
-                </Grid>
+        <Grid container spacing={2} sx={style}>
+            <Grid item xs={12} sx={{
+                textAlign: "center",
+                color: "black"
+            }}>
+                <Typography id="modal-title" variant="h4">
+                    Password Reset
+                </Typography>
             </Grid>
-        </div>
+            <Grid item xs={12} sx={{
+                textAlign: "center",
+                color: "black"
+            }}>
+                <Typography id="modal-title" sx={{
+                }}>
+                    Enter your new password below.
+                </Typography>
+            </Grid>
+            <Grid item xs={12}>
+                <SmallTextField
+                    fieldName={"Old Password"}
+                    helperText={"Please Enter your old password."}
+                    onChange={handleOldPassChange}
+                    sx={{
+                        width: "100%"
+                    }}
+                />
+            </Grid>
+            <Grid item xs={12}>
+                <SmallTextField
+                    fieldName={"New Password"}
+                    helperText={"Please Enter your new password."}
+                    onChange={handleNewPassChnage}
+                    sx={{
+                        width: "100%"
+                    }}
+                />
+            </Grid>
+            <Grid item xs={12}>
+                <SmallTextField
+                    fieldName={"Confirm New Password"}
+                    helperText={"Please re-enter your new password."}
+                    onChange={handleNewPassConfirmChange}
+                    sx={{
+                        width: "100%"
+                    }}
+                />
+            </Grid>
+            <Grid item xs={12} sx={{
+                textAlign: "center"
+            }}>
+                <SubmitButton
+                    onClick={onSubmit}
+                    sx={{
+                        width: "100%"
+                    }}
+                    text={"Reset Password"}
+                />
+            </Grid>
+        </Grid>
     );
-
 }
 
 export default ResetPasswordScreen;
