@@ -113,7 +113,7 @@ function ResetPasswordScreen() {
                     sx={{
                         width: "100%"
                     }}
-                    text={"Reset Password"}
+                    text={"RESET PASSWORD"}
                 />
             </Grid>
         </Grid>

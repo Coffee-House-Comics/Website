@@ -75,7 +75,7 @@ function RegisterScreen() {
                 <Typography id="modal-title" sx={{
                 }}>
                     {"Already have an account?  "}
-                    <Link to={types.TabType.AUTH.children.LOGIN.fullRoute}>{"Sign in."}</Link>
+                    <Link to={types.TabType.AUTH.children.LOGIN.fullRoute}>{"Log in."}</Link>
                 </Typography>
             </Grid>
             <Grid item xs={6}>
@@ -120,8 +120,8 @@ function RegisterScreen() {
             </Grid>
             <Grid item xs={12}>
                 <SmallTextField
-                    fieldName={"Confirm New Password"}
-                    helperText={"Please re-enter your new password."}
+                    fieldName={"Confirm Password"}
+                    helperText={"Please re-enter your password."}
                     onChange={handleConfirmPassChange}
                     sx={{
                         width: "100%"
@@ -136,7 +136,7 @@ function RegisterScreen() {
                     sx={{
                         width: "100%"
                     }}
-                    text={"SIGN IN"}
+                    text={"REGISTER"}
                 />
             </Grid>
         </Grid>

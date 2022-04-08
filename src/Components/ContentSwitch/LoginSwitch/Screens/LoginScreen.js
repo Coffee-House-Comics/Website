@@ -50,7 +50,7 @@ function LoginScreen() {
                 color: "black"
             }}>
                 <Typography id="modal-title" variant="h4">
-                    Sign in
+                    Log in
                 </Typography>
             </Grid>
             <Grid item xs={12} sx={{
@@ -60,7 +60,7 @@ function LoginScreen() {
                 <Typography id="modal-title" sx={{
                 }}>
                     {"New to Coffee House Comics?  "}
-                    <Link to={types.TabType.AUTH.children.REGISTER.fullRoute}>{"Create an Account"}</Link>
+                    <Link to={types.TabType.AUTH.children.REGISTER.fullRoute}>{"Register an Account"}</Link>
                 </Typography>
             </Grid>
             <Grid item xs={12}>
@@ -83,6 +83,11 @@ function LoginScreen() {
                     }}
                 />
             </Grid>
+            <Grid item xs={12}>
+                <Typography variant="caption">
+                    <Link to={types.TabType.AUTH.children.FORGOTPASSWORD.fullRoute}>{"Forgot your password?"}</Link>
+                </Typography>
+            </Grid>
             <Grid item xs={12} sx={{
                 textAlign: "center"
             }}>
@@ -91,7 +96,7 @@ function LoginScreen() {
                     sx={{
                         width: "100%"
                     }}
-                    text={"SIGN IN"}
+                    text={"LOG IN"}
                 />
             </Grid>
         </Grid>

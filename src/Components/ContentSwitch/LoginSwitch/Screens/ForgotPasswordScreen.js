@@ -37,7 +37,7 @@ function ForgotPasswordScreen() {
 
         const modalInfo = {
             title: "New Password Sent!",
-            body: "The new password should arrive to your account's email in a few minutes.",
+            body: "If " + email + " is associated with an account, the new password should arrive in a few minutes.",
             action: null
         };
 
@@ -81,7 +81,7 @@ function ForgotPasswordScreen() {
                     sx={{
                         width: "100%"
                     }}
-                    text={"Send New Password"}
+                    text={"SEND NEW PASSWORD"}
                 />
             </Grid>
         </Grid>

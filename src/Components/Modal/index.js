@@ -71,7 +71,7 @@ function GlobalModal() {
                 <Grid item xs={12} />
                 <Grid item xs={1} />
                 <Grid item xs={4}>
-                    <Button variant="contained" onClick={onClose} >Cancel</Button>
+                    <Button variant="contained" onClick={onClose} >Close</Button>
                 </Grid>
                 <Grid item xs={3} />
                 <Grid item xs={4}>
