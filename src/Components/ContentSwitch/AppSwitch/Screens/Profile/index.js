@@ -1,5 +1,6 @@
 import { useParams } from 'react-router-dom';
 import { useState, useContext } from 'react'
+import { GlobalStoreContext } from '../../../../../Store';
 import Forum from './Forum';
 import Saved from './Saved';
 import View from '../View';
@@ -8,13 +9,11 @@ import {
     Typography,
     Grid,
     Box,
-    Toolbar,
-    Tab,
-    Tabs
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 
 function ProfileRouter() {
+    const { store } = useContext(GlobalStoreContext);
     const { id } = useParams();
     const theme = useTheme();
 
@@ -66,7 +65,7 @@ function ProfileRouter() {
             height: "100%"
         }} >
             <Box sx={{
-                width: "350px",
+                width: "375px",
                 height: "100%",
                 bgcolor: theme.palette.cg_blue.main,
                 float: "left"
@@ -76,54 +75,62 @@ function ProfileRouter() {
             <Box sx={{
                 // bgcolor: theme.palette.fuzzy_wuzzy.main,
                 height: "100%",
-                width: "calc(100% - 350px)",
-                float: "right"
+                width: "calc(100% - 375px - 20px)", // Take off 20 for padding
+                float: "right",
+                paddingLeft: "20px"
             }}>
-                <Grid container spacing={0} sx={{
-                    position: "relative",
-                    padding: "20px",
+                <Box sx={{
+                    height: "80px",
                 }}>
-                    <Grid item xs={1} sx={{
-                        borderBottom: lineCss,
-                        padding: "10px 0px 10px 0px",
-                    }} />
-                    <Grid item xs={2}
-                        onClick={() => changeTab(PROFILE_TABS.VIEW)}
+                    <Grid container spacing={0}
+                        alignItems="stretch"
                         sx={{
-                            ...backgroundCSS(PROFILE_TABS.VIEW),
-
+                            position: "relative",
                         }}>
-                        {mutateText("View")}
+                        <Grid item xs={1} sx={{
+                            borderBottom: lineCss,
+                            padding: "10px 0px 10px 0px",
+                        }} />
+                        <Grid item xs={2}
+                            onClick={() => changeTab(PROFILE_TABS.VIEW)}
+                            sx={{
+                                ...backgroundCSS(PROFILE_TABS.VIEW),
+                            }}>
+                            {mutateText(store.app)}
+                        </Grid>
+                        <Grid item xs={2}
+                            onClick={() => changeTab(PROFILE_TABS.FORUM)}
+                            sx={{
+                                ...backgroundCSS(PROFILE_TABS.FORUM),
+                            }}>
+                            {mutateText("Forum")}
+                        </Grid>
+                        <Grid item xs={2}
+                            onClick={() => changeTab(PROFILE_TABS.SAVED)}
+                            sx={{
+                                ...backgroundCSS(PROFILE_TABS.SAVED),
+                            }}>
+                            {mutateText("Saved")}
+                        </Grid>
+                        <Grid item xs={2}
+                            onClick={() => changeTab(PROFILE_TABS.SETTINGS)}
+                            sx={{
+                                ...backgroundCSS(PROFILE_TABS.SETTINGS),
+                            }}>
+                            {mutateText("Settings")}
+                        </Grid>
+                        <Grid item xs={3} sx={{
+                            borderBottom: lineCss,
+                            padding: "10px 0px 10px 0px",
+                        }} />
                     </Grid>
-                    <Grid item xs={2}
-                        onClick={() => changeTab(PROFILE_TABS.FORUM)}
-                        sx={{
-                            ...backgroundCSS(PROFILE_TABS.FORUM),
-                        }}>
-                        {mutateText("Forum")}
-                    </Grid>
-                    <Grid item xs={2}
-                        onClick={() => changeTab(PROFILE_TABS.SAVED)}
-                        sx={{
-                            ...backgroundCSS(PROFILE_TABS.SAVED),
-                        }}>
-                        {mutateText("Saved")}
-                    </Grid>
-                    <Grid item xs={2}
-                        onClick={() => changeTab(PROFILE_TABS.SETTINGS)}
-                        sx={{
-                            ...backgroundCSS(PROFILE_TABS.SETTINGS),
-                        }}>
-                        {mutateText("Settings")}
-                    </Grid>
-                    <Grid item xs={3} sx={{
-                        borderBottom: lineCss,
-                        padding: "10px 0px 10px 0px",
-                    }} />
-                    <Grid item xs={12}>
-                        {activeScreen}
-                    </Grid>
-                </Grid>
+                </Box>
+                <Box sx={{
+                    position: "relative",
+                    height: "calc(100% - 80px)",
+                }}>
+                    {activeScreen}
+                </Box>
             </Box>
         </Box>
     );
