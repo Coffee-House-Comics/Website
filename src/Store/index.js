@@ -2,9 +2,6 @@ import { createContext, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import types from '../Common/Types'
 
-import { ContentSwitch, AppSwitch } from '../Components';
-
-
 const GlobalStoreContext = createContext({});
 
 const GlobalStoreActionType = {
@@ -27,7 +24,7 @@ function GlobalStoreContextProvider(props) {
         app: "comic",
         user: null,
         isLoggedIn: false,
-        modal: null,
+        modal: null
     });
 
     const storeReducer = (action) => {
@@ -37,6 +34,15 @@ function GlobalStoreContextProvider(props) {
             case GlobalStoreActionType.LOGIN_USER: {
                 return setStore({
 
+                });
+            }
+
+            case GlobalStoreActionType.CHANGE_MODAL: {
+                return setStore({
+                    app: store.app,
+                    user: store.user,
+                    isLoggedIn: store.isLoggedIn,
+                    modal: payload
                 });
             }
 
@@ -51,11 +57,38 @@ function GlobalStoreContextProvider(props) {
 
     // Store functions
 
-    
+
     store.reRoute = function (fullRoute) {
         console.log("Store reroute:", fullRoute);
         if (fullRoute)
             navigate(fullRoute, { replace: true });
+    }
+
+
+    // Modal Related Functions ------------------------------------
+    store.createModal = function (metadata, callback = null) {
+        const { title, body, action } = metadata;
+        
+        const modalInfo = {
+            title: title,
+            body: body,
+
+            // Supply action with a string if you want an option besides just `close`
+            action: action,
+            hook: callback
+        };
+
+        storeReducer({
+            type: GlobalStoreActionType.CHANGE_MODAL,
+            payload: modalInfo
+        });
+    }
+
+    store.closeModal = function () {
+        storeReducer({
+            type: GlobalStoreActionType.CHANGE_MODAL,
+            payload: null
+        });
     }
 
     //Return the context provider

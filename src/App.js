@@ -3,7 +3,7 @@ import { React } from 'react';
 import {
   Header,
   ContentSwitch,
-  AppSwitch
+  Modal
 } from './Components/index'
 import { generateTestPosts } from './Bloat/testData';
 
@@ -17,6 +17,7 @@ function App() {
       </div>
       <div>
         <ContentSwitch />
+        <Modal />
       </div>
     </div>
   );
