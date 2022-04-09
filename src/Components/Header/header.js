@@ -25,7 +25,7 @@ function Header(props) {
 
     // In the case of being logged in or not
     if (store.isLoggedIn === false) {
-        pages = [appTabs.children.EXPLORE];
+        pages = [appTabs.children.EXPLORE, appTabs.children.SUBSCRIPTIONS]; // TODO: Remove subscriptions
         settings = [appTabs.children.PROFILE, authTabs.children.REGISTER, authTabs.children.LOGIN];
     }
     else {
@@ -146,12 +146,12 @@ function Header(props) {
                     <CHCIcon sx={{ overflow: "visible", width: 45, height: 45, marginTop: 0.5, marginRight: 2 }} />
                 </Grid>
                 {tabButtons}
-                <Grid item xs/>
+                <Grid item xs />
                 <Grid item xs={5}>
                     {searchBar}
                 </Grid>
                 <Grid item xs />
-                <Grid item xs/>
+                <Grid item xs />
                 <Grid item>
                     {profileMenuButton}
                 </Grid>
