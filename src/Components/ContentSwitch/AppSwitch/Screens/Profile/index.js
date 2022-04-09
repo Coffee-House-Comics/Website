@@ -87,10 +87,7 @@ function ProfileRouter() {
                         sx={{
                             position: "relative",
                         }}>
-                        <Grid item xs={1} sx={{
-                            borderBottom: lineCss,
-                            padding: "10px 0px 10px 0px",
-                        }} />
+
                         <Grid item xs={2}
                             onClick={() => changeTab(PROFILE_TABS.VIEW)}
                             sx={{

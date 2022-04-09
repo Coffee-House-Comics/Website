@@ -63,9 +63,6 @@ function Header(props) {
 
     }
 
-    //TODO
-    let searchText = "";
-
     const profileMenuButton =
         <div>
             <Tooltip title="Profile Menu">
