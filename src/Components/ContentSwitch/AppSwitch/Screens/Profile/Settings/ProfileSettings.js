@@ -53,14 +53,9 @@ export default function ProfileSettings() {
     const buildImage = function () {
         let imgTag = null;
         if (imageURI !== null)
-            imgTag = (<div className="row">
-                <div className="small-9 small-centered columns">
-                    <img className="thumbnail" src={imageURI}></img>
-                </div>
-            </div>);
+            imgTag = <img className="thumbnail" src={imageURI}></img>
         return imgTag;
     };
-
 
     return (
         <Box sx={{
