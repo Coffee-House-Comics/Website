@@ -42,7 +42,15 @@ export default function ForumSettings() {
 
     const handleChange = function () {
         if (isEnabled) {
-            setForumText('Disabled');
+            const metadata = {
+                title: "Are you sure that you want to delete your forum?",
+                body: "All current forum posts will be deleted.",
+                action: "Yes, delete it."
+            };
+
+            store.createModal(metadata, function () {
+                setForumText('Disabled');
+            })
         }
         else {
             // Enabling doesn't require confirmation
