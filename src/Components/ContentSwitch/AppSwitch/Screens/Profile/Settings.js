@@ -20,7 +20,7 @@ export default function Settings() {
         FORUM: "Forum"
     };
 
-    const [settingsTab, setSettingsTab] = useState();
+    const [settingsTab, setSettingsTab] = useState(SETTINGS_TAB.PROFILE);
 
     function changeTab(tab) {
         console.log("Changing to..:", tab);
@@ -28,19 +28,30 @@ export default function Settings() {
     }
 
     // Settings tab component
-    function settingsTabComponent(text, props) {
+    function settingsTabComponent(tab, props) {
         return (
             <Box
                 sx={{
                     ...props,
                     width: "100%",
-                    height: "100px",
+                    height: "75px",
                     textAlign: "center",
-                    color: theme.palette.ivory.main,
-                    cursor: (text) ? "pointer" : "default",
+                    color: (tab === settingsTab) ? theme.palette.olive_drab_7.main : theme.palette.ivory.main,
+                    cursor: (tab) ? "pointer" : "default",
+                    bgcolor: (tab === settingsTab) ? theme.palette.ivory.main : "transparent",
+                    transform: "translateX(+7%)",
+                    borderRadius: "15px",
+                    paddingRight: "5px"
                 }}
             >
-                {(text) ? <Typography variant='h6'>{text}</Typography> : ""}
+                <Box sx={{
+                    verticalAlign: "center",
+                    position: "relative",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                }}>
+                    {(tab) ? <Typography variant='h6'>{tab}</Typography> : ""}
+                </Box>
             </Box>
         );
     }
@@ -61,24 +72,30 @@ export default function Settings() {
             }}>
                 <Grid
                     container
-                    direction="column"
                     justifyContent="space-between"
                     alignItems="center"
+                    spacing={6}
                 >
-                    <Grid item>
+                    <Grid item xs={12}>
                         {settingsTabComponent()}
                     </Grid>
-                    <Grid item>
+                    <Grid item xs={12}
+                        onClick={() => changeTab(SETTINGS_TAB.PROFILE)}
+                    >
                         {settingsTabComponent(SETTINGS_TAB.PROFILE)}
                     </Grid>
-                    <Grid item>
+                    <Grid item xs={12}
+                        onClick={() => changeTab(SETTINGS_TAB.ACCOUNT)}
+                    >
                         {settingsTabComponent(SETTINGS_TAB.ACCOUNT)}
                     </Grid>
-                    <Grid item>
+                    <Grid item xs={12}
+                        onClick={() => changeTab(SETTINGS_TAB.FORUM)}
+                    >
                         {settingsTabComponent(SETTINGS_TAB.FORUM)}
                     </Grid>
                 </Grid>
             </Box>
-        </Box>
+        </Box >
     );
 }
