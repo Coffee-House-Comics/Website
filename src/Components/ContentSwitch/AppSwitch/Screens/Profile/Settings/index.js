@@ -1,12 +1,15 @@
 import { useParams } from 'react-router-dom';
 import { useState, useContext } from 'react'
-import { GlobalStoreContext } from '../../../../../Store';
+import { GlobalStoreContext } from '../../../../../../Store';
 import {
     Typography,
     Grid,
     Box,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
+import ForumSettings from './ForumSettings';
+import ProfileSettings from './ProfileSettings';
+import AccountSettings from './AccountSettings';
 
 
 export default function Settings() {
@@ -26,6 +29,13 @@ export default function Settings() {
         console.log("Changing to..:", tab);
         setSettingsTab(tab);
     }
+
+    let activeSettingsPage = <ProfileSettings />;
+    if (settingsTab === SETTINGS_TAB.ACCOUNT)
+        activeSettingsPage = <AccountSettings />;
+    else if (settingsTab === SETTINGS_TAB.FORUM)
+        activeSettingsPage = <ForumSettings />;
+
 
     // Settings tab component
     function settingsTabComponent(tab, props) {
@@ -95,6 +105,12 @@ export default function Settings() {
                         {settingsTabComponent(SETTINGS_TAB.FORUM)}
                     </Grid>
                 </Grid>
+            </Box>
+            <Box sx={{
+                width: "calc( 100% - 175px )",
+                float: "right"
+            }}>
+                {activeSettingsPage}
             </Box>
         </Box >
     );
