@@ -1,31 +1,31 @@
 :root {
-  --swatch-coffee              : #775940;
-  --swatch-ivory               : #F9FAF0;
-  --swatch-fuzzy_wuzzy         : #C96971;
+  --swatch-coffee: #775940;
+  --swatch-ivory: #F9FAF0;
+  --swatch-fuzzy_wuzzy: #C96971;
   --swatch-forest_green_crayola: #72AD7D;
-  --swatch-cg_blue             : #247BA0;
-  --swatch-cadet_blue          : #61A0AF;
-  --swatch-olive_drab_7        : #3D3522;
-  --swatch-grey                : 989898;
+  --swatch-cg_blue: #247BA0;
+  --swatch-cadet_blue: #61A0AF;
+  --swatch-olive_drab_7: #3D3522;
+  --swatch-grey: 989898;
 }
 
 #App {
-  width : 100%;
-  left  : 0px;
+  width: 100%;
+  left: 0px;
   height: 100%;
-  top   : 0px;
+  top: 0px;
 }
 
 #root {
   font-family: "Lexend Exa";
-  color      : var(--swatch-olive_drab_7);
-  position   : absolute;
-  width      : 100%;
-  left       : 0px;
-  height     : 100%;
-  top        : 0px;
-  overflow-x : hidden;
-  overflow-y : visible;
+  color: var(--swatch-olive_drab_7);
+  position: absolute;
+  width: 100%;
+  left: 0px;
+  height: 100%;
+  top: 0px;
+  overflow-x: hidden;
+  overflow-y: visible;
 }
 
 body {
@@ -33,18 +33,18 @@ body {
 }
 
 #header-wrapper {
-  padding-bottom: 40px;
-  position      : relative;
+  height: 110px;
+  position: relative;
 }
 
 #content-wrapper {
-  height  : 100%;
-  width   : 95%;
-  left    : 2.5%;
+  height: calc(100% - 110px);
+  width: 95%;
+  left: 2.5%;
   position: relative;
 }
 
 #Content-Switch {
   height: 95%;
-  width : 100%;
+  width: 100%;
 }
