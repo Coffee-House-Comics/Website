@@ -36,10 +36,12 @@ const Theme = createTheme({
             main: Colors.ivory
         },
         fuzzy_wuzzy: {
-            main: Colors.fuzzy_wuzzy
+            main: Colors.fuzzy_wuzzy,
+            hover: "#ff8c96"
         },
         forest_green_crayola: {
-            main: Colors.forest_green_crayola
+            main: Colors.forest_green_crayola,
+            hover: "#a7efb5"
         },
         cg_blue: {
             main: Colors.cg_blue

@@ -29,13 +29,14 @@ const CssTextField = styled(TextField)({
 
 export default function smallTextField(props) {
 
-    const { fieldName, helperText, onChange, sx } = props;
+    const { fieldName, helperText, onChange, sx, defaultValue } = props;
 
     return (
         <CssTextField
             label={fieldName}
             helperText={helperText}
             onChange={onChange}
+            defaultValue={defaultValue}
             sx={sx}
         ></CssTextField>
     );
