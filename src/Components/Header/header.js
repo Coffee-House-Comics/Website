@@ -3,11 +3,13 @@ import { GlobalStoreContext } from '../../Store'
 import { useTheme } from '@mui/material/styles'
 import types from '../../Common/Types'
 import {
-    AppBar, Box, Toolbar, IconButton, Typography, Menu, Container,
-    Avatar, Button, Tooltip, MenuItem
+    AppBar, InputAdornment, IconButton, Typography, Menu, TextField,
+    Avatar, Button, Tooltip, MenuItem, Grid, FormControl, InputLabel, OutlinedInput
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useNavigate } from 'react-router-dom';
+import CHCIcon from '../Icons/CHCIcon';
+import SearchIcon from '@mui/icons-material/Search';
 
 function Header(props) {
     const Navigate = useNavigate();
@@ -31,7 +33,6 @@ function Header(props) {
         settings = [appTabs.children.PROFILE, authTabs.children.LOGOUT];
     }
 
-
     const [anchorElNav, setAnchorElNav] = useState(null);
     const [anchorElUser, setAnchorElUser] = useState(null);
 
@@ -52,103 +53,112 @@ function Header(props) {
         store.reRoute(routeName);
     };
 
+    //TODO
+    const handleSearchButtonClick = function () {
+
+    }
+
+    //TODO
+    const handleSearchTextChange = function () {
+
+    }
+
+    //TODO
+    let searchText = "";
+
+    const profileMenuButton =
+        <div>
+            <Tooltip title="Profile Menu">
+                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                    <Avatar alt="Remy Sharp" />
+                </IconButton>
+            </Tooltip>
+            <Menu
+                sx={{ mt: '45px' }}
+                id="menu-appbar"
+                anchorEl={anchorElUser}
+                anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                }}
+                keepMounted
+                transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                }}
+                open={Boolean(anchorElUser)}
+                onClose={handleCloseUserMenu}
+            >
+                {
+                    settings.map((setting) => (
+                        <MenuItem key={setting.name} onClick={() => handleCloseUserMenu(setting.fullRoute)}>
+                            <Typography textAlign="center" sx={{ color: theme.palette.olive_drab_7.main }}>
+                                {setting.name}
+                            </Typography>
+                        </MenuItem>)
+                    )
+                }
+            </Menu>
+        </div>
+
+    const tabButtons = pages.map((page) => (
+        <Button
+            key={page.name}
+            onClick={() => handleCloseNavMenu(page.fullRoute)}
+            sx={{ paddingInline: 2, my: 2, color: theme.palette.ivory.main, display: 'block' }}
+            variant="text"
+        >
+            {page.name.toUpperCase()}
+        </Button>
+    ))
+
+    const searchBar =
+        <TextField
+            onChange={handleSearchTextChange}
+            size="small"
+            variant="outlined"
+            sx={{
+                width: "100%",
+                backgroundColor: "rgba(255,255,255,0.2)",
+                borderRadius: 1
+            }}
+            InputProps={{
+                startAdornment:
+                    <InputAdornment>
+                        <IconButton
+                            aria-label="search"
+                            onClick={handleSearchButtonClick}
+                            edge="start"
+                            color="ivory"
+                        >
+                            <SearchIcon />
+                        </IconButton>
+                    </InputAdornment>
+            }}>
+        </TextField>
+
+
     return (
         <AppBar position="static" style={{
             background: theme.palette.coffee.main,
-            color: theme.palette.ivory.main
+            color: theme.palette.ivory.main,
+            paddingInline: 20
         }} >
-            <Container maxWidth="xl">
-                <Toolbar disableGutters>
-                    <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-                        <IconButton
-                            size="large"
-                            aria-label="account of current user"
-                            aria-controls="menu-appbar"
-                            aria-haspopup="true"
-                            onClick={handleOpenNavMenu}
-                            color="inherit"
-                        >
-                            <MenuIcon />
-                        </IconButton>
-                        <Menu
-                            id="menu-appbar"
-                            anchorEl={anchorElNav}
-                            anchorOrigin={{
-                                vertical: 'bottom',
-                                horizontal: 'left',
-                            }}
-                            keepMounted
-                            transformOrigin={{
-                                vertical: 'top',
-                                horizontal: 'left',
-                            }}
-                            open={Boolean(anchorElNav)}
-                            onClose={handleCloseNavMenu}
-                            sx={{
-                                display: { xs: 'block', md: 'none' },
-                            }}
-                        >
-                            {
-                                pages.map((page) => (
-                                    <MenuItem
-                                        key={page.name}
-                                        onClick={() => handleCloseNavMenu(page.fullRoute)}
-                                    >
-                                        <Typography sx={{ color: theme.palette.olive_drab_7.main }} textAlign="center">{page.name}</Typography>
-                                    </MenuItem>
-                                ))
-                            }
-                        </Menu>
-                    </Box>
-                    <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-                        { // The Buttons that appear in the app bar in full screen
-                            pages.map((page) => (
-                                <Button
-                                    key={page.name}
-                                    onClick={() => handleCloseNavMenu(page.fullRoute)}
-                                    sx={{ my: 2, color: theme.palette.ivory.main, display: 'block' }}
-                                >
-                                    {page.name}
-                                </Button>
-                            ))
-                        }
-                    </Box>
-
-                    <Box sx={{ flexGrow: 0 }}>
-                        <Tooltip title="Click to open">
-                            <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-                            </IconButton>
-                        </Tooltip>
-                        <Menu
-                            sx={{ mt: '45px' }}
-                            id="menu-appbar"
-                            anchorEl={anchorElUser}
-                            anchorOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right',
-                            }}
-                            keepMounted
-                            transformOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right',
-                            }}
-                            open={Boolean(anchorElUser)}
-                            onClose={handleCloseUserMenu}
-                        >
-                            {
-                                settings.map((setting) => (
-                                    <MenuItem key={setting.name} onClick={() => handleCloseUserMenu(setting.fullRoute)}>
-                                        <Typography textAlign="center" sx={{ color: theme.palette.olive_drab_7.main }}>
-                                            {setting.name}
-                                        </Typography>
-                                    </MenuItem>)
-                                )
-                            }
-                        </Menu>
-                    </Box>
-                </Toolbar>
-            </Container>
+            <Grid container direction="row" justifyContent="flex-start" alignItems="center">
+                <Grid item>
+                    <CHCIcon sx={{ overflow: "visible", width: 45, height: 45, marginTop: 0.5, marginRight: 2 }} />
+                </Grid>
+                {tabButtons}
+                <Grid item xs/>
+                <Grid item xs={5}>
+                    {searchBar}
+                </Grid>
+                <Grid item xs />
+                <Grid item xs/>
+                <Grid item>
+                    {profileMenuButton}
+                </Grid>
+            </Grid>
         </AppBar >
     );
 }

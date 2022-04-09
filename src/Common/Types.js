@@ -26,6 +26,11 @@ types.TabType = {
                 route: "login",
                 fullRoute: "/auth/login"
             },
+            LOGOUT: {
+                name: "Logout",
+                route: "login",
+                fullRoute: "/auth/login"
+            },
             FORGOTPASSWORD: {
                 name: "Forgot Password",
                 route: "forgot-password",

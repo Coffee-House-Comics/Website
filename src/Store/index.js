@@ -23,7 +23,7 @@ function GlobalStoreContextProvider(props) {
     const [store, setStore] = useState({
         app: "Comics",
         user: null,
-        isLoggedIn: false,
+        isLoggedIn: true,
         modal: null
     });
 
