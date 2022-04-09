@@ -10,7 +10,7 @@ import {
 import { styled } from '@mui/material/styles';
 import SmallTextField from '../../../../../TextFields/SmallTextField';
 import SubmitButton from '../../../../../Buttons/SubmitButton';
-import types from '../../../../../../Common/Types'
+import types from '../../../../../../Common/Types';
 
 export default function AccountSettings() {
     const { store } = useContext(GlobalStoreContext);

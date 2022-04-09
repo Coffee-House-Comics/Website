@@ -108,6 +108,7 @@ export default function Settings() {
             </Box>
             <Box sx={{
                 width: "calc( 100% - 175px )",
+                height: "100%",
                 float: "right"
             }}>
                 {activeSettingsPage}

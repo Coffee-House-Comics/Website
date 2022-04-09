@@ -48,3 +48,29 @@ body {
   height: 95%;
   width: 100%;
 }
+
+.thumbnail {
+  height: 200px;
+  width: 200px;
+  object-fit: cover;
+}
+
+.button {
+  display: inline-block;
+  padding: 6px 12px;
+  cursor: pointer;
+  border-radius: 5px;
+  background-color: var(--swatch-cg_blue);
+  color: var(--swatch-ivory);
+  border: 1px solid var(--swatch-ivory);
+}
+
+.button:hover {
+  color: var(--swatch-cg_blue);
+  background-color: var(--swatch-ivory);
+  border: 1px solid var(--swatch-cg_blue);
+}
+
+input[type="file"] {
+  visibility: hidden;
+}

@@ -121,7 +121,7 @@ function Header(props) {
             }}
             InputProps={{
                 startAdornment:
-                    <InputAdornment>
+                    <InputAdornment position='start' >
                         <IconButton
                             aria-label="search"
                             onClick={handleSearchButtonClick}

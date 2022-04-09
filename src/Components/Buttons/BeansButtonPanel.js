@@ -15,7 +15,7 @@ import BeansIcon from '../Icons/BeansIcon';
  *  currentVote: Number (-1, 0, 1)
  */
 export default function BeansButtonPanel(props) {
-    console.log(props.currentVote)
+    //console.log(props.currentVote)
     let upIcon = (props.currentVote == 1) ? <UpArrowIcon color="green" fontSize="small" /> : <UpArrowIcon fontSize="small" />
     let downIcon = (props.currentVote == -1) ? <DownArrowIcon color="fuzzy_wuzzy" fontSize="small" /> : <DownArrowIcon fontSize="small" />
 
