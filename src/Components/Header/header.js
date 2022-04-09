@@ -105,7 +105,7 @@ function Header(props) {
         <Button
             key={page.name}
             onClick={() => handleCloseNavMenu(page.fullRoute)}
-            sx={{ paddingInline: 2, my: 2, color: theme.palette.ivory.main, display: 'block' }}
+            sx={{ paddingInline: 2, fontSize: 17, my: 2, color: theme.palette.ivory.main, display: 'block' }}
             variant="text"
         >
             {page.name.toUpperCase()}
