@@ -63,7 +63,7 @@ types.TabType = {
             VIEW: {
                 name: "View",
                 route: "view/:id",
-                fullRoute: "/app/content/:id"
+                fullRoute: "/app/view/:id"
             },
             // Used for editing an unpublished story or comic you own,
             EDIT: {
