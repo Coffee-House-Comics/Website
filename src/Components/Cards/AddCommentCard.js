@@ -25,7 +25,7 @@ export default function CommentCard() {
   return (<Box>
       <h3>Add Comment:</h3>
 
-      <TextField multiline="true" sx={{
+      <TextField multiline={true} sx={{
             bgcolor:"ivory.main",
             borderRadius: 1,
             opacity: .75,

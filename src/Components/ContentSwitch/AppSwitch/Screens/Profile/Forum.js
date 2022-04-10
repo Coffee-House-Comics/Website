@@ -160,7 +160,6 @@ export default function Forum(props) {
                     body: "Woooooooooo!"
                 }
             ]
-
         }
     ]
 

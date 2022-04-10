@@ -53,9 +53,9 @@ export default function CommentCard(props) {
 
       <Grid container direction="row" justifyContent="space-between" alignItems="center">
         <Grid item sx={{ml:1}}>
-          <Typography>
+          <Box>
               <AuthorButton author={author} onClick={onClickAuthor}></AuthorButton>
-          </Typography>
+          </Box>
         </Grid>
         <Grid item sx={{mr:2}}>
           <BeansButtonPanel onUpvote={onUpvote} onDownvote={onDownvote} numBeans={beanCount} currentVote={currentVote}></BeansButtonPanel>

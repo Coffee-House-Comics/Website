@@ -84,16 +84,16 @@ export default function ForumPost(props) {
       id="panel-header"
     >
 
-      <Typography sx={{ width: '85%', flexShrink: 0 }}>
+      <Box sx={{ width: '85%', flexShrink: 0 }}>
         <h2>{heading}</h2>
         <AuthorButton author={author} onClick={onClickAuthor}></AuthorButton>
-      </Typography>
+      </Box>
       <BeansButtonPanel onUpvote={onUpvote} onDownvote={onDownvote} numBeans={beanCount} currentVote={currentVote}>
 
       </BeansButtonPanel>
     </AccordionSummary>
     <AccordionDetails>
-      <Typography>
+      <Box>
         {body}
         <h3>Comments:</h3>
         {commentsCards.length == 0 ? <Typography sx={{
@@ -105,7 +105,7 @@ export default function ForumPost(props) {
           {commentsCards}
           <AddCommentCard></AddCommentCard>
         </Box>
-      </Typography>
+      </Box>
     </AccordionDetails>
   </Accordion>);
 }
