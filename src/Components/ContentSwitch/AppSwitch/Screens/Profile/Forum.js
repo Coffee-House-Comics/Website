@@ -5,14 +5,14 @@ export default function Forum(props) {
 
     let allPosts = [
         {
-            heading : "You're comics are awesome!!!",
+            heading: "You're comics are awesome!!!",
             beanCount: 5,
             currentVote: 1,
             body: "I love your content!!!",
-            author:{
+            author: {
                 name: "Jerry"
             },
-            comments : [
+            comments: [
                 {
                     beanCount: 52,
                     currentVote: 1,
@@ -47,16 +47,16 @@ export default function Forum(props) {
                 }
             ]
         },
-    
+
         {
-            heading : "You suck!",
+            heading: "You suck!",
             beanCount: -6,
             currentVote: 0,
             body: "Stop making comics!",
-            author:{
+            author: {
                 name: "Larry"
             },
-            comments : [
+            comments: [
                 {
                     beanCount: 17,
                     currentVote: -1,
@@ -83,27 +83,27 @@ export default function Forum(props) {
                 }
             ]
         },
-    
+
         {
-            heading : "Hes mediocre at comics",
+            heading: "Hes mediocre at comics",
             beanCount: 45,
             currentVote: -1,
             body: "^^^^^Title says it all^^^^^",
-            author:{
+            author: {
                 name: "Morty"
             },
-            comments:[]
+            comments: []
         },
-    
+
         {
-            heading : "This is trash.",
+            heading: "This is trash.",
             beanCount: -15,
             currentVote: -1,
             body: "waste of time",
-            author:{
+            author: {
                 name: "Zack"
             },
-            comments : [
+            comments: [
                 {
                     beanCount: -62,
                     currentVote: 1,
@@ -122,27 +122,27 @@ export default function Forum(props) {
                 }
             ]
         },
-    
+
         {
-            heading : "ThIS is N0t a 5cam p05t",
+            heading: "ThIS is N0t a 5cam p05t",
             beanCount: -6,
             currentVote: 0,
             body: "Whats app for bitcoing 1(234)678-9900",
-            author:{
+            author: {
                 name: "Meet Kevin"
             },
-            comments:[]
+            comments: []
         },
-    
+
         {
-            heading : "Idk how this forum post thing works....",
+            heading: "Idk how this forum post thing works....",
             beanCount: 150,
             currentVote: 1,
             body: "They should have programmed this better",
-            author:{
+            author: {
                 name: "Rico"
             },
-            comments : [
+            comments: [
                 {
                     beanCount: 1003,
                     currentVote: 0,
@@ -160,17 +160,24 @@ export default function Forum(props) {
                     body: "Woooooooooo!"
                 }
             ]
-            
+
         }
     ]
 
 
     const ret = allPosts.map((post, index) =>
-    <ForumPost key={index} heading={post.heading} currentVote={post.currentVote} beanCount={post.beanCount} body={post.body} author={post.author} comments={post.comments}>
-    </ForumPost>
+        <ForumPost
+            key={index}
+            heading={post.heading}
+            currentVote={post.currentVote}
+            beanCount={post.beanCount}
+            body={post.body}
+            author={post.author}
+            comments={post.comments}>
+        </ForumPost>
     );
 
 
 
-  return ret;
+    return ret;
 }
