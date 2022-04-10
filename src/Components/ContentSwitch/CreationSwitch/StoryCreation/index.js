@@ -34,7 +34,7 @@ export default function StoryCreation() {
             <SplitPane
                 split="vertical"
                 minSize={330}
-                defaultSize={330}
+                defaultSize={600}
                 resizerStyle={styles}
             >
                 <TextEditor currPage={pages[0].title}/>

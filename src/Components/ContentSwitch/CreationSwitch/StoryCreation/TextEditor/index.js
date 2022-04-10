@@ -11,7 +11,7 @@ export default function TextEditor(props) {
     const [editorState, setEditorState] = useState(EditorState.createEmpty());
 
     const onEditorStateChange = function(newEditorState){
-        setEditorState()
+        setEditorState(newEditorState)
     }
 
     return (
@@ -33,13 +33,21 @@ export default function TextEditor(props) {
                 </Grid>
             </Grid>
 
-            <Grid item>
+            <Grid item xs sx={{
+                width:"100%",
+            }}>
                 <Editor
                     editorState={editorState}
                     toolbarClassName="toolbarClassName"
                     wrapperClassName="wrapperClassName"
                     editorClassName="editorClassName"
                     onEditorStateChange={onEditorStateChange}
+                    editorStyle={{
+                        backgroundColor:"white",
+                        padding:"10px",
+                        width:"100%",
+                        height:"300px"
+                    }}
                 />
             </Grid>
 
