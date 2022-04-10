@@ -4,7 +4,7 @@ import { useState, useContext } from 'react'
 
 import Forum from './Forum';
 import Saved from './Saved';
-import View from '../View';
+import View from './View';
 import Settings from './Settings';
 
 function ProfileRouter() {
