@@ -2,7 +2,8 @@ import {
     Button,
     Typography,
     Modal,
-    Grid
+    Grid,
+    fabClasses
 } from '@mui/material';
 
 import { GlobalStoreContext } from '../../Store';
@@ -33,13 +34,13 @@ function GlobalModal() {
         return (<div></div>);
 
     const onClose = function () {
-        store.closeModal();
+        store.closeModal(false);
     }
 
     const onAction = function () {
         if (store.modal.hook)
             store.modal.hook();
-        store.closeModal();
+        store.closeModal(true);
     }
 
     return (

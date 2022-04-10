@@ -116,11 +116,11 @@ function GlobalStoreContextProvider(props) {
         });
     }
 
-    store.closeModal = function () {
+    store.closeModal = function (special) {
         if (!store.modal)
             return;
 
-        if (store.modal.specialMode)
+        if (store.modal.specialMode && special)
             storeReducer({
                 type: GlobalStoreActionType.CHANGE_CONTENT_MODE,
             });
