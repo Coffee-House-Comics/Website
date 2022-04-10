@@ -150,7 +150,7 @@ export default function ComicCreationScreen() {
 
     //TODO
     const pagesSection = 
-        <HorizontalScroll style={{height: pageHeight*1.1}}>
+        <HorizontalScroll reverseScroll={true} style={{height: pageHeight*1.1}}>
             {pages}
         </HorizontalScroll>
 

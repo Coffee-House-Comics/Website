@@ -2,7 +2,7 @@ export const generateTestPosts = function (numPosts) {
     let testPosts = [];
     for (let i = 0; i < numPosts; i++) {
         testPosts.push({
-            name: "Story " + i,
+            name: "Post " + i,
             author: {
                 name: "Author " + i
             }
