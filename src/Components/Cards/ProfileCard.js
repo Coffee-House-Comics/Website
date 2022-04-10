@@ -1,9 +1,10 @@
 import React from 'react'
-import { Grid, Image, Typography, ThemeProvider, Avatar, Box } from '@mui/material';
+import { Grid, Image, Typography, ThemeProvider, Avatar, Box, Button } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import BeansIcon from '../Icons/BeansIcon';
 import { useTheme } from '@mui/material/styles';
 import CoffeeIcon from '@mui/icons-material/Coffee';
+import styled from '@emotion/styled';
 
 export default function ProfileCard(props) {
     const profile = props.profile;
@@ -16,6 +17,14 @@ export default function ProfileCard(props) {
     let comicSubscribers = 3;
     let storySubscribers = 9;
     let description = "Welcome to my CHC Profile!!! Excited to have fans.  BTW Shadow is the cutest dog... :D :D";
+
+    let SubscribeButton = styled(Button)(({ theme }) => ({
+        color: theme.palette.ivory.main,
+        backgroundColor: theme.palette.cg_blue.main,
+        '&:hover': {
+            backgroundColor: theme.palette.cadet_blue.main
+        }
+    }));
 
     const profileStatistics =
         <Grid container direction="column" justifyContent="flex-start" alignItems="flex-start" width="100%" sx={{border: "0px solid black", borderRadius:"4px", marginTop: "10px", marginBottom: "10px", padding: "10px"}}>
@@ -139,11 +148,14 @@ export default function ProfileCard(props) {
             <Box sx={{
                 position: "absolute",
                 bottom: "0",
-                width: "max-content",
+                width: "90%",
                 left: "5%",
                 justifyContent: "center",
                 paddingBottom: "40px",
             }}>
+                <SubscribeButton sx={{width:"100%"}} variant="contained" color="cg_blue">
+                    SUBSCRIBE
+                </SubscribeButton>
             </Box>
         </div>
     )
