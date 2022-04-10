@@ -12,7 +12,6 @@ function Explore() {
      *      name: String
      *  }]
      */
-    console.log("Explore")
     let postSets = [{
         posts: testStories,
         name: "Recent Releases"
