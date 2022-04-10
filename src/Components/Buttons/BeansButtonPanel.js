@@ -19,9 +19,22 @@ export default function BeansButtonPanel(props) {
     let upIcon = (props.currentVote == 1) ? <UpArrowIcon style={{filter: Theme.palette.green.filter, overflow: "visible"}} fontSize="small" /> : <UpArrowIcon fontSize="small" sx={{overflow: "visible"}}/>
     let downIcon = (props.currentVote == -1) ? <DownArrowIcon style={{filter: Theme.palette.red.filter, overflow: "visible"}} fontSize="small" /> : <DownArrowIcon fontSize="small" sx={{overflow: "visible"}}/>
 
+    const handleUpvoteClick = function(event){
+        if (event.stopPropagation) {
+            event.stopPropagation();
+        }
+        props.onUpvote();
+    }
+
+    const handleDownvoteClick = function(event){
+        if (event.stopPropagation) {
+            event.stopPropagation();
+        }
+        props.onDownvote();
+    }
     return (
         <Grid container direction="row" justifyContent="center" alignItems="center" wrap="nowrap" width="max-content">
-                <IconButton onClick={props.onUpvote} sx={{ marginInline: -1 }}>
+                <IconButton onClick={handleUpvoteClick} sx={{ marginInline: -1 }}>
                     {upIcon}
                 </IconButton>
 
@@ -31,7 +44,7 @@ export default function BeansButtonPanel(props) {
                     {props.numBeans}
                 </Typography>
             </Grid>
-                <IconButton onClick={props.onDownvote} sx={{ marginInline:-1}}>
+                <IconButton onClick={handleDownvoteClick} sx={{ marginInline:-1}}>
                     {downIcon}
                 </IconButton>
         </Grid>

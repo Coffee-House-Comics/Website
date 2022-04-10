@@ -73,7 +73,7 @@ export default function ForumPost(props) {
   return (
 
     <div style={{ marginTop: 20 }}>
-      <Accordion expanded={enabled} disableGutters={true} sx={{
+      <Accordion expanded={enabled} disableGutters={true} onChange={toggleEnable} sx={{
         width: "100%",
         float: "right",
         bgcolor: "coffee.main",
@@ -81,11 +81,10 @@ export default function ForumPost(props) {
         borderRadius: 4
       }}>
         <AccordionSummary
-          expandIcon={<ExpandMoreIcon onClick={toggleEnable} />}
+          expandIcon={<ExpandMoreIcon/>}
           aria-controls="panel"
           id="panel-header"
         >
-
           <Grid container direction="row" width="100%" justifyContent="center" alignItems="center">
             <Grid item xs="auto">
               <Grid container direction="column" width="100%">
