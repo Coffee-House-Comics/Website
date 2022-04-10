@@ -166,7 +166,7 @@ export default function Forum(props) {
 
 
     const ret = allPosts.map((post, index) =>
-        <Grid item key={index}>
+        <Grid item key={index} xs={12}>
             <ForumPost
                 key={index}
                 heading={post.heading}
@@ -184,7 +184,10 @@ export default function Forum(props) {
 
 
     return (
-        <Grid container direction="column" paddingBottom={5}>
+        <Grid container paddingBottom={5} sx={{
+            overflowY:"auto",
+            height: "100%"
+        }}>
             {ret}
         </Grid>
     )

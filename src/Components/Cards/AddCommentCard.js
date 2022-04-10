@@ -18,7 +18,7 @@ export default function CommentCard() {
         <Grid container direction="row" justifyContent="center" alignItems="center" spacing={1}>
           <Grid item xs>
             <TextField multiline={true} sx={{
-              bgcolor: "ivory.main",
+              bgcolor: "white",
               borderRadius: 1,
               opacity: .75,
               width: "100%",
