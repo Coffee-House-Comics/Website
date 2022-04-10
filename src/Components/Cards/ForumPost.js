@@ -95,10 +95,9 @@ export default function ForumPost(props) {
     <AccordionDetails>
       <Box>
         {body}
-        <h3>Comments:</h3>
         {commentsCards.length == 0 ? <Typography sx={{
           color: "fuzzy_wuzzy.main"
-        }}>There are no comments</Typography> : <div></div>}
+        }}>There are no comments</Typography> : <h3>Comments:</h3>}
         <Box sx={{
           overflow: "scroll"
         }}>
