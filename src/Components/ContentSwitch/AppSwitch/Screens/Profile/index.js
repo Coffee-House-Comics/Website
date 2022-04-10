@@ -5,6 +5,7 @@ import Forum from './Forum';
 import Saved from './Saved';
 import View from '../View';
 import Settings from './Settings';
+import ProfileCard from '../../../../Cards/ProfileCard';
 import {
     Typography,
     Grid,
@@ -66,11 +67,13 @@ function ProfileRouter() {
         }} >
             <Box sx={{
                 width: "375px",
-                height: "100%",
-                bgcolor: theme.palette.cg_blue.main,
-                float: "left"
+                height: "500px",
+                float: "left",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center"
             }}>
-                Put Profile Card here
+                <ProfileCard/>
             </Box>
             <Box sx={{
                 // bgcolor: theme.palette.fuzzy_wuzzy.main,
