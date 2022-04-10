@@ -3,7 +3,7 @@ import { useState, useContext } from 'react'
 import { GlobalStoreContext } from '../../../../../Store';
 import Forum from './Forum';
 import Saved from './Saved';
-import View from '../View';
+import ProfileContent from './ProfileContent';
 import Settings from './Settings';
 import ProfileCard from '../../../../Cards/ProfileCard';
 import {
@@ -33,7 +33,7 @@ function ProfileRouter() {
     }
 
     // Get the active Screen
-    let activeScreen = <View />;
+    let activeScreen = <ProfileContent />;
     if (profileTab === PROFILE_TABS.FORUM)
         activeScreen = <Forum />;
     else if (profileTab === PROFILE_TABS.SAVED)
