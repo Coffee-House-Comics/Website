@@ -15,10 +15,10 @@ export default function PostCard(props) {
     let isBookmarked = false;
 
     //TODO
-    let currentVote = 1;
+    let currentVote = Math.floor(Math.random() * 3) - 1;
 
     //TOOD
-    let numBeans = 0;
+    let numBeans = Math.floor(Math.random() * 1000);
 
     //TODO
     const handleBookmarkClick = function () {
