@@ -67,7 +67,7 @@ function ProfileRouter() {
         }} >
             <Box sx={{
                 width: "375px",
-                height: "500px",
+                height: "100%",
                 float: "left",
                 display: "flex",
                 justifyContent: "center",
