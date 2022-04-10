@@ -26,7 +26,7 @@ export default function PostsSection(props) {
       <Typography variant="h4" sx={{ marginBottom: "5px", marginTop: "20px" }}>
         {props.name}
       </Typography>
-      <HorizontalScroll style={{ width: "100%", height: PostCardHeight * 1.1 }}>
+      <HorizontalScroll reverseScroll={true} style={{ width: "100%", height: PostCardHeight * 1.1 }}>
         {buildCards(props.posts)}
       </HorizontalScroll>
     </div>

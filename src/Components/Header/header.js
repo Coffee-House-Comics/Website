@@ -210,13 +210,12 @@ function Header(props) {
                     <Typography variant="h4">{mode}</Typography>
                 </Grid>
                 {tabButtons}
-                <Grid item xs />
-                <Grid item xs={5}>
+                <Grid item lg/>
+                <Grid item xs lg={5} sx={{marginInline: "20px"}}>
                     {searchBar}
                 </Grid>
-                <Grid item xs />
-                <Grid item xs />
-                <Grid item xs >
+                <Grid item lg/>
+                <Grid item xs="auto" >
                     <button className='create-app' onClick={handleCreateAppPost}>
                         {"+ Create " + singular}
                     </button>
