@@ -14,21 +14,30 @@ import SplitPane from 'react-split-pane';
 export default function StoryCreation() {
     const styles = {
         background: '#000',
-        width: '2px',
+        width: '3px',
         cursor: 'col-resize',
         margin: '0 5px',
-        height: '100%',
+        height: '95%',
     };
+
+    const pages = [
+        {
+            title: "Page 3",
+            body: ""
+    
+        },
+
+    ]
 
     return (
         <div>
             <SplitPane
                 split="vertical"
-                minSize={100}
-                defaultSize={100}
+                minSize={330}
+                defaultSize={330}
                 resizerStyle={styles}
             >
-                <TextEditor />
+                <TextEditor currPage={pages[0].title}/>
                 <FlowEditor />
             </SplitPane>
         </div>
