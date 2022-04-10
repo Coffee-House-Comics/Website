@@ -10,6 +10,8 @@ import AddCommentCard from '../../../../Cards/AddCommentCard';
 
 export default function CommentsPanel() {
 
+  const theme = useTheme();
+
   //TODO get comments
    const comments = [
     {author: {
@@ -85,7 +87,7 @@ export default function CommentsPanel() {
 
   return (
     <div style={{height: "100%", width: "100%"}}>
-      <div style={{height: "calc(100% - 135px)", width: "100%"}}>
+      <div style={{height: "calc(100% - 135px)", width: "100%", border: "2px solid " + theme.palette.olive_drab_7.main, borderRadius: "5px"}}>
         <div style={{overflowY: "scroll", overflowX: "hidden", height: "100%"}}>
           <Grid container direction="column" justifyContent="flex-start" alignItems="stretch" spacing={0.5}>
             {commentComponents}

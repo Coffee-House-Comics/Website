@@ -89,8 +89,7 @@ export default function View() {
         <Box sx={{ 
           height: "100%",
           float: "right",
-          width: "75%",
-          backgroundColor: theme.palette.coffee.main
+          width: "75%"
         }}>
             <ContentPanel/>
         </Box>
