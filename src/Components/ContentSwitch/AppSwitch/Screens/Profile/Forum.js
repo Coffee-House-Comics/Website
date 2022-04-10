@@ -58,18 +58,24 @@ export default function Forum(props) {
             },
             comments : [
                 {
+                    beanCount: 17,
+                    currentVote: -1,
                     author: {
                         name: "Tyler"
                     },
                     body: "Be Nice!"
                 },
                 {
+                    beanCount: -3,
+                    currentVote: -1,
                     author: {
                         name: "Larry"
                     },
                     body: "YOO SUCK!"
                 },
                 {
+                    beanCount: -1,
+                    currentVote: 0,
                     author: {
                         name: "Tyler"
                     },
@@ -99,12 +105,16 @@ export default function Forum(props) {
             },
             comments : [
                 {
+                    beanCount: -62,
+                    currentVote: 1,
                     author: {
                         name: "Zack"
                     },
                     body: "This isn't even recycling, just pure trash!"
                 },
                 {
+                    beanCount: -21,
+                    currentVote: 1,
                     author: {
                         name: "Larry"
                     },
@@ -134,12 +144,16 @@ export default function Forum(props) {
             },
             comments : [
                 {
+                    beanCount: 1003,
+                    currentVote: 0,
                     author: {
                         name: "RicoFan4Life"
                     },
                     body: "Rico we loveeee youuu!"
                 },
                 {
+                    beanCount: 347,
+                    currentVote: -1,
                     author: {
                         name: "Larry"
                     },

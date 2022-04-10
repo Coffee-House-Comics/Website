@@ -5,6 +5,7 @@ import BeansButtonPanel from '../Buttons/BeansButtonPanel';
 import { useState } from 'react';
 import AuthorButton from '../Buttons/AuthorButton';
 import CommentCard from './CommentCard';
+import AddCommentCard from './AddCommentCard';
 
 
 /**
@@ -94,13 +95,15 @@ export default function ForumPost(props) {
   <AccordionDetails>
     <Typography>
       {body}
-
-        {commentsCards.length == 0 ? <div></div> : <h3>Comments:</h3>}
-        
+        <h3>Comments:</h3>
+          {commentsCards.length == 0 ? <Typography sx={{
+            color:"fuzzy_wuzzy.main"
+        }}>There are no comments</Typography> : <div></div>}
         <Box sx={{
           overflow: "scroll"
         }}>
           {commentsCards}
+          <AddCommentCard></AddCommentCard>
         </Box>
     </Typography>
   </AccordionDetails>
