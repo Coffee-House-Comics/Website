@@ -11,25 +11,79 @@ export default function ProfileCard(props) {
     const theme = useTheme();
 
     //Remove the following hardcoded values
-    let beans = 25;
     let comicBeans = 17;
     let storyBeans = 8;
-    let subscribers = 3;
+    let comicSubscribers = 3;
+    let storySubscribers = 9;
     let description = "Welcome to my CHC Profile!!! Excited to have fans.  BTW Shadow is the cutest dog... :D :D";
 
     const profileStatistics =
-        <Grid container direction="row" justifyContent="flex-end" alignItems="center" spacing={1}>
-            <Grid item>
-                <BeansIcon></BeansIcon>
+        <Grid container direction="column" justifyContent="flex-start" alignItems="flex-start" width="100%" sx={{border: "0px solid black", borderRadius:"4px", marginTop: "10px", marginBottom: "10px", padding: "10px"}}>
+            <Grid item width="100%">
+                <Grid container direction="row" justifyContent="space-evenly" alignItems="center">
+                    <Grid item>
+                        <Typography variant="subtitle1">
+                            Comic Caf{"\xE9"}
+                        </Typography>
+                    </Grid>
+                    <Grid item>
+                        <Grid container direction="row" justifyContent="center" alignItems="center" spacing={2}>
+                            <Grid item>
+                                <Grid container direction="row" justifyContent="center" alignItems="center">
+                                    <Grid item>
+                                        <BeansIcon />
+                                    </Grid>
+                                    <Grid item>
+                                        <Typography variant="caption">{comicBeans}</Typography>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                            <Grid item>
+                                <Grid container direction="row" justifyContent="center" alignItems="center">
+                                    <Grid item>
+                                        <PersonIcon />
+                                    </Grid>
+                                    <Grid item>
+                                        <Typography variant="caption">{comicSubscribers}</Typography>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                </Grid>
             </Grid>
-            <Grid>
-                <Typography>{beans}</Typography>
-            </Grid>
-            <Grid item>
-                <PersonIcon sx={{ marginLeft: '10px' }}></PersonIcon>
-            </Grid>
-            <Grid>
-                <Typography>{subscribers}</Typography>
+            <Grid item width="100%">
+                <Grid container direction="row" justifyContent="space-evenly" alignItems="center">
+                    <Grid item>
+                        <Typography variant="subtitle1">
+                            Story Caf{"\xE9"}
+                        </Typography>
+                    </Grid>
+                    <Grid item>
+                        <Grid container direction="row" justifyContent="center" alignItems="center" spacing={2}>
+                            <Grid item>
+                                <Grid container direction="row" justifyContent="center" alignItems="center">
+                                    <Grid item>
+                                        <BeansIcon />
+                                    </Grid>
+                                    <Grid item>
+                                        <Typography variant="caption">{storyBeans}</Typography>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                            <Grid item>
+                                <Grid container direction="row" justifyContent="center" alignItems="center">
+                                    <Grid item>
+                                        <PersonIcon />
+                                    </Grid>
+                                    <Grid item>
+                                        <Typography variant="caption">{storySubscribers}</Typography>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                </Grid>
             </Grid>
         </Grid>
 
@@ -40,7 +94,7 @@ export default function ProfileCard(props) {
                 borderRadius: "5px",
                 overflow: "hidden",
                 boxShadow: "1px 3px 10px grey",
-                width: "90%",
+                width: "100%",
                 height: "100%",
                 backgroundColor: "rgba(255, 255, 255, 0.6)",
                 paddingLeft: "4px",
@@ -70,10 +124,8 @@ export default function ProfileCard(props) {
                 <Grid item>
                     <Typography variant="subtitle1">@krtek</Typography>
                 </Grid>
-                <Grid item>
-                    <div style={{ paddingRight: 2, paddingLeft: 2, marginTop: '15px' }}>
-                        {profileStatistics}
-                    </div>
+                <Grid item width="100%">
+                    {profileStatistics}
                 </Grid>
                 <Grid item>
                     <Typography sx={{ marginTop: '10px', paddingLeft: 1, paddingRight: 1 }}>{description}</Typography>
@@ -82,65 +134,16 @@ export default function ProfileCard(props) {
 
                 </Grid>
             </Grid>
+
+            {/* Bottom */}
             <Box sx={{
                 position: "absolute",
                 bottom: "0",
-                width: "90%",
+                width: "max-content",
                 left: "5%",
                 justifyContent: "center",
                 paddingBottom: "40px",
             }}>
-                <Typography variant="h6" sx={{ fontWeight: 'bold', marginTop: '10px' }}>Communities</Typography>
-                <Grid container direction="column"
-                    sx={{
-                        border: "1px solid " + theme.palette.olive_drab_7.main,
-                        borderRadius: "10px",
-                        padding: "1px"
-                    }}
-                >
-                    <Grid item>
-                        <Grid container direction="row" justifyContent="flex-start" sx={{ padding: "8px" }} spacing={8}>
-                            <Grid item>
-                                <Grid container direction="row" justifyContent="center" alignItem="center" spacing={2}>
-                                    <Grid item width="80px">
-                                        <Grid container direction="row" justifyContent="center" alignItems="center">
-                                            <Grid item>
-                                                <BeansIcon />
-                                            </Grid>
-                                            <Grid item>
-                                                <Typography variant="caption">{comicBeans}</Typography>
-                                            </Grid>
-                                        </Grid>
-                                    </Grid>
-                                    <Grid item>
-                                        <Typography variant="caption" fontWeight="bold">Comic Caf{"\xE9"}</Typography>
-                                    </Grid>
-                                </Grid>
-                            </Grid>
-                        </Grid>
-                    </Grid>
-                    <Grid item>
-                        <Grid container direction="row" justifyContent="flex-start" sx={{ padding: "8px" }} spacing={8}>
-                            <Grid item>
-                                <Grid container direction="row" justifyContent="center" alignItem="center" spacing={2}>
-                                    <Grid item width="80px">
-                                        <Grid container direction="row" justifyContent="center" alignItems="center">
-                                            <Grid item>
-                                                <BeansIcon />
-                                            </Grid>
-                                            <Grid item>
-                                                <Typography variant="caption">{storyBeans}</Typography>
-                                            </Grid>
-                                        </Grid>
-                                    </Grid>
-                                    <Grid item>
-                                        <Typography variant="caption" fontWeight="bold">Story Caf{"\xE9"}</Typography>
-                                    </Grid>
-                                </Grid>
-                            </Grid>
-                        </Grid>
-                    </Grid>
-                </Grid>
             </Box>
         </div>
     )
