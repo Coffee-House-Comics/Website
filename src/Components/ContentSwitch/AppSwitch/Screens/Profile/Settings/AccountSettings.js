@@ -71,7 +71,7 @@ export default function AccountSettings() {
                     <SubmitButton text={"CHANGE USERNAME"} onClick={handleSubmitUserName} />
                 </Grid>
                 <Grid item xs={12}>
-                    <Typography variant="h6">Username:</Typography>
+                    <Typography variant="h6" sx={{marginTop: 5}}>Email:</Typography>
                 </Grid>
                 <Grid item xs={12}>
                     <SmallTextField
@@ -88,7 +88,7 @@ export default function AccountSettings() {
                     <SubmitButton text={"CHANGE EMAIL"} onClick={handleSubmitEmailChange} />
                 </Grid>
                 <Grid item xs={12}>
-                    <Typography variant="h6">Change Password:</Typography>
+                    <Typography variant="h6" sx={{marginTop: 5}}>Change Password:</Typography>
                 </Grid>
                 <Grid item xs={12}>
                     <SubmitButton text={"CHANGE PASSWORD HERE"} onClick={handleChangePassword} />

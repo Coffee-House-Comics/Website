@@ -20,7 +20,7 @@ export default function CommentsPanel() {
     }, 
     beanCount: 8000,
     currentVote: 0,
-    body: "Slay the house down, Seuss"},
+    body: "Slay the house down, Krtek"},
     {author: {
       _id: 456,
       name: "Ben De La Creme"
@@ -34,14 +34,14 @@ export default function CommentsPanel() {
     }, 
     beanCount: 332,
     currentVote: 1,
-    body: "Seuss is trade"},
+    body: "Krtek is trade"},
     {author: {
       _id: 123,
       name: "Shangela"
     }, 
     beanCount: 8000,
     currentVote: 0,
-    body: "Slay the house down, Seuss"},
+    body: "Slay the house down, Krtek"},
     {author: {
       _id: 456,
       name: "Ben De La Creme"
@@ -55,14 +55,14 @@ export default function CommentsPanel() {
     }, 
     beanCount: 332,
     currentVote: 1,
-    body: "Seuss is trade"},
+    body: "Krtek is trade"},
     {author: {
       _id: 123,
       name: "Shangela"
     }, 
     beanCount: 8000,
     currentVote: 0,
-    body: "Slay the house down, Seuss"},
+    body: "Slay the house down, Krtek"},
     {author: {
       _id: 456,
       name: "Ben De La Creme"
@@ -76,7 +76,7 @@ export default function CommentsPanel() {
     }, 
     beanCount: 332,
     currentVote: 1,
-    body: "Seuss is trade"}
+    body: "Krtek is trade"}
   ]
 
   const commentComponents = comments.map((comment, index) => {

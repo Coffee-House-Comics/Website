@@ -91,7 +91,7 @@ export default function ProfileSettings() {
                     />
                 </Grid>
                 <Grid item xs={12}>
-                    <Typography variant="h6">Username:</Typography>
+                    <Typography variant="h6" sx={{marginTop: 3}}>Username:</Typography>
                 </Grid>
                 <Grid item xs={12}>
                     <SmallTextField
@@ -108,7 +108,7 @@ export default function ProfileSettings() {
                     <SubmitButton text={"CHANGE DISPLAY NAME"} onClick={handleSubmitDisplayName} />
                 </Grid>
                 <Grid item xs={12}>
-                    <Typography variant="h6">Username:</Typography>
+                    <Typography variant="h6" sx={{marginTop: 3}}>Bio:</Typography>
                 </Grid>
                 <Grid item xs={12}>
                     <SmallTextField

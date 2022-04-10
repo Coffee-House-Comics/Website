@@ -20,6 +20,8 @@ export default function PostCard(props) {
     //TOOD
     let numBeans = Math.floor(Math.random() * 1000);
 
+    const imgSrc = "/Images/coffee" + (Math.floor(Math.random() * 6)) + ".jpg"
+
     //TODO
     const handleBookmarkClick = function () {
 
@@ -91,7 +93,7 @@ export default function PostCard(props) {
                 {/* Cover image */}
                 <Grid item>
                     {/* TODO Change this to cover image */}
-                    <img src="/Images/coffee.jpg" height="250px" width="200px" />
+                    <img src={imgSrc} height="250px" width="200px" style={{objectFit: "cover"}} />
                 </Grid>
                 <Grid container direction="row" justifyContent="space-between">
                     {/* Metadata panel */}
