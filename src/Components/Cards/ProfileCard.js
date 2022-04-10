@@ -35,16 +35,16 @@ export default function ProfileCard(props) {
     return (
         <div
             style={{
-                border: "3px solid black",
+                border: "3px solid " + theme.palette.olive_drab_7.main,
                 borderRadius: "5px",
                 overflow: "hidden",
                 boxShadow: "1px 3px 10px grey",
-                left: "5%",
                 width: "90%",
                 height: "100%",
                 backgroundColor: "rgba(255, 255, 255, 0.6)",
                 paddingLeft: "4px",
                 paddingRight: "4px",
+                position: "relative"
             }}
         >
             <Grid container direction="column" justifyContent="center" alignItems="center" width="100%" marginBottom="10px">
@@ -77,29 +77,43 @@ export default function ProfileCard(props) {
                     <Typography sx={{ marginTop: '10px', paddingLeft: 1, paddingRight: 1 }}>{description}</Typography>
                 </Grid>
                 <Grid item sx={{ width: "100%", paddingLeft: 1, paddingRight: 1 }}>
-                    <Typography variant="h6" sx={{ fontWeight: 'bold', marginTop: '10px' }}>Communities</Typography>
-                    <Box container sx={{ border: "1px solid black", borderRadius: "5px" }}>
-                        <Grid container direction="row" justifyContent="space-evenly" sx={{ paddingLeft: 1, paddingRight: 1, paddingTop: 1 }}>
-                            <Grid item>
-                                <Typography variant="caption" fontWeight="bold">Comic Caf{"\xE9"}</Typography>
-                            </Grid>
-                            <Grid item>
-                                <BeansIcon />
-                                <Typography variant="caption">{comicBeans}</Typography>
-                            </Grid>
-                        </Grid>
-                        <Grid container direction="row" justifyContent="space-evenly" sx={{ paddingLeft: 1, paddingRight: 1 }}>
-                            <Grid item>
-                                <Typography variant="caption" fontWeight="bold">Story Caf{"\xE9"}</Typography>
-                            </Grid>
-                            <Grid item>
-                                <BeansIcon />
-                                <Typography variant="caption">{storyBeans}</Typography>
-                            </Grid>
-                        </Grid>
-                    </Box>
+
                 </Grid>
             </Grid>
+            <Box sx={{
+                position: "absolute",
+                bottom: "0",
+                width: "90%",
+                left: "5%",
+                justifyContent: "center",
+                paddingBottom: "40px",
+            }}>
+                <Typography variant="h6" sx={{ fontWeight: 'bold', marginTop: '10px' }}>Communities</Typography>
+                <Box container
+                    sx={{
+                        border: "1px solid " + theme.palette.olive_drab_7.main,
+                        borderRadius: "10px"
+                    }}>
+                    <Grid container direction="row" justifyContent="space-evenly" sx={{ padding: "8px" }}>
+                        <Grid item>
+                            <Typography variant="caption" fontWeight="bold">Comic Caf{"\xE9"}</Typography>
+                        </Grid>
+                        <Grid item>
+                            <BeansIcon />
+                            <Typography variant="caption">{comicBeans}</Typography>
+                        </Grid>
+                    </Grid>
+                    <Grid container direction="row" justifyContent="space-evenly" sx={{ paddingLeft: 1, paddingRight: 1 }}>
+                        <Grid item>
+                            <Typography variant="caption" fontWeight="bold">Story Caf{"\xE9"}</Typography>
+                        </Grid>
+                        <Grid item>
+                            <BeansIcon />
+                            <Typography variant="caption">{storyBeans}</Typography>
+                        </Grid>
+                    </Grid>
+                </Box>
+            </Box>
         </div>
     )
 }
