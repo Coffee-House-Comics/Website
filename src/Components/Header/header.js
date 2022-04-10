@@ -66,6 +66,7 @@ function Header(props) {
 
     const handleCreateAppPost = function () {
         console.log("Trying to create a post...");
+        store.newContent();
     }
 
     const handleOpenLogoMenu = function (event) {

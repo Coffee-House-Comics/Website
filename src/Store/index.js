@@ -87,6 +87,14 @@ function GlobalStoreContextProvider(props) {
             navigate(fullRoute, { replace: true });
     }
 
+    store.newContent = function () {
+        const route = (store.app === "Comics") ?
+            types.TabType.CREATION.children.COMIC.fullRoute :
+            types.TabType.CREATION.children.STORY.fullRoute;
+
+        store.reRoute(route);
+    }
+
 
     // Modal Related Functions ------------------------------------
     store.createModal = function (metadata, callback = null, specialMode = false) {

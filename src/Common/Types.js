@@ -9,7 +9,7 @@ types.TabType = {
         route: "/",
         fullRoute: "/"
     },
-    
+
     AUTH: {
         name: "Auth",
         route: "auth",
@@ -76,6 +76,23 @@ types.TabType = {
                 route: "profile/:id",
                 fullRoute: "/app/profile/:id",
             },
+        }
+    },
+    CREATION: {
+        name: "Creation",
+        route: "/edit",
+
+        children: {
+            COMIC: {
+                name: "Edit Comic",
+                route: "comic/:id",
+                fullRoute: "/edit/comic/:id",
+            },
+            STORY: {
+                name: "Edit Story",
+                route: "story/:id",
+                fullRoute: "/edit/story/:id",
+            }
         }
     }
 };

@@ -17,9 +17,15 @@ import {
     View
 } from './AppSwitch';
 
+import {
+    StoryCreation,
+    ComicCreation
+} from './CreationSwitch'
+
 function ContentSwitch() {
     const authChildren = types.TabType.AUTH.children;
     const appChildren = types.TabType.APP.children;
+    const createChildren = types.TabType.CREATION.children;
 
     return (
         <div id="Content-Switch">
@@ -36,6 +42,10 @@ function ContentSwitch() {
                     <Route path={appChildren.SUBSCRIPTIONS.route} element={<Subscriptions />} />
                     <Route path={appChildren.VIEW.route} element={<View />} />
                     <Route path={appChildren.PROFILE.route} element={<Profile />} />
+                </Route>
+                <Route path={types.TabType.CREATION.route}>
+                    <Route path={createChildren.COMIC.route} element={<ComicCreation />} />
+                    <Route path={createChildren.STORY.route} element={<StoryCreation />} />
                 </Route>
             </Routes>
         </div>
