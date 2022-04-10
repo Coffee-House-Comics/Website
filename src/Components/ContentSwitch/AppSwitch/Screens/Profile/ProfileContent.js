@@ -1,11 +1,11 @@
-import { Grid, List, ListItem, Typography } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import React from 'react'
 import { testStories } from '../../../../../App';
 import PostCard from '../../../../Cards/PostCard';
 import PostsSection, { PADDING_BTWN_CARDS } from '../../../../Cards/PostsSection';
 
-export default function Saved() {
-    //TODO
+export default function ProfileContent() {
+//TODO
     /**
      * Format:
      *    [{
@@ -13,7 +13,7 @@ export default function Saved() {
      *        posts: [PostMetadata]
      *    }]
      */
-    let seriesContent = [{
+     let seriesContent = [{
         name: "Series 1",
         posts: testStories
     },
