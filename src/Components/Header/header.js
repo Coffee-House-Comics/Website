@@ -7,18 +7,18 @@ import {
     Avatar, Button, Tooltip, MenuItem, Grid, FormControl, InputLabel, OutlinedInput
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import { useNavigate } from 'react-router-dom';
 import CHCIcon from '../Icons/CHCIcon';
 import SearchIcon from '@mui/icons-material/Search';
 
 function Header(props) {
-    const Navigate = useNavigate();
 
     const { store } = useContext(GlobalStoreContext);
     const theme = useTheme();
 
     const appTabs = types.TabType.APP;
     const authTabs = types.TabType.AUTH;
+
+    const mode = store.app.toUpperCase();
 
     let pages;
     let settings;
@@ -35,6 +35,7 @@ function Header(props) {
 
     const [anchorElNav, setAnchorElNav] = useState(null);
     const [anchorElUser, setAnchorElUser] = useState(null);
+    const [anchorElLogo, setAnchorElLogo] = useState(null);
 
     const handleOpenNavMenu = (event) => {
         setAnchorElNav(event.currentTarget);
@@ -53,15 +54,70 @@ function Header(props) {
         store.reRoute(routeName);
     };
 
-    //TODO
+    // TODO:
     const handleSearchButtonClick = function () {
 
     }
 
-    //TODO
+    // TODO:
     const handleSearchTextChange = function () {
 
     }
+
+    const handleCreateAppPost = function () {
+        console.log("Trying to create a post...");
+    }
+
+    const handleOpenLogoMenu = function (event) {
+        setAnchorElLogo(event.currentTarget);
+    }
+
+    const handleCloseLogoMenu = function () {
+        setAnchorElLogo(null);
+    }
+
+    const handleSwitchAppMode = function () {
+        store.switchAppMode();
+        handleCloseLogoMenu();
+    }
+
+    const logoMenu = (
+        <div>
+            <CHCIcon
+                onClick={handleOpenLogoMenu}
+                sx={{
+                    cursor: "pointer",
+                    overflow: "visible",
+                    width: 45,
+                    height: 45,
+                    marginTop: 0.5,
+                    marginRight: 2
+                }}
+            />
+            <Menu
+                sx={{ mt: '45px' }}
+                id="menu-appbar"
+                anchorEl={anchorElLogo}
+                anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                }}
+                keepMounted
+                transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                }}
+                open={Boolean(anchorElLogo)}
+                onClose={handleCloseLogoMenu}
+            >
+                <MenuItem key={"LOGO-MENU-SHADOW-IS-CUTE"} onClick={handleSwitchAppMode}>
+                    <Typography textAlign="center" sx={{ color: theme.palette.olive_drab_7.main }}>
+                        {(store.app.toUpperCase() === "COMICS") ? "Switch to Story Café" : "Switch to Comic Café"}
+                    </Typography>
+                </MenuItem>
+            </Menu>
+        </div>
+    );
 
     const profileMenuButton =
         <div>
@@ -143,7 +199,13 @@ function Header(props) {
         }} >
             <Grid container direction="row" justifyContent="flex-start" alignItems="center">
                 <Grid item>
-                    <CHCIcon sx={{ overflow: "visible", width: 45, height: 45, marginTop: 0.5, marginRight: 2 }} />
+                    {logoMenu}
+                </Grid>
+                <Grid sx={{
+                    paddingRight: "20px",
+                    borderRight: "2px solid " + theme.palette.ivory.main
+                }}>
+                    <Typography variant="h4">{mode}</Typography>
                 </Grid>
                 {tabButtons}
                 <Grid item xs />
@@ -152,6 +214,11 @@ function Header(props) {
                 </Grid>
                 <Grid item xs />
                 <Grid item xs />
+                <Grid item xs >
+                    <button className='create-app' onClick={handleCreateAppPost}>
+                        {"+ Create " + store.app.slice(0, -1)}
+                    </button>
+                </Grid>
                 <Grid item>
                     {profileMenuButton}
                 </Grid>

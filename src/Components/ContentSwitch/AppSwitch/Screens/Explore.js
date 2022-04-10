@@ -23,8 +23,9 @@ function Explore() {
 
     //Build PostSections
     let postSections = []
+    let index = 0;
     for(let postSet of postSets){
-        postSections.push(<PostsSection posts={postSet.posts} name={postSet.name}/>)
+        postSections.push(<PostsSection key={index++} posts={postSet.posts} name={postSet.name}/>)
     }
 
     return (

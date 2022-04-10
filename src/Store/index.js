@@ -37,6 +37,15 @@ function GlobalStoreContextProvider(props) {
                 });
             }
 
+            case GlobalStoreActionType.CHANGE_CONTENT_MODE: {
+                return setStore({
+                    app: (store.app === "Comics") ? "Stories" : "Comics",
+                    user: store.user,
+                    isLoggedIn: store.isLoggedIn,
+                    modal: store.modal
+                });
+            }
+
             case GlobalStoreActionType.CHANGE_MODAL: {
                 return setStore({
                     app: store.app,
@@ -56,7 +65,11 @@ function GlobalStoreContextProvider(props) {
     const navigate = useNavigate();
 
     // Store functions
-
+    store.switchAppMode = function () {
+        storeReducer({
+            type: GlobalStoreActionType.CHANGE_CONTENT_MODE
+        });
+    }
 
     store.reRoute = function (fullRoute) {
         console.log("Store reroute:", fullRoute);
@@ -68,7 +81,7 @@ function GlobalStoreContextProvider(props) {
     // Modal Related Functions ------------------------------------
     store.createModal = function (metadata, callback = null) {
         const { title, body, action } = metadata;
-        
+
         const modalInfo = {
             title: title,
             body: body,
