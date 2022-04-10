@@ -1,5 +1,5 @@
 import { Divider, Grid, IconButton, Typography } from '@mui/material'
-import React from 'react'
+import React, { useState } from 'react'
 import EditorButtonPanel from '../../../Buttons/EditorButtons/EditorButtonPanel'
 import CreateIcon from '@mui/icons-material/Create';
 import InterestsIcon from '@mui/icons-material/Interests';
@@ -8,13 +8,29 @@ import { handleBreakpoints } from '@mui/system';
 import EraserIcon from '../../../Icons/EraserIcon';
 import HorizontalScroll from 'react-scroll-horizontal';
 
+const STICKER_TAB_TYPE = {
+    PREFAB_TAB: "Prefab",
+    STICKER_TAB: "Sticker"
+}
+
 export default function ComicCreationScreen() {
+    const [stickerTab, setStickerTab] = useState(STICKER_TAB_TYPE.PREFAB_TAB)
 
     const stickersSectionBackgroundColor = "rgba(170,170,170, 1)"
 
     //TODO
     let prefabsTabBackgroundColor = stickersSectionBackgroundColor
     let stickersTabBackgroundColor = "transparent"
+
+    switch(stickerTab){
+        case STICKER_TAB_TYPE.PREFAB_TAB:
+            prefabsTabBackgroundColor = stickersSectionBackgroundColor;
+            stickersTabBackgroundColor = "transparent"
+            break;
+        case STICKER_TAB_TYPE.STICKER_TAB:
+            prefabsTabBackgroundColor = "transparent";
+            stickersTabBackgroundColor = stickersSectionBackgroundColor;
+    }
 
     //TODO
     const handlePencilClick = function () {
@@ -38,12 +54,12 @@ export default function ComicCreationScreen() {
 
     //TODO
     const handlePrefabsTabClick = function () {
-        console.log("Prefabs")
+        setStickerTab(STICKER_TAB_TYPE.PREFAB_TAB)
     }
 
     //TODO
     const handleStickersTabClick = function () {
-        console.log("Stickers")
+        setStickerTab(STICKER_TAB_TYPE.STICKER_TAB)
     }
 
     //TODO
