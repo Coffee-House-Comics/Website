@@ -53,7 +53,7 @@ export default function View() {
       }}>
         <Box sx={{
             width: "25%",
-            height: "500px",
+            height: "600px",
             float: "left"
         }}>
           <Box sx={{
@@ -81,8 +81,7 @@ export default function View() {
           </Box>
           <Box sx={{
             position: "relative",
-            height: "calc(100% - 80px)",
-            backgroundColor: theme.palette.coffee.main
+            height: "calc(100% - 80px)"
             }}>
             {activePanel}
           </Box>
