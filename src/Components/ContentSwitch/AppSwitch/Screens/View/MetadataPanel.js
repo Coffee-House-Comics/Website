@@ -7,8 +7,6 @@ import {
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import BeansButtonPanel from '../../../../Buttons/BeansButtonPanel';
-import UpArrowIcon from '../../../../Icons/UpArrowIcon';
-import DownArrowIcon from '../../../../Icons/DownArrowIcon';
 import BeansIcon from '../../../../Icons/BeansIcon';
 
 export default function MetadataPanel(props) {
