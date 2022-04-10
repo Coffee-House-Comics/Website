@@ -5,24 +5,94 @@ import {
   Box,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
+import CommentCard from '../../../../Cards/CommentCard';
+import AddCommentCard from '../../../../Cards/AddCommentCard';
 
 export default function CommentsPanel() {
+
+  //TODO get comments
+   const comments = [
+    {author: {
+      _id: 123,
+      name: "Shangela"
+    }, 
+    beanCount: 8000,
+    currentVote: 0,
+    body: "Slay the house down, Seuss"},
+    {author: {
+      _id: 456,
+      name: "Ben De La Creme"
+    }, 
+    beanCount: 457,
+    currentVote: 0,
+    body: "This is not a serve"},
+    {author: {
+      _id: 789,
+      name: "Trixie"
+    }, 
+    beanCount: 332,
+    currentVote: 1,
+    body: "Seuss is trade"},
+    {author: {
+      _id: 123,
+      name: "Shangela"
+    }, 
+    beanCount: 8000,
+    currentVote: 0,
+    body: "Slay the house down, Seuss"},
+    {author: {
+      _id: 456,
+      name: "Ben De La Creme"
+    }, 
+    beanCount: 457,
+    currentVote: 0,
+    body: "This is not a serve"},
+    {author: {
+      _id: 789,
+      name: "Trixie"
+    }, 
+    beanCount: 332,
+    currentVote: 1,
+    body: "Seuss is trade"},
+    {author: {
+      _id: 123,
+      name: "Shangela"
+    }, 
+    beanCount: 8000,
+    currentVote: 0,
+    body: "Slay the house down, Seuss"},
+    {author: {
+      _id: 456,
+      name: "Ben De La Creme"
+    }, 
+    beanCount: 457,
+    currentVote: 0,
+    body: "This is not a serve"},
+    {author: {
+      _id: 789,
+      name: "Trixie"
+    }, 
+    beanCount: 332,
+    currentVote: 1,
+    body: "Seuss is trade"}
+  ]
+
+  const commentComponents = comments.map((comment, index) => {
+    return(<Grid item key={index}>
+      <CommentCard {...comment}></CommentCard>
+    </Grid>)
+  });
+
   return (
-    <div style={{ overflow: "scroll", width: "100%", height: "100%", display: "flex", justifyContent: "center"}}>
-       <Grid container direction="column" justifyContent="flex-start" alignItems="center" spacing={0.5} width="100%">
-        <Grid item>
-          Whats the tea, hunty?
-        </Grid>
-        <Grid item>
-          Yass Girly Pop!!
-        </Grid>
-        <Grid item>
-          Slay the house down boots
-        </Grid>
-        <Grid item>
-          Girl, you better work!s
-        </Grid>
-       </Grid>
+    <div style={{height: "100%", width: "100%"}}>
+      <div style={{height: "calc(100% - 135px)", width: "100%"}}>
+        <div style={{overflowY: "scroll", overflowX: "hidden", height: "100%"}}>
+          <Grid container direction="column" justifyContent="flex-start" alignItems="stretch" spacing={0.5}>
+            {commentComponents}
+          </Grid>
+        </div>
+      </div>
+      <AddCommentCard/>
     </div>
   )
 }

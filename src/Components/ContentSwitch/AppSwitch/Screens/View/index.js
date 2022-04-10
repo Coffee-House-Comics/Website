@@ -53,7 +53,7 @@ export default function View() {
       }}>
         <Box sx={{
             width: "25%",
-            height: "600px",
+            height: "100%",
             float: "left"
         }}>
           <Box sx={{
