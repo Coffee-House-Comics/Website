@@ -203,9 +203,10 @@ function Header(props) {
                 <Grid item>
                     {logoMenu}
                 </Grid>
-                <Grid sx={{
+                <Grid item sx={{
                     paddingRight: "20px",
-                    borderRight: "2px solid " + theme.palette.ivory.main
+                    borderRight: "2px solid " + theme.palette.ivory.main,
+                    paddingTop: 0.7
                 }}>
                     <Typography variant="h4">{mode}</Typography>
                 </Grid>
@@ -214,6 +215,7 @@ function Header(props) {
                 <Grid item xs lg={5} sx={{marginInline: "20px"}}>
                     {searchBar}
                 </Grid>
+                <Grid item lg/>
                 <Grid item lg/>
                 <Grid item xs="auto" >
                     <button className='create-app' onClick={handleCreateAppPost}>
