@@ -1,4 +1,4 @@
-import { Accordion, AccordionSummary, Typography, AccordionDetails, Box } from '@mui/material';
+import { Accordion, AccordionSummary, Typography, AccordionDetails, Box, Grid } from '@mui/material';
 import React from 'react';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import BeansButtonPanel from '../Buttons/BeansButtonPanel';
@@ -6,6 +6,7 @@ import { useState } from 'react';
 import AuthorButton from '../Buttons/AuthorButton';
 import CommentCard from './CommentCard';
 import AddCommentCard from './AddCommentCard';
+import { Theme } from '../../Common/Theme';
 
 
 /**
@@ -69,47 +70,58 @@ export default function ForumPost(props) {
     <CommentCard key={index} author={comment.author} beanCount={comment.beanCount} currentVote={comment.currentVote} body={comment.body}></CommentCard>
   );
 
-  return (<Accordion expanded={enabled} sx={{
-    width: "100%",
-    float: "right",
-    bgcolor: "coffee.main",
-    overflow: "scroll",
-    color: "ivory.main",
-    m: 1,
-    borderRadius: 4
-  }}>
-    <AccordionSummary
-      expandIcon={<ExpandMoreIcon onClick={toggleEnable} />}
-      aria-controls="panel"
-      id="panel-header"
-    >
+  return (
 
-      <Box sx={{ width: '85%', flexShrink: 0 }}>
-        <Typography variant="h5" sx={{mt:3}}>{heading}</Typography>
-        <AuthorButton author={author} onClick={onClickAuthor}></AuthorButton>
-      </Box>
-      <BeansButtonPanel onUpvote={onUpvote} onDownvote={onDownvote} numBeans={beanCount} currentVote={currentVote}>
+    <div style={{ marginTop: 20 }}>
+      <Accordion expanded={enabled} disableGutters={true} sx={{
+        width: "100%",
+        float: "right",
+        bgcolor: "coffee.main",
+        color: "ivory.main",
+        borderRadius: 4
+      }}>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon onClick={toggleEnable} />}
+          aria-controls="panel"
+          id="panel-header"
+        >
 
-      </BeansButtonPanel>
-    </AccordionSummary>
-    <AccordionDetails>
-      <Box>
-        <Typography sx={{mt:1}}>{body}</Typography>
-        {commentsCards.length == 0 ? <Typography sx={{
-          color: "fuzzy_wuzzy.main",
-          mt:3
-        }}>There are no comments</Typography> : <Typography variant="h5" sx={{mt:3}}>Comments:</Typography>}
-        
-        <Box sx={{
-          overflow: "scroll",
-          maxHeight: "250px"
-        }}>
-          {commentsCards}
-        </Box>
+          <Grid container direction="row" width="100%" justifyContent="center" alignItems="center">
+            <Grid item xs="auto">
+              <Grid container direction="column" width="100%">
+                <Typography variant="h5" sx={{ mt: 2, mb: 1 }}>{heading}</Typography>
+                <AuthorButton author={author} onClick={onClickAuthor}></AuthorButton>
+              </Grid>
+            </Grid>
+            <Grid item xs />
+            <Grid item xs="auto">
+              <div style={{ backgroundColor: Theme.palette.ivory.main, padding: 5, borderRadius: "10px", marginRight: "20px", opacity: "90%", color: Theme.palette.text.main }}>
+                <BeansButtonPanel onUpvote={onUpvote} onDownvote={onDownvote} numBeans={beanCount} currentVote={currentVote} />
+              </div>
+            </Grid>
+          </Grid>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Box>
+            <Typography sx={{ mt: 2, mb: 3 }}>{body}</Typography>
 
-        <AddCommentCard></AddCommentCard>
+            <hr style={{ marginBottom: 30 }} />
 
-      </Box>
-    </AccordionDetails>
-  </Accordion>);
+            {commentsCards.length > 0 ? <Typography variant="h5" sx={{ mt: 1 }}>Comments:</Typography> : ""}
+
+            <Box sx={{
+              overflowY: "auto",
+              maxHeight: "350px",
+              marginBottom: "30px"
+            }}>
+              {commentsCards}
+            </Box>
+
+            <AddCommentCard></AddCommentCard>
+
+          </Box>
+        </AccordionDetails>
+      </Accordion>
+    </div>
+  );
 }

@@ -5,6 +5,7 @@ import UpArrowIcon from '../Icons/UpArrowIcon';
 import DownArrowIcon from '../Icons/DownArrowIcon';
 import { Grid, IconButton, Typography } from '@mui/material';
 import BeansIcon from '../Icons/BeansIcon';
+import { Theme } from '../../Common/Theme';
 
 
 /**
@@ -15,9 +16,8 @@ import BeansIcon from '../Icons/BeansIcon';
  *  currentVote: Number (-1, 0, 1)
  */
 export default function BeansButtonPanel(props) {
-    //console.log(props.currentVote)
-    let upIcon = (props.currentVote == 1) ? <UpArrowIcon color="green" fontSize="small" sx={{overflow: "visible"}}/> : <UpArrowIcon fontSize="small" sx={{overflow: "visible"}}/>
-    let downIcon = (props.currentVote == -1) ? <DownArrowIcon color="fuzzy_wuzzy" fontSize="small" sx={{overflow: "visible"}}/> : <DownArrowIcon fontSize="small" sx={{overflow: "visible"}}/>
+    let upIcon = (props.currentVote == 1) ? <UpArrowIcon style={{filter: Theme.palette.green.filter, overflow: "visible"}} fontSize="small" /> : <UpArrowIcon fontSize="small" sx={{overflow: "visible"}}/>
+    let downIcon = (props.currentVote == -1) ? <DownArrowIcon style={{filter: Theme.palette.red.filter, overflow: "visible"}} fontSize="small" /> : <DownArrowIcon fontSize="small" sx={{overflow: "visible"}}/>
 
     return (
         <Grid container direction="row" justifyContent="center" alignItems="center" wrap="nowrap" width="max-content">

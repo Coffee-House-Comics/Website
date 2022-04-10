@@ -1,3 +1,4 @@
+import { Grid } from "@mui/material";
 import ForumPost from "../../../../Cards/ForumPost";
 
 
@@ -165,18 +166,27 @@ export default function Forum(props) {
 
 
     const ret = allPosts.map((post, index) =>
-        <ForumPost
-            key={index}
-            heading={post.heading}
-            currentVote={post.currentVote}
-            beanCount={post.beanCount}
-            body={post.body}
-            author={post.author}
-            comments={post.comments}>
-        </ForumPost>
+        <Grid item key={index}>
+            <ForumPost
+                key={index}
+                heading={post.heading}
+                currentVote={post.currentVote}
+                beanCount={post.beanCount}
+                body={post.body}
+                author={post.author}
+                comments={post.comments}>
+            </ForumPost>
+
+        </Grid>
+
     );
 
 
 
-    return ret;
+    return (
+        <Grid container direction="column" paddingBottom={5}>
+            {ret}
+        </Grid>
+    )
+
 }
