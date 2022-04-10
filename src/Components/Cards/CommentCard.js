@@ -21,25 +21,25 @@ import AuthorButton from '../Buttons/AuthorButton';
  */
 export default function CommentCard(props) {
 
-    const body = props.body
-    const beanCount = props.beanCount
-    const currentVote = props.currentVote
-    const author = props.author
+  const body = props.body
+  const beanCount = props.beanCount
+  const currentVote = props.currentVote
+  const author = props.author
 
-    const onUpvote = function () {
-      console.log("Up Vote");
+  const onUpvote = function () {
+    console.log("Up Vote");
   }
 
   const onDownvote = function () {
-      console.log("Down Vote");
+    console.log("Down Vote");
   }
 
-  const onClickAuthor = function(){
-      console.log("Clicked on" + author.name)
+  const onClickAuthor = function () {
+    console.log("Clicked on" + author.name)
   }
 
   return (<Box sx={{
-    width:"95%",
+    width: "95%",
     p: 1,
     mx: "auto",
     bgcolor: "ivory.main",
@@ -48,21 +48,24 @@ export default function CommentCard(props) {
     mb: 2
   }}>
 
-
-
-
-      <Grid container direction="row" justifyContent="space-between" alignItems="center">
-        <Grid item sx={{ml:1}}>
-          <Box>
+    <Grid container direction="row" justifyContent="space-between" alignItems="center">
+      <Grid item xs sx={{ml:1}}>
+        <Grid container direction="column">
+          <Grid item>
+            <Box>
               <AuthorButton author={author} onClick={onClickAuthor}></AuthorButton>
-          </Box>
-        </Grid>
-        <Grid item sx={{mr:2}}>
-          <BeansButtonPanel onUpvote={onUpvote} onDownvote={onDownvote} numBeans={beanCount} currentVote={currentVote}></BeansButtonPanel>
+            </Box>
+          </Grid>
+          <Grid item>
+            <Typography>
+              {body}
+            </Typography>
+          </Grid>
         </Grid>
       </Grid>
-      <Typography sx={{ml:3}}>
-            {body}
-      </Typography>
-    </Box>)
+      <Grid item xs="auto">
+        <BeansButtonPanel onUpvote={onUpvote} onDownvote={onDownvote} numBeans={beanCount} currentVote={currentVote}/>
+      </Grid>
+    </Grid>
+  </Box>)
 }
