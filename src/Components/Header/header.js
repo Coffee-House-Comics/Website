@@ -190,6 +190,7 @@ function Header(props) {
             }}>
         </TextField>
 
+    const singular = (store.app === "Comics") ? "Comic" : "Story";
 
     return (
         <AppBar position="static" style={{
@@ -216,7 +217,7 @@ function Header(props) {
                 <Grid item xs />
                 <Grid item xs >
                     <button className='create-app' onClick={handleCreateAppPost}>
-                        {"+ Create " + store.app.slice(0, -1)}
+                        {"+ Create " + singular}
                     </button>
                 </Grid>
                 <Grid item>

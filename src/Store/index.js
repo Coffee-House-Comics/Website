@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect } from 'react'
+import { createContext, useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import types from '../Common/Types'
 
@@ -42,9 +42,10 @@ function GlobalStoreContextProvider(props) {
                     app: (store.app === "Comics") ? "Stories" : "Comics",
                     user: store.user,
                     isLoggedIn: store.isLoggedIn,
-                    modal: store.modal
+                    modal: null
                 });
             }
+
 
             case GlobalStoreActionType.CHANGE_MODAL: {
                 return setStore({
@@ -60,15 +61,24 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
+    const ref = useRef(store);
+
     // Auxilliary Information
 
     const navigate = useNavigate();
 
     // Store functions
     store.switchAppMode = function () {
-        storeReducer({
-            type: GlobalStoreActionType.CHANGE_CONTENT_MODE
-        });
+        const singularOpp = (store.app === "Comics") ? "Story" : "Comic";
+        const metadata = {
+            title: "Are you sure you want to switch to " + singularOpp + " Café?",
+            body: "You may be redirected to a different page.",
+            action: "Yeah, switch!"
+        }
+
+        store.createModal(metadata, function () {
+            store.reRoute("/");
+        }, true);
     }
 
     store.reRoute = function (fullRoute) {
@@ -79,7 +89,7 @@ function GlobalStoreContextProvider(props) {
 
 
     // Modal Related Functions ------------------------------------
-    store.createModal = function (metadata, callback = null) {
+    store.createModal = function (metadata, callback = null, specialMode = false) {
         const { title, body, action } = metadata;
 
         const modalInfo = {
@@ -88,7 +98,8 @@ function GlobalStoreContextProvider(props) {
 
             // Supply action with a string if you want an option besides just `close`
             action: action,
-            hook: callback
+            hook: callback,
+            specialMode: specialMode
         };
 
         storeReducer({
@@ -98,10 +109,18 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.closeModal = function () {
-        storeReducer({
-            type: GlobalStoreActionType.CHANGE_MODAL,
-            payload: null
-        });
+        if (!store.modal)
+            return;
+
+        if (store.modal.specialMode)
+            storeReducer({
+                type: GlobalStoreActionType.CHANGE_CONTENT_MODE,
+            });
+        else
+            storeReducer({
+                type: GlobalStoreActionType.CHANGE_MODAL,
+                payload: null
+            });
     }
 
     //Return the context provider
