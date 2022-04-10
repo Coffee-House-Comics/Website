@@ -7,8 +7,13 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import AuthorButton from '../Buttons/AuthorButton';
 import BeansButtonPanel from '../Buttons/BeansButtonPanel';
 
+import { GlobalStoreContext } from '../../Store';
+import types from '../../Common/Types'
+
 export const PostCardHeight = 335;
 export default function PostCard(props) {
+    const { store } = React.useContext(GlobalStoreContext);
+
     const post = props.post;
 
     //TODO
@@ -21,6 +26,13 @@ export default function PostCard(props) {
     let numBeans = Math.floor(Math.random() * 1000);
 
     const imgSrc = "/Images/coffee" + (Math.floor(Math.random() * 6)) + ".jpg"
+
+
+    // TODO:
+    const handleOpenPost = function () {
+        store.reRoute(types.TabType.APP.children.VIEW.fullRoute);
+    }
+
 
     //TODO
     const handleBookmarkClick = function () {
@@ -88,17 +100,28 @@ export default function PostCard(props) {
         </Grid>
 
     return (
-        <div style={{ border: "3px solid black", borderRadius: "5px", overflow: "hidden", boxShadow: "1px 3px 10px grey", width: "max-content", height: PostCardHeight }}>
+        <div
+            onClick={handleOpenPost}
+            style={{
+                border: "3px solid black",
+                borderRadius: "5px",
+                overflow: "hidden",
+                boxShadow: "1px 3px 10px grey",
+                width: "max-content",
+                height: PostCardHeight,
+                cursor: "pointer"
+            }}
+        >
             <Grid container direction="column" justifyContent="flex-start" alignItems="flex-start" width="200px">
                 {/* Cover image */}
                 <Grid item>
                     {/* TODO Change this to cover image */}
-                    <img src={imgSrc} height="250px" width="200px" style={{objectFit: "cover"}} />
+                    <img src={imgSrc} height="250px" width="200px" style={{ objectFit: "cover" }} />
                 </Grid>
                 <Grid container direction="row" justifyContent="space-between">
                     {/* Metadata panel */}
                     <Grid item xs="auto">
-                        <div style={{ paddingLeft: 8, height: "100%", width: "100%"}}>
+                        <div style={{ paddingLeft: 8, height: "100%", width: "100%" }}>
                             {metaPanel}
                         </div>
                     </Grid>

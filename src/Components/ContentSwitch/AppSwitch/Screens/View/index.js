@@ -12,23 +12,23 @@ export default function View() {
     const theme = useTheme();
 
     const CONTENT_TABS = {
-        CONTENT: 0,
+        VIEW: 0,
         COMMENTS: 1
     }
-    const [contentTab, setContentTab] = useState(CONTENT_TABS.CONTENT);
+    const [contentTab, setContentTab] = useState(CONTENT_TABS.VIEW);
 
     function changeTab(tab) {
         console.log("Changing to..:", tab);
         setContentTab(tab);
     }
 
-    let activePanel = <MetadataPanel/>;
-    if(contentTab === CONTENT_TABS.COMMENTS)
-        activePanel = <CommentsPanel/>;
+    let activePanel = <MetadataPanel />;
+    if (contentTab === CONTENT_TABS.COMMENTS)
+        activePanel = <CommentsPanel />;
 
     const lineCss = "3px solid " + theme.palette.coffee.main;
 
-    let  mode = "Comic"; // TODO comic or story depending on store
+    let mode = "Comic"; // TODO comic or story depending on store
 
     function backgroundCSS(tab) {
         return {
@@ -50,48 +50,48 @@ export default function View() {
 
     return (<Box sx={{
         height: "100%",
-      }}>
+    }}>
         <Box sx={{
             width: "25%",
             height: "100%",
             float: "left"
         }}>
-          <Box sx={{
-            height: "80px",
-          }}>
-              <Grid container justifyContent="space-evenly" alignItems="stretch"
-                  sx={{
-                  }}>
-      
-                  <Grid item xs="6"
-                      onClick={() => changeTab(CONTENT_TABS.VIEW)}
-                      sx={{
-                          ...backgroundCSS(CONTENT_TABS.VIEW),
-                      }}>
-                      {mutateText(mode)}
-                  </Grid>
-                  <Grid item xs="6"
-                      onClick={() => changeTab(CONTENT_TABS.COMMENTS)}
-                      sx={{
-                          ...backgroundCSS(CONTENT_TABS.COMMENTS),
-                      }}>
-                      {mutateText("Comments")}
-                  </Grid>
-              </Grid>
-          </Box>
-          <Box sx={{
-            position: "relative",
-            height: "calc(100% - 80px)"
+            <Box sx={{
+                height: "80px",
             }}>
-            {activePanel}
-          </Box>
+                <Grid container justifyContent="space-evenly" alignItems="stretch"
+                    sx={{
+                    }}>
+
+                    <Grid item xs="6"
+                        onClick={() => changeTab(CONTENT_TABS.VIEW)}
+                        sx={{
+                            ...backgroundCSS(CONTENT_TABS.VIEW),
+                        }}>
+                        {mutateText(mode)}
+                    </Grid>
+                    <Grid item xs="6"
+                        onClick={() => changeTab(CONTENT_TABS.COMMENTS)}
+                        sx={{
+                            ...backgroundCSS(CONTENT_TABS.COMMENTS),
+                        }}>
+                        {mutateText("Comments")}
+                    </Grid>
+                </Grid>
+            </Box>
+            <Box sx={{
+                position: "relative",
+                height: "calc(100% - 80px)"
+            }}>
+                {activePanel}
+            </Box>
         </Box>
-        <Box sx={{ 
-          height: "100%",
-          float: "right",
-          width: "75%"
+        <Box sx={{
+            height: "100%",
+            float: "right",
+            width: "75%"
         }}>
-            <ContentPanel/>
+            <ContentPanel />
         </Box>
     </Box>);
 
