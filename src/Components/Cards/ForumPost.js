@@ -85,7 +85,7 @@ export default function ForumPost(props) {
     >
 
       <Box sx={{ width: '85%', flexShrink: 0 }}>
-        <h2>{heading}</h2>
+        <Typography variant="h5" sx={{mt:3}}>{heading}</Typography>
         <AuthorButton author={author} onClick={onClickAuthor}></AuthorButton>
       </Box>
       <BeansButtonPanel onUpvote={onUpvote} onDownvote={onDownvote} numBeans={beanCount} currentVote={currentVote}>
@@ -94,16 +94,21 @@ export default function ForumPost(props) {
     </AccordionSummary>
     <AccordionDetails>
       <Box>
-        {body}
+        <Typography sx={{mt:1}}>{body}</Typography>
         {commentsCards.length == 0 ? <Typography sx={{
-          color: "fuzzy_wuzzy.main"
-        }}>There are no comments</Typography> : <h3>Comments:</h3>}
+          color: "fuzzy_wuzzy.main",
+          mt:3
+        }}>There are no comments</Typography> : <Typography variant="h5" sx={{mt:3}}>Comments:</Typography>}
+        
         <Box sx={{
-          overflow: "scroll"
+          overflow: "scroll",
+          maxHeight: "250px"
         }}>
           {commentsCards}
-          <AddCommentCard></AddCommentCard>
         </Box>
+
+        <AddCommentCard></AddCommentCard>
+
       </Box>
     </AccordionDetails>
   </Accordion>);

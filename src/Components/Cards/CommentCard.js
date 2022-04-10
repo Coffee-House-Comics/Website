@@ -39,7 +39,7 @@ export default function CommentCard(props) {
   }
 
   return (<Box sx={{
-    width:"80%",
+    width:"95%",
     p: 1,
     mx: "auto",
     bgcolor: "ivory.main",

@@ -1,4 +1,4 @@
-import { TextField, Box, Grid } from '@mui/material';
+import { TextField, Box, Typography } from '@mui/material';
 import React from 'react';
 import SubmitButton from '../Buttons/SubmitButton';
 
@@ -23,7 +23,7 @@ export default function CommentCard() {
   }
 
   return (<Box>
-      <h3>Add Comment:</h3>
+      <Typography variant="h5" sx={{mt:1}}>Add Comments:</Typography>
 
       <TextField multiline={true} sx={{
             bgcolor:"ivory.main",
