@@ -1,3 +1,4 @@
+import { Global } from '@emotion/react';
 import { createContext, useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import types from '../Common/Types'
@@ -8,7 +9,7 @@ const GlobalStoreActionType = {
     LOGIN_USER: "LOGIN_USER",
     LOGOUT_USER: "LOGOUT_USER",
     CHANGE_MODAL: "CHANGE_MODAL",
-    CHANGE_CONTENT_MODE: "CHANGE_CONTENT_MODE"
+    CHANGE_APP: "CHANGE_APP"
 }
 
 const AuthActionType = {
@@ -30,14 +31,26 @@ function GlobalStoreContextProvider(props) {
     const storeReducer = (action) => {
         const { type, payload } = action;
         switch (type) {
-            // Sets loggedIn to true, sets userId, sets content mode to home
+            // Sets loggedIn to true, sets userId
             case GlobalStoreActionType.LOGIN_USER: {
                 return setStore({
-
+                    app: store.app,
+                    user: payload,
+                    isLoggedIn: true,
+                    modal: null
                 });
             }
 
-            case GlobalStoreActionType.CHANGE_CONTENT_MODE: {
+            case GlobalStoreActionType.LOGOUT_TYPE: {
+                return setStore({
+                    app: store.app,
+                    user: null,
+                    isLoggedIn: false,
+                    modal: null
+                })
+            }
+
+            case GlobalStoreActionType.CHANGE_APP: {
                 return setStore({
                     app: (store.app === "Comics") ? "Stories" : "Comics",
                     user: store.user,
