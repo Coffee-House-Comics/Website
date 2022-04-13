@@ -1,5 +1,6 @@
 import { PostAdd } from "@mui/icons-material";
-
+import axios from 'axios'
+axios.defaults.withCredentials = true;
 const AuthAPI = {};
 
 
@@ -11,7 +12,7 @@ AuthAPI.register = async function (username, pass, confirmPass) {
     */
 }
 
-AuthAPI.loginUser = async function (userName, password) {
+AuthAPI.loginUser = async function (email, password) {
     /* 
         method: POST
         route: /auth/login
@@ -88,6 +89,8 @@ AuthAPI.changeUserName = async function (oldUserName, newUserName) {
 //     method: DELETE,
 //         route: /comic/
 // }
+
+export default AuthAPI
 
 
 

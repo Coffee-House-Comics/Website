@@ -1,8 +1,9 @@
 import { Global } from '@emotion/react';
 import { StoreTwoTone } from '@mui/icons-material';
-import { createContext, useState, useEffect, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
-import types from '../Common/Types'
+import { createContext, useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import types from '../Common/Types';
+import AuthAPI from '../API';
 
 const GlobalStoreContext = createContext({});
 
@@ -148,7 +149,17 @@ function GlobalStoreContextProvider(props) {
     //AUTH related functions
 
     store.login = async function(loginInfo) {
-        const { email, password } = loginInfo
+        const { email, password } = loginInfo;
+
+        const response = await AuthAPI.loginUser(email, password);
+
+        if(response.status == 200) {
+
+        }
+
+        else {
+            
+        }
     }
 
     store.logout = async function() {
@@ -156,7 +167,7 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.register = async function(registerInfo) {
-        const { firstName, lastName, email, password, confirmPassword } = registerInfo
+        const { firstName, lastName, email, password, confirmPassword } = registerInfo;
     }
 
     store.forgotPassword = async function() {
