@@ -1,4 +1,5 @@
 import { Global } from '@emotion/react';
+import { StoreTwoTone } from '@mui/icons-material';
 import { createContext, useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import types from '../Common/Types'
@@ -135,7 +136,7 @@ function GlobalStoreContextProvider(props) {
 
         if (store.modal.specialMode && special)
             storeReducer({
-                type: GlobalStoreActionType.CHANGE_CONTENT_MODE,
+                type: GlobalStoreActionType.CHANGE_APP,
             });
         else
             storeReducer({
@@ -143,6 +144,33 @@ function GlobalStoreContextProvider(props) {
                 payload: null
             });
     }
+
+    //AUTH related functions
+
+    store.login = async function(loginInfo) {
+        const { email, password } = loginInfo
+    }
+
+    store.logout = async function() {
+
+    }
+
+    store.register = async function(registerInfo) {
+        const { firstName, lastName, email, password, confirmPassword } = registerInfo
+    }
+
+    store.forgotPassword = async function() {
+
+    }
+
+    store.changeUsername = async function(newUsername) {
+
+    }
+
+    store.changePassword = async function(newPassword) {
+
+    }
+
 
     //Return the context provider
 
