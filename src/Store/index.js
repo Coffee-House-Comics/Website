@@ -1,6 +1,9 @@
-import { createContext, useState, useEffect, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
-import types from '../Common/Types'
+import { Global } from '@emotion/react';
+import { RepeatOneSharp, StoreTwoTone } from '@mui/icons-material';
+import { createContext, useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import types from '../Common/Types';
+import AuthAPI from '../API';
 
 const GlobalStoreContext = createContext({});
 
@@ -8,7 +11,7 @@ const GlobalStoreActionType = {
     LOGIN_USER: "LOGIN_USER",
     LOGOUT_USER: "LOGOUT_USER",
     CHANGE_MODAL: "CHANGE_MODAL",
-    CHANGE_CONTENT_MODE: "CHANGE_CONTENT_MODE"
+    CHANGE_APP: "CHANGE_APP"
 }
 
 const AuthActionType = {
@@ -30,14 +33,26 @@ function GlobalStoreContextProvider(props) {
     const storeReducer = (action) => {
         const { type, payload } = action;
         switch (type) {
-            // Sets loggedIn to true, sets userId, sets content mode to home
+            // Sets loggedIn to true, sets userId
             case GlobalStoreActionType.LOGIN_USER: {
                 return setStore({
-
+                    app: store.app,
+                    user: payload,
+                    isLoggedIn: true,
+                    modal: null
                 });
             }
 
-            case GlobalStoreActionType.CHANGE_CONTENT_MODE: {
+            case GlobalStoreActionType.LOGOUT_USER: {
+                return setStore({
+                    app: store.app,
+                    user: null,
+                    isLoggedIn: false,
+                    modal: null
+                })
+            }
+
+            case GlobalStoreActionType.CHANGE_APP: {
                 return setStore({
                     app: (store.app === "Comics") ? "Stories" : "Comics",
                     user: store.user,
@@ -122,7 +137,7 @@ function GlobalStoreContextProvider(props) {
 
         if (store.modal.specialMode && special)
             storeReducer({
-                type: GlobalStoreActionType.CHANGE_CONTENT_MODE,
+                type: GlobalStoreActionType.CHANGE_APP,
             });
         else
             storeReducer({
@@ -130,6 +145,104 @@ function GlobalStoreContextProvider(props) {
                 payload: null
             });
     }
+
+    //AUTH related functions
+
+    store.login = async function(loginInfo) {
+        const { email, password } = loginInfo;
+
+        const response = await AuthAPI.loginUser(email, password);
+
+        if(response.status == 200) {
+            storeReducer({
+                type: GlobalStoreActionType.LOGIN_USER,
+                payload: response.data.id
+            });
+            store.reRoute(types.TabType.APP.children.EXPLORE.fullRoute);
+        }
+
+        else {
+            store.createModal({
+                title: "Error logging in",
+                body: "You could not be logged in. Please try again.",
+                action: ""
+            });
+        }
+    }
+
+    store.logout = async function() {
+        const response = await AuthAPI.logoutUser();
+
+        if(response.status == 200) {
+            storeReducer({
+                type: GlobalStoreActionType.LOGOUT_USER,
+                payload: null
+            });
+            store.reRoute(types.TabType.AUTH.fullRoute);
+        } 
+
+        else {
+            store.createModal({
+                title: "Error logging out",
+                body: "You could not be logged out. Please try again.",
+                action: ""
+            });
+        }
+    }
+
+    store.register = async function(registerInfo) {
+        const { firstName, lastName, username, email, password, confirmPassword } = registerInfo; //Do fitst, last, email get used?
+
+        const displayName = firstName + " " + lastName;
+
+        const response = await AuthAPI.register(username, password, email, confirmPassword, displayName);
+
+        if(response.status == 200) {
+            //User is not logged in until they confirm email
+            store.reRoute(types.TabType.DEFAULT.fullRoute);
+        }
+        else {
+            const errorMessage = response.data.error;
+            store.createModal({
+                title: "Error registering",
+                body: errorMessage + ". Please try again.",
+                action: ""
+            });
+        } 
+    }
+
+    store.forgotPassword = async function() {
+        //TODO Back end requires username AND email but front end form doesnt allow for both. Are we giving the option of uusing email or username??
+
+    }
+
+    store.changeUsername = async function(newUsername) {
+
+        //Provide old username to request
+        const response = await AuthAPI.changeUsername(oldUsername);
+
+        if(response.status == 200) {
+            //Create modal to confirm success
+            store.createModal({
+                title: "Username change",
+                body: "Your username has been successfully changed!",
+                action: ""
+            });
+        }
+        else {
+            const errorMessage = response.data.error;
+            store.createModal({
+                title: "Error changing username",
+                body: errorMessage + ". Please try again.",
+                action: ""
+            });
+        } 
+    }
+
+    store.changePassword = async function(newPassword) {
+
+    }
+
 
     //Return the context provider
 
