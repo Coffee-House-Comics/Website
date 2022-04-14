@@ -212,11 +212,31 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.forgotPassword = async function() {
+        //TODO Back end requires username AND email but front end form doesnt allow for both. Are we giving the option of uusing email or username??
 
     }
 
     store.changeUsername = async function(newUsername) {
 
+        //Provide old username to request
+        const response = await AuthAPI.changeUsername(oldUsername);
+
+        if(response.status == 200) {
+            //Create modal to confirm success
+            store.createModal({
+                title: "Username change",
+                body: "Your username has been successfully changed!",
+                action: ""
+            });
+        }
+        else {
+            const errorMessage = response.data.error;
+            store.createModal({
+                title: "Error changing username",
+                body: errorMessage + ". Please try again.",
+                action: ""
+            });
+        } 
     }
 
     store.changePassword = async function(newPassword) {

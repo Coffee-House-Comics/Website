@@ -76,12 +76,11 @@ AuthAPI.changePassword = async function (oldpass, newpass, confirmnewpass) {
     */
 }
 
-AuthAPI.changeUserName = async function (oldUserName, newUserName) {
+AuthAPI.changeUserName = async function (newUserName) {
     /* Chnage Username ------------
         method: put
         route: /auth/changeUserName
         Request body: {
-            oldUserName: String,
             newUserName: String
         }
     */
