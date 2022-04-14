@@ -4,12 +4,14 @@ axios.defaults.withCredentials = true;
 const AuthAPI = {};
 
 
-AuthAPI.register = async function (username, pass, confirmPass) {
+AuthAPI.register = async function (username, pass, email, confirmPass, displayName) {
     /*
         method: POST,
         route: /auth/register
         payload: { userName, pass, confirmPass }    
     */
+
+    const bio = {}; //Initialize bio to be empty when registering
 }
 
 AuthAPI.loginUser = async function (email, password) {

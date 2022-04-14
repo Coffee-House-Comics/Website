@@ -191,7 +191,24 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.register = async function(registerInfo) {
-        const { firstName, lastName, email, password, confirmPassword } = registerInfo;
+        const { firstName, lastName, username, email, password, confirmPassword } = registerInfo; //Do fitst, last, email get used?
+
+        const displayName = firstName + " " + lastName;
+
+        const response = await AuthAPI.register(username, password, email, confirmPassword, displayName);
+
+        if(response.status == 200) {
+            //User is not logged in until they confirm email
+            store.reRoute(types.TabType.DEFAULT.fullRoute);
+        }
+        else {
+            const errorMessage = response.data.error;
+            store.createModal({
+                title: "Error registering",
+                body: errorMessage + ". Please try again.",
+                action: ""
+            });
+        } 
     }
 
     store.forgotPassword = async function() {
