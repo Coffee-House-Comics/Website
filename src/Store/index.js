@@ -43,7 +43,7 @@ function GlobalStoreContextProvider(props) {
                 });
             }
 
-            case GlobalStoreActionType.LOGOUT_TYPE: {
+            case GlobalStoreActionType.LOGOUT_USER: {
                 return setStore({
                     app: store.app,
                     user: null,
@@ -166,12 +166,28 @@ function GlobalStoreContextProvider(props) {
                 title: "Error logging in",
                 body: "You could not be logged in. Please try again.",
                 action: ""
-            })
+            });
         }
     }
 
     store.logout = async function() {
+        const response = await AuthAPI.logoutUser();
 
+        if(response.status == 200) {
+            storeReducer({
+                type: GlobalStoreActionType.LOGOUT_USER,
+                payload: null
+            });
+            store.reRoute(types.TabType.AUTH.fullRoute);
+        } 
+
+        else {
+            store.createModal({
+                title: "Error logging out",
+                body: "You could not be logged out. Please try again.",
+                action: ""
+            });
+        }
     }
 
     store.register = async function(registerInfo) {
