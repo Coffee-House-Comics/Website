@@ -1,5 +1,5 @@
 import { Global } from '@emotion/react';
-import { StoreTwoTone } from '@mui/icons-material';
+import { RepeatOneSharp, StoreTwoTone } from '@mui/icons-material';
 import { createContext, useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import types from '../Common/Types';
@@ -154,11 +154,19 @@ function GlobalStoreContextProvider(props) {
         const response = await AuthAPI.loginUser(email, password);
 
         if(response.status == 200) {
-
+            storeReducer({
+                type: GlobalStoreActionType.LOGIN_USER,
+                payload: response.data.id
+            });
+            store.reRoute(types.TabType.APP.children.EXPLORE.fullRoute);
         }
 
         else {
-            
+            store.createModal({
+                title: "Error logging in",
+                body: "You could not be logged in. Please try again.",
+                action: ""
+            })
         }
     }
 
