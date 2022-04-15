@@ -59,7 +59,7 @@ function ForgotPasswordScreen() {
             }}>
                 <Typography id="modal-title" sx={{
                 }}>
-                    Enter your email below to reset your password.
+                    Enter your email and username below to reset your password.
                 </Typography>
             </Grid>
             <Grid item xs={12}>
