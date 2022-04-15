@@ -239,8 +239,28 @@ function GlobalStoreContextProvider(props) {
         } 
     }
 
-    store.changePassword = async function(newPassword) {
+    store.changePassword = async function(passwordInfo) {
+        const {oldPassword, newPassword, confirmNewPass} = passwordInfo;
 
+        const response = await AuthAPI.changePassword(oldPassword, newPassword, confirmNewPass);
+
+        if(response.status == 200) {
+            //Create modal to confirm success
+            store.createModal({
+                title: "Password change",
+                body: "Your password has been successfully changed!",
+                action: ""
+            });
+        }
+
+        else {
+            const errorMessage = response.data.error;
+            store.createModal({
+                title: "Error changing password",
+                body: errorMessage + ". Please try again.",
+                action: ""
+            });
+        }
     }
 
 
