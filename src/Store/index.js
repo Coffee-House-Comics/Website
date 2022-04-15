@@ -211,8 +211,29 @@ function GlobalStoreContextProvider(props) {
         } 
     }
 
-    store.forgotPassword = async function() {
-        //TODO Back end requires username AND email but front end form doesnt allow for both. Are we giving the option of uusing email or username??
+    store.forgotPassword = async function(forgotPasswordInfo) {
+        //TODO Change front end form to require username as well as email
+
+        const {username, email} = forgotPasswordInfo;
+
+        const response = await AuthAPI.forgotPassword(username, email);
+
+        if(response.status == 200) {
+            //Create modal to confirm success
+            store.createModal({
+                title: "Password reset successfully",
+                body: "Check your email for a temporary password to use. Most emails arrive within a few minutes",
+                action: ""
+            });
+        }
+        else {
+            const errorMessage = response.data.error;
+            store.createModal({
+                title: "Password reset error",
+                body: errorMessage,
+                action: ""
+            });
+        } 
 
     }
 
@@ -233,14 +254,34 @@ function GlobalStoreContextProvider(props) {
             const errorMessage = response.data.error;
             store.createModal({
                 title: "Error changing username",
-                body: errorMessage + ". Please try again.",
+                body: errorMessage,
                 action: ""
             });
         } 
     }
 
-    store.changePassword = async function(newPassword) {
+    store.changePassword = async function(passwordInfo) {
+        const {oldPassword, newPassword, confirmNewPass} = passwordInfo;
 
+        const response = await AuthAPI.changePassword(oldPassword, newPassword, confirmNewPass);
+
+        if(response.status == 200) {
+            //Create modal to confirm success
+            store.createModal({
+                title: "Password change",
+                body: "Your password has been successfully changed!",
+                action: ""
+            });
+        }
+
+        else {
+            const errorMessage = response.data.error;
+            store.createModal({
+                title: "Error changing password",
+                body: errorMessage,
+                action: ""
+            });
+        }
     }
 
 
