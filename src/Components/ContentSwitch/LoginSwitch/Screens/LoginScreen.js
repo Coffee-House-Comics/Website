@@ -41,6 +41,7 @@ function LoginScreen() {
     const onSubmit = function () {
         console.log("Login submit pressed...");
         console.log("->", email, password);
+        store.login({email: {email}, password: {password}});
     }
 
     return (

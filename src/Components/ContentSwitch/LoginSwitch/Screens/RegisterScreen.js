@@ -16,6 +16,7 @@ function RegisterScreen() {
 
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
+    const [username, setUserName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPass, setConfirmPass] = useState("");
@@ -41,6 +42,10 @@ function RegisterScreen() {
         setLastName(event.target.value);
     }
 
+    const handleUsernameChange = function (event) {
+        setUserName(event.target.value);
+    }
+
     const handleEmailChange = function (event) {
         setEmail(event.target.value);
     }
@@ -55,7 +60,10 @@ function RegisterScreen() {
 
     const onSubmit = function () {
         console.log("Login register pressed...");
-        console.log("->", firstName, lastName, email, password, confirmPass);
+        console.log("->", firstName, lastName, username, email, password, confirmPass);
+      
+        store.register({
+            firstName: {firstName}, lastName: {lastName}, username: {username}, email: {email}, password: {password}, confirmPass: {confirmPass}});
     }
 
     return (
@@ -93,6 +101,16 @@ function RegisterScreen() {
                     fieldName={"Last Name"}
                     helperText={"Please enter your last name."}
                     onChange={handleLastNameChange}
+                    sx={{
+                        width: "100%"
+                    }}
+                />
+            </Grid>
+            <Grid item xs={12}>
+                <SmallTextField
+                    fieldName={"Username"}
+                    helperText={"Please enter your username."}
+                    onChange={handleUsernameChange}
                     sx={{
                         width: "100%"
                     }}
