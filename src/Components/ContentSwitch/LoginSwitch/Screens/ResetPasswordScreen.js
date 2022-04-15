@@ -52,8 +52,8 @@ function ResetPasswordScreen() {
         };
 
         store.createModal(modalInfo, function () {
-            console.log("Modal Closed");
-        });
+            store.changePassword({oldPassword: {oldPass}, newPassword: {newPassword}, confirmNewPass: {confirmNewPass}});
+        }, true);
     }
 
     return (
