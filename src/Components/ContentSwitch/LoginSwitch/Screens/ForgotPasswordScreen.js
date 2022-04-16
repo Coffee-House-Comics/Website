@@ -40,7 +40,7 @@ function ForgotPasswordScreen() {
         console.log("Forgot Pass submit pressed...");
         console.log("->", email);
 
-        store.forgotPassword({username: {username}, email: {email}});
+        store.forgotPassword({username: username, email: email});
     }
 
     return (

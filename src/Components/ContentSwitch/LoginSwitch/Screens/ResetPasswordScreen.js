@@ -52,7 +52,7 @@ function ResetPasswordScreen() {
         };
 
         store.createModal(modalInfo, function () {
-            store.changePassword({oldPassword: {oldPass}, newPassword: {newPass}, confirmNewPass: {confirmNewPass}});
+            store.changePassword({oldPassword: oldPass, newPassword: newPass, confirmNewPass: confirmNewPass});
         }, true);
     }
 
