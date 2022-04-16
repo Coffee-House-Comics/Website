@@ -61,9 +61,15 @@ function RegisterScreen() {
     const onSubmit = function () {
         console.log("Login register pressed...");
         console.log("->", firstName, lastName, username, email, password, confirmPass);
-      
+
         store.register({
-            firstName: {firstName}, lastName: {lastName}, username: {username}, email: {email}, password: {password}, confirmPass: {confirmPass}});
+            firstName: firstName,
+            lastName: lastName,
+            username: username,
+            email: email,
+            password: password,
+            confirmPass: confirmPass
+        });
     }
 
     return (

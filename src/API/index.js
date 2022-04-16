@@ -1,20 +1,38 @@
-import { PostAdd } from "@mui/icons-material";
 import axios from 'axios'
-axios.defaults.withCredentials = true;
-const AuthAPI = {};
+
+// TODO: Set to true once we correct cors on the server to just accept from 
+//      coffeehousecomics.com
+axios.defaults.withCredentials = false;
+
+const backend = axios.create({
+    baseURL: 'https://coffeehousecomics.com',
+})
+
+const API = {
+    Auth: {},
+    Comic: {},
+    Story: {}
+};
 
 
-AuthAPI.register = async function (username, pass, email, confirmPass, displayName) {
+API.Auth.register = function (username, pass, email, confirmPass, displayName) {
     /*
         method: POST,
         route: /auth/register
         payload: { userName, pass, confirmPass }    
     */
 
-    const bio = {}; //Initialize bio to be empty when registering
+    return backend.post('/auth/register', {
+        userName: username,
+        password: pass,
+        email: email,
+        confirmPassword: confirmPass,
+        displayName: displayName,
+        bio: "This User prefers to keep things mysterious..."
+    });
 }
 
-AuthAPI.loginUser = async function (email, password) {
+API.Auth.loginUser = function (email, password) {
     /* 
         method: POST
         route: /auth/login
@@ -25,7 +43,7 @@ AuthAPI.loginUser = async function (email, password) {
     */
 }
 
-AuthAPI.forgotPassword = async function (userName, email) {
+API.Auth.forgotPassword = function (userName, email) {
     /* 
         method: post
         route: /auth/forgotPassword
@@ -36,7 +54,7 @@ AuthAPI.forgotPassword = async function (userName, email) {
     */
 }
 
-AuthAPI.logoutUser = async function () {
+API.Auth.logoutUser = function () {
     /* 
         method: POST
         route: /auth/logout
@@ -44,7 +62,7 @@ AuthAPI.logoutUser = async function () {
     */
 }
 
-AuthAPI.confirmCode = async function () {
+API.Auth.confirmCode = function () {
     /* 
         method: get
         route: /auth/confirmCode/${id}
@@ -52,7 +70,7 @@ AuthAPI.confirmCode = async function () {
     */
 }
 
-AuthAPI.updateProfile = async function (image, displayName, bio) {
+API.Auth.updateProfile = function (image, displayName, bio) {
     /* Update Profile ------------
         method: put
         route: /auth/updateProfile
@@ -64,7 +82,7 @@ AuthAPI.updateProfile = async function (image, displayName, bio) {
     */
 }
 
-AuthAPI.changePassword = async function (oldpass, newpass, confirmnewpass) {
+API.Auth.changePassword = function (oldpass, newpass, confirmnewpass) {
     /* Change Password ------------
         method: put
         route: /auth/changePassword
@@ -76,7 +94,7 @@ AuthAPI.changePassword = async function (oldpass, newpass, confirmnewpass) {
     */
 }
 
-AuthAPI.changeUserName = async function (newUserName) {
+API.Auth.changeUserName = function (newUserName) {
     /* Chnage Username ------------
         method: put
         route: /auth/changeUserName
@@ -91,7 +109,7 @@ AuthAPI.changeUserName = async function (newUserName) {
 //         route: /comic/
 // }
 
-export default AuthAPI
+export default API;
 
 
 

@@ -3,7 +3,10 @@ import { RepeatOneSharp, StoreTwoTone } from '@mui/icons-material';
 import { createContext, useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import types from '../Common/Types';
-import AuthAPI from '../API';
+
+import API from '../API';
+const AuthAPI = API.Auth;
+
 
 const GlobalStoreContext = createContext({});
 
@@ -12,10 +15,6 @@ const GlobalStoreActionType = {
     LOGOUT_USER: "LOGOUT_USER",
     CHANGE_MODAL: "CHANGE_MODAL",
     CHANGE_APP: "CHANGE_APP"
-}
-
-const AuthActionType = {
-    SET_LOGGED_IN: 0,
 }
 
 // Setting up the Global Store
@@ -146,14 +145,15 @@ function GlobalStoreContextProvider(props) {
             });
     }
 
-    //AUTH related functions
+    //AUTH related functions ------------------------------------
 
     store.login = async function(loginInfo) {
         const { email, password } = loginInfo;
 
         const response = await AuthAPI.loginUser(email, password);
 
-        if(response.status == 200) {
+        if(response.status === 200) {
+            console.log("Logged in!")
             storeReducer({
                 type: GlobalStoreActionType.LOGIN_USER,
                 payload: response.data.id
@@ -162,6 +162,7 @@ function GlobalStoreContextProvider(props) {
         }
 
         else {
+            console.log("Not logged in :/");
             store.createModal({
                 title: "Error logging in",
                 body: "You could not be logged in. Please try again.",
@@ -199,6 +200,7 @@ function GlobalStoreContextProvider(props) {
 
         if(response.status === 200) {
             //User is not logged in until they confirm email
+            console.log("Registering a success");
             store.reRoute(types.TabType.DEFAULT.fullRoute);
         }
         else {
