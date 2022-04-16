@@ -13,6 +13,7 @@ function ForgotPasswordScreen() {
     const theme = useTheme();
 
     const [email, setEmail] = useState("");
+    const [username, setUsername] = useState("");
 
     const style = {
         position: 'absolute',
@@ -31,17 +32,15 @@ function ForgotPasswordScreen() {
         setEmail(event.target.value);
     }
 
+    const handleUsernameChange = function (event) {
+        setUsername(event.target.value);
+    }
+
     const onSubmit = function () {
         console.log("Forgot Pass submit pressed...");
         console.log("->", email);
 
-        const modalInfo = {
-            title: "New Password Sent!",
-            body: "If " + email + " is associated with an account, the new password should arrive in a few minutes.",
-            action: null
-        };
-
-        store.createModal(modalInfo);
+        store.forgotPassword({username: {username}, email: {email}});
     }
 
     return (
@@ -60,7 +59,7 @@ function ForgotPasswordScreen() {
             }}>
                 <Typography id="modal-title" sx={{
                 }}>
-                    Enter your email below to reset your password.
+                    Enter your email and username below to reset your password.
                 </Typography>
             </Grid>
             <Grid item xs={12}>
@@ -68,6 +67,16 @@ function ForgotPasswordScreen() {
                     fieldName={"Email"}
                     helperText={"Please enter your email."}
                     onChange={handleEmailChange}
+                    sx={{
+                        width: "100%"
+                    }}
+                />
+            </Grid>
+            <Grid item xs={12}>
+                <SmallTextField
+                    fieldName={"Username"}
+                    helperText={"Please enter your username."}
+                    onChange={handleUsernameChange}
                     sx={{
                         width: "100%"
                     }}

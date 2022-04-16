@@ -191,11 +191,11 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.register = async function(registerInfo) {
-        const { firstName, lastName, username, email, password, confirmPassword } = registerInfo; //Do fitst, last, email get used?
+        const { firstName, lastName, username, email, password, confirmPass } = registerInfo; //Do fitst, last, email get used?
 
         const displayName = firstName + " " + lastName;
 
-        const response = await AuthAPI.register(username, password, email, confirmPassword, displayName);
+        const response = await AuthAPI.register(username, password, email, confirmPass, displayName);
 
         if(response.status == 200) {
             //User is not logged in until they confirm email
@@ -212,7 +212,6 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.forgotPassword = async function(forgotPasswordInfo) {
-        //TODO Change front end form to require username as well as email
 
         const {username, email} = forgotPasswordInfo;
 
@@ -239,8 +238,8 @@ function GlobalStoreContextProvider(props) {
 
     store.changeUsername = async function(newUsername) {
 
-        //Provide old username to request
-        const response = await AuthAPI.changeUsername(oldUsername);
+        //Provide new username to request
+        const response = await AuthAPI.changeUsername(newUsername);
 
         if(response.status == 200) {
             //Create modal to confirm success
