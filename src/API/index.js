@@ -28,7 +28,7 @@ API.Auth.register = function (username, password, email, confirmPassord, display
         email: email,
         confirmPassword: confirmPassord,
         displayName: displayName,
-        bio: ""
+        bio: "I'm gonna be rank one CHC LfG!"
     });
 }
 
