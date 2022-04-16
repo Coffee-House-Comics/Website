@@ -108,6 +108,16 @@ API.Auth.changeUserName = function (newUserName) {
     */
 }
 
+API.Auth.changeEmail = function (newEmail) {
+     /* Chnage Email ------------
+        method: put
+        route: /auth/changeEmail
+        Request body: {
+            newEmail: String
+        }
+    */
+}
+
 // unsubscribe(id) {
 //     method: DELETE,
 //         route: /comic/
