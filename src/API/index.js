@@ -122,7 +122,7 @@ API.Auth.changeUserName = function (newUserName) {
             newUserName: String
         }
     */
-    return backend.put('/auth/changePassword', {
+    return backend.put('/auth/changeUserName', {
         newUserName: newUserName,
     });
 }
