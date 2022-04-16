@@ -32,7 +32,7 @@ API.Auth.register = function (username, pass, email, confirmPass, displayName) {
     });
 }
 
-API.Auth.loginUser = function (email, password) {
+API.Auth.loginUser = function (username, password) {
     /* 
         method: POST
         route: /auth/login
@@ -41,6 +41,10 @@ API.Auth.loginUser = function (email, password) {
             password: String
         }
     */
+    return backend.post('/auth/login', {
+        userName: username,
+        password: password
+    });
 }
 
 API.Auth.forgotPassword = function (userName, email) {

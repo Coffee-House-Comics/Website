@@ -14,7 +14,7 @@ function LoginScreen() {
     const { store } = useContext(GlobalStoreContext);
     const theme = useTheme();
 
-    const [email, setEmail] = useState("");
+    const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
     const style = {
@@ -30,8 +30,8 @@ function LoginScreen() {
         p: 4
     };
 
-    const handleEmailChange = function (event) {
-        setEmail(event.target.value);
+    const handleUsernameChange = function (event) {
+        setUsername(event.target.value);
     }
 
     const handlePassChange = function (event) {
@@ -40,8 +40,8 @@ function LoginScreen() {
 
     const onSubmit = function () {
         console.log("Login submit pressed...");
-        console.log("->", email, password);
-        store.login({email: email, password: password});
+        console.log("->", username, password);
+        store.login({username: username, password: password});
     }
 
     return (
@@ -66,9 +66,9 @@ function LoginScreen() {
             </Grid>
             <Grid item xs={12}>
                 <SmallTextField
-                    fieldName={"Email"}
-                    helperText={"Please enter your email."}
-                    onChange={handleEmailChange}
+                    fieldName={"Username"}
+                    helperText={"Please enter your username."}
+                    onChange={handleUsernameChange}
                     sx={{
                         width: "100%"
                     }}

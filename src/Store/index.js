@@ -148,9 +148,9 @@ function GlobalStoreContextProvider(props) {
     //AUTH related functions ------------------------------------
 
     store.login = async function(loginInfo) {
-        const { email, password } = loginInfo;
+        const { username, password } = loginInfo;
 
-        const response = await AuthAPI.loginUser(email, password);
+        const response = await AuthAPI.loginUser(username, password);
 
         if(response.status === 200) {
             console.log("Logged in!")
