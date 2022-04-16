@@ -285,6 +285,28 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
+    store.changeEmail = async function(newEmail) {
+        const response = await AuthAPI.changeEmail(newEmail);
+
+        if(response.status === 200) {
+            //Create modal to confirm success
+            store.createModal({
+                title: "Email change",
+                body: "Your email has been successfully changed!",
+                action: ""
+            });
+        }
+
+        else {
+            const errorMessage = response.data.error;
+            store.createModal({
+                title: "Error changing email",
+                body: errorMessage,
+                action: ""
+            });
+        }
+    }
+
 
     //Return the context provider
 

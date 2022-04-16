@@ -11,19 +11,29 @@ import { styled } from '@mui/material/styles';
 import SmallTextField from '../../../../../TextFields/SmallTextField';
 import SubmitButton from '../../../../../Buttons/SubmitButton';
 import types from '../../../../../../Common/Types';
+import { TrendingUpRounded } from '@mui/icons-material';
 
 export default function AccountSettings() {
     const { store } = useContext(GlobalStoreContext);
 
-    const [userName, setUserName] = useState("USERRRR");
+    const [username, setUsername] = useState("USERRRR");
     const [email, setEmail] = useState("OLD EMAIL");
 
-    function handleUserNameChange(event) {
-        setUserName(event.target.value);
+    function handleUsernameChange(event) {
+        setUsername(event.target.value);
     }
 
-    function handleSubmitUserName() {
-        console.log("Submitting the username:", userName);
+    function handleSubmitUsername() {
+        console.log("Submitting username change:", username);
+        const metadata = {
+            title: "Are you sure that you want to change your username to " + username + "?",
+            body: "Your new username must be used to log in from now on.",
+            action: "Yes, please change the username."
+        };
+
+        store.createModal(metadata, function () {
+            store.changeUsername(username);
+        }, true);
     }
 
     function handleEmailChange(event) {
@@ -44,8 +54,8 @@ export default function AccountSettings() {
         };
 
         store.createModal(metadata, function () {
-            console.log("Selected yes change it");
-        })
+            store.changeEmail(email);
+        }, true);
     }
 
     return (
@@ -60,15 +70,15 @@ export default function AccountSettings() {
                     <SmallTextField
                         fieldName={"Username"}
                         helperText={"Edit your username."}
-                        onChange={handleUserNameChange}
+                        onChange={handleUsernameChange}
                         sx={{
                             width: "100%"
                         }}
-                        defaultValue={userName}
+                        defaultValue={username}
                     />
                 </Grid>
                 <Grid item xs={12}>
-                    <SubmitButton text={"CHANGE USERNAME"} onClick={handleSubmitUserName} />
+                    <SubmitButton text={"CHANGE USERNAME"} onClick={handleSubmitUsername} />
                 </Grid>
                 <Grid item xs={12}>
                     <Typography variant="h6" sx={{marginTop: 5}}>Email:</Typography>
