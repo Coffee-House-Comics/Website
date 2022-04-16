@@ -15,11 +15,11 @@ const API = {
 };
 
 
-API.Auth.register = function (username, password, email, confirmPassord, displayName, bio) {
+API.Auth.register = function (username, password, email, confirmPassord, displayName) {
     /*
         method: POST,
         route: /auth/register
-        payload: { userName, passord, confirmPassord, email, displayName, bio }    
+        payload: { userName, passord, confirmPassord, email, displayName }    
     */
 
     return backend.post('/auth/register', {
@@ -28,7 +28,7 @@ API.Auth.register = function (username, password, email, confirmPassord, display
         email: email,
         confirmPassword: confirmPassord,
         displayName: displayName,
-        bio: bio
+        bio: ""
     });
 }
 
@@ -127,10 +127,39 @@ API.Auth.changeUserName = function (newUserName) {
     });
 }
 
-// unsubscribe(id) {
-//     method: DELETE,
-//         route: /comic/
-// }
+API.Auth.changeEmail = function (newEmail) {
+    /* Change Email ------------
+       method: put
+       route: /auth/changeEmail
+       Request body: {
+           newEmail: String
+       }
+   */
+    return backend.put('/auth/changeEmail', {
+        newEmail: newEmail,
+    });
+}
+
+API.Comic.explore = function () {
+    /* Explore Comics ------------
+       method: get
+       route: /comic/explore
+       Request body: {}
+   */
+    return backend.get('/comic/explore', {});
+}
+
+
+API.Story.explore = function () {
+    /* Explore Stories ------------
+       method: get
+       route: /story/explore
+       Request body: {}
+   */
+    return backend.get('/story/explore', {});
+}
+
+//
 
 export default API;
 
