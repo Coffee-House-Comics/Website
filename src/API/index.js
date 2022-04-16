@@ -149,6 +149,88 @@ API.Comic.explore = function () {
     return backend.get('/comic/explore', {});
 }
 
+API.Comic.search = function (searchCriteria) {
+    /* Search Comics ------------
+       method: get
+       route: /comic/search
+       Request body: {
+           searchCriteria: String[]
+       }
+   */
+    return backend.get('/comic/search', {
+        searchCriteria: searchCriteria
+    });
+}
+
+API.Comic.create = function (name, description) {
+    /* Create Comic ------------
+       method: post
+       route: /comic/create
+       Request body: {
+           name: String,
+           description: String
+       }
+   */
+    return backend.get('/comic/create', {
+        name: name,
+        description: description
+    });
+}
+
+API.Comic.viewUnpublished = function (id) {
+    /* View Unpublished Comics ------------
+       method: get
+       route: /comic/unpublished/${id}
+       Request body: {}
+   */
+    return backend.get(`/comic/unpublished/${id}`, {});
+}
+
+API.Comic.saveContent = function (id, pages) {
+    /* Save Comic Content ------------
+       method: put
+       route: /comic/content/save/${id}
+       Request body: {
+           pages: JSON[]
+       }
+   */
+    return backend.put(`/comic/content/save/${id}`, {
+        pages: pages
+    });
+}
+
+API.Comic.saveSticker = function (sticker) {
+    /* Save Sticker ------------
+       method: post
+       route: /comic/content/saveSticker
+       Request body: {
+           sticker: JSON
+       }
+   */
+    return backend.post(`/comic/content/saveSticker`, {
+        sticker: sticker
+    });
+}
+
+API.Comic.editMetadata = function (id, name, description, coverPhoto, series) {
+    /* Edit Comic Metadata------------
+       method: put
+       route: /comic/metadata/update/${id}
+       Request body: {
+           name: String,
+           description: String,
+           coverPhoto: String,
+           series: String
+       }
+   */
+    return backend.put(`/comic/metadata/update/${id}`, {
+        name: name,
+        description: description,
+        coverPhoto: coverPhoto,
+        series: series
+    });
+}
+
 
 API.Story.explore = function () {
     /* Explore Stories ------------
@@ -159,6 +241,75 @@ API.Story.explore = function () {
     return backend.get('/story/explore', {});
 }
 
+API.Story.search = function (searchCriteria) {
+    /* Search Stories ------------
+       method: get
+       route: /story/search
+       Request body: {
+           searchCriteria: String[]
+       }
+   */
+    return backend.get('/story/search', {
+        searchCriteria: searchCriteria
+    });
+}
+
+API.Story.create = function (name, description) {
+    /* Create Story ------------
+       method: post
+       route: /story/create
+       Request body: {
+           name: String,
+           description: String
+       }
+   */
+    return backend.get('/story/create', {
+        name: name,
+        description: description
+    });
+}
+
+API.Story.viewUnpublished = function (id) {
+    /* View Unpublished Stories ------------
+       method: get
+       route: /story/unpublished/{:id}
+       Request body: {}
+   */
+    return backend.get(`/story/unpublished/${id}`, {});
+}
+
+API.Story.saveContent = function (id, pages, ReactFlowJSON) {
+    /* Save Story Content ------------
+       method: put
+       route: /story/content/save/${id}
+       Request body: {
+           pages: JSON[]
+       }
+   */
+    return backend.put(`/story/content/save/${id}`, {
+        pages: pages,
+        ReactFlowJSON: ReactFlowJSON
+    });
+}
+
+API.Story.editMetadata = function (id, name, description, coverPhoto, series) {
+    /* Edit Story Metadata------------
+       method: put
+       route: /story/metadata/update/${id}
+       Request body: {
+           name: String,
+           description: String,
+           coverPhoto: String,
+           series: String
+       }
+   */
+    return backend.put(`/story/metadata/update/${id}`, {
+        name: name,
+        description: description,
+        coverPhoto: coverPhoto,
+        series: series
+    });
+}
 //
 
 export default API;
