@@ -15,20 +15,20 @@ const API = {
 };
 
 
-API.Auth.register = function (username, pass, email, confirmPass, displayName) {
+API.Auth.register = function (username, password, email, confirmPassord, displayName, bio) {
     /*
         method: POST,
         route: /auth/register
-        payload: { userName, pass, confirmPass }    
+        payload: { userName, passord, confirmPassord, email, displayName, bio }    
     */
 
     return backend.post('/auth/register', {
         userName: username,
-        password: pass,
+        password: password,
         email: email,
-        confirmPassword: confirmPass,
+        confirmPassword: confirmPassord,
         displayName: displayName,
-        bio: "This User prefers to keep things mysterious..."
+        bio: bio
     });
 }
 
@@ -37,25 +37,29 @@ API.Auth.loginUser = function (username, password) {
         method: POST
         route: /auth/login
         Request body: {
-            userName: String
+            username: String
             password: String
         }
     */
     return backend.post('/auth/login', {
         userName: username,
-        password: password
+        password: password,
     });
 }
 
-API.Auth.forgotPassword = function (userName, email) {
+API.Auth.forgotPassword = function (username, email) {
     /* 
         method: post
         route: /auth/forgotPassword
         Request body: {
-            userName: String,
+            username: String,
             email: String 
         }
     */
+    return backend.post('/auth/forgotPassword', {
+        userName: username,
+        email: email,
+    });
 }
 
 API.Auth.logoutUser = function () {
@@ -64,14 +68,16 @@ API.Auth.logoutUser = function () {
         route: /auth/logout
         Request body: {}
     */
+    return backend.post('/auth/logout', {});
 }
 
-API.Auth.confirmCode = function () {
+API.Auth.confirmCode = function (id) {
     /* 
         method: get
         route: /auth/confirmCode/${id}
         Request body: {}
     */
+    return backend.get(`auth/confirmCode/${id}`)
 }
 
 API.Auth.updateProfile = function (image, displayName, bio) {
@@ -84,6 +90,11 @@ API.Auth.updateProfile = function (image, displayName, bio) {
             bio: String,
         }
     */
+    return backend.put('/auth/updateProfile', {
+        image: image,
+        displayName: displayName,
+        bio: bio
+    });
 }
 
 API.Auth.changePassword = function (oldpass, newpass, confirmnewpass) {
@@ -96,6 +107,11 @@ API.Auth.changePassword = function (oldpass, newpass, confirmnewpass) {
             confirmNewPassword: String,
         }
     */
+    return backend.put('/auth/changePassword', {
+        oldPassword: oldpass,
+        newPassword: newpass,
+        confirmNewPassword: confirmnewpass
+    });
 }
 
 API.Auth.changeUserName = function (newUserName) {
@@ -106,16 +122,9 @@ API.Auth.changeUserName = function (newUserName) {
             newUserName: String
         }
     */
-}
-
-API.Auth.changeEmail = function (newEmail) {
-     /* Chnage Email ------------
-        method: put
-        route: /auth/changeEmail
-        Request body: {
-            newEmail: String
-        }
-    */
+    return backend.put('/auth/changePassword', {
+        newUserName: newUserName,
+    });
 }
 
 // unsubscribe(id) {
