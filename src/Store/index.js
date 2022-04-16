@@ -99,7 +99,7 @@ function GlobalStoreContextProvider(props) {
     store.reRoute = function (fullRoute) {
         console.log("Store reroute:", fullRoute);
         if (fullRoute)
-            navigate(fullRoute, { replace: true });
+            navigate(fullRoute);
     }
 
     store.newContent = function () {
@@ -173,7 +173,7 @@ function GlobalStoreContextProvider(props) {
     store.logout = async function() {
         const response = await AuthAPI.logoutUser();
 
-        if(response.status == 200) {
+        if(response.status === 200) {
             storeReducer({
                 type: GlobalStoreActionType.LOGOUT_USER,
                 payload: null
@@ -197,7 +197,7 @@ function GlobalStoreContextProvider(props) {
 
         const response = await AuthAPI.register(username, password, email, confirmPass, displayName);
 
-        if(response.status == 200) {
+        if(response.status === 200) {
             //User is not logged in until they confirm email
             store.reRoute(types.TabType.DEFAULT.fullRoute);
         }
@@ -217,7 +217,7 @@ function GlobalStoreContextProvider(props) {
 
         const response = await AuthAPI.forgotPassword(username, email);
 
-        if(response.status == 200) {
+        if(response.status === 200) {
             //Create modal to confirm success
             store.createModal({
                 title: "Password reset successfully",
@@ -241,7 +241,7 @@ function GlobalStoreContextProvider(props) {
         //Provide new username to request
         const response = await AuthAPI.changeUsername(newUsername);
 
-        if(response.status == 200) {
+        if(response.status === 200) {
             //Create modal to confirm success
             store.createModal({
                 title: "Username change",
@@ -264,7 +264,7 @@ function GlobalStoreContextProvider(props) {
 
         const response = await AuthAPI.changePassword(oldPassword, newPassword, confirmNewPass);
 
-        if(response.status == 200) {
+        if(response.status === 200) {
             //Create modal to confirm success
             store.createModal({
                 title: "Password change",
