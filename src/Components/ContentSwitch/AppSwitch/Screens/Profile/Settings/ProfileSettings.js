@@ -28,7 +28,7 @@ export default function ProfileSettings(props) {
         const metadata = {
             title: "Are you sure that you want to change your display name to " + displayName + "?",
             body: "Your new display name will be shown for your account.",
-            action: "Yes, please change the display name."
+            action: "Yes"
         };
 
         store.createModal(metadata, function () {
