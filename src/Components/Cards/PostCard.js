@@ -80,13 +80,13 @@ export default function PostCard(props) {
             <AuthorButton onClick={handleAuthorClick} author={post.author} />
         </Grid>
 
-    const bookmarkButton =
+    const bookmarkButton = store.isLoggedIn?
         <IconButton onClick={handleBookmarkClick} aria-label="bookmark" size="small">
             {(isBookmarked)
                 ? <BookmarkIcon fontSize="small" />
                 : <BookmarkBorderIcon fontSize="small" />
             }
-        </IconButton>
+        </IconButton>:<div></div>
 
     const buttonPanel =
         <Grid container direction="column" justifyContent="space-between" alignItems="flex-end" height="100%">

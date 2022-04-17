@@ -1,4 +1,5 @@
-import {useState, React} from 'react'
+import {useState} from 'react'
+import React from 'react'
 import ArrowUpwardOutlinedIcon from '@mui/icons-material/ArrowUpwardOutlined';
 import ArrowDownwardOutlinedIcon from '@mui/icons-material/ArrowDownwardOutlined';
 import UpArrowIcon from '../Icons/UpArrowIcon';
@@ -6,6 +7,7 @@ import DownArrowIcon from '../Icons/DownArrowIcon';
 import { Grid, IconButton, Typography } from '@mui/material';
 import BeansIcon from '../Icons/BeansIcon';
 import { Theme } from '../../Common/Theme';
+import { GlobalStoreContext } from '../../Store';
 
 
 /**
@@ -18,7 +20,9 @@ import { Theme } from '../../Common/Theme';
 export default function BeansButtonPanel(props) {
 
     const [vote, setVote] = useState(props.currentVote);
-    const [beans, setBeans] = useState(props.numBeans)
+    const [beans, setBeans] = useState(props.numBeans);
+    const { store } = React.useContext(GlobalStoreContext);
+
 
 
     let upIcon = (vote == 1) ? <UpArrowIcon style={{filter: Theme.palette.green.filter, overflow: "visible"}} fontSize="small" /> : <UpArrowIcon fontSize="small" sx={{overflow: "visible"}}/>
@@ -66,6 +70,7 @@ export default function BeansButtonPanel(props) {
         props.onDownvote();
     }
     return (
+        store.isLoggedIn?
         <Grid container direction="row" justifyContent="center" alignItems="center" wrap="nowrap" width="max-content">
                 <IconButton onClick={handleUpvoteClick} sx={{ marginInline: -1 }}>
                     {upIcon}
@@ -80,6 +85,6 @@ export default function BeansButtonPanel(props) {
                 <IconButton onClick={handleDownvoteClick} sx={{ marginInline:-1}}>
                     {downIcon}
                 </IconButton>
-        </Grid>
+        </Grid>:<div></div>
     )
 }

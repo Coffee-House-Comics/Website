@@ -1,15 +1,20 @@
-import { TextField, Box, Typography, Grid } from '@mui/material';
+import { TextField, Box, Typography, Grid} from '@mui/material';
 import React from 'react';
+import { GlobalStoreContext } from '../../Store';
 import SubmitButton from '../Buttons/SubmitButton';
 
 
-export default function CommentCard() {
+export default function AddCommentCard() {
 
   const addComment = function () {
     console.log("Add Comment");
   }
 
+  const { store } = React.useContext(GlobalStoreContext);
+
+
   return (
+    store.isLoggedIn?
     <Grid container direction="column" justifyContent="flex-start" alignItems="stretch" width="100%">
       <Grid item xs="auto">
         <Typography variant="h5" sx={{ mt: 1 }}>Add Comments:</Typography>
@@ -30,6 +35,6 @@ export default function CommentCard() {
           </Grid>
         </Grid>
       </Grid>
-    </Grid>
+    </Grid>:<div></div>
   )
 }
