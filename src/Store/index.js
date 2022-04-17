@@ -12,7 +12,9 @@ const GlobalStoreActionType = {
     LOGIN_USER: "LOGIN_USER",
     LOGOUT_USER: "LOGOUT_USER",
     CHANGE_MODAL: "CHANGE_MODAL",
-    CHANGE_APP: "CHANGE_APP"
+    CHANGE_APP: "CHANGE_APP",
+    TOGGLE_LOADING: "TOGGLE_LOADING",
+    UPDATE_USER: "UPDATE_USER"
 }
 
 // Setting up the Global Store
@@ -24,7 +26,8 @@ function GlobalStoreContextProvider(props) {
         app: "Comics",
         user: null,
         isLoggedIn: false,
-        modal: null
+        modal: null,
+        loading: false
     });
 
     const storeReducer = (action) => {
@@ -36,7 +39,8 @@ function GlobalStoreContextProvider(props) {
                     app: store.app,
                     user: payload,
                     isLoggedIn: true,
-                    modal: null
+                    modal: null,
+                    loading: store.loading
                 });
             }
 
@@ -45,7 +49,8 @@ function GlobalStoreContextProvider(props) {
                     app: store.app,
                     user: null,
                     isLoggedIn: false,
-                    modal: null
+                    modal: null,
+                    loading: store.loading
                 })
             }
 
@@ -54,7 +59,8 @@ function GlobalStoreContextProvider(props) {
                     app: (store.app === "Comics") ? "Stories" : "Comics",
                     user: store.user,
                     isLoggedIn: store.isLoggedIn,
-                    modal: null
+                    modal: null,
+                    loading: store.loading
                 });
             }
 
@@ -64,7 +70,28 @@ function GlobalStoreContextProvider(props) {
                     app: store.app,
                     user: store.user,
                     isLoggedIn: store.isLoggedIn,
-                    modal: payload
+                    modal: payload,
+                    loading: store.loading
+                });
+            }
+
+            case GlobalStoreActionType.TOGGLE_LOADING: {
+                return setStore({
+                    app: store.app,
+                    user: store.user,
+                    isLoggedIn: store.isLoggedIn,
+                    modal: store.modal,
+                    loading: !store.loading
+                });
+            }
+
+            case GlobalStoreActionType.UPDATE_USER: {
+                return setStore({
+                    app: store.app,
+                    user: payload,
+                    isLoggedIn: store.isLoggedIn,
+                    modal: store.modal,
+                    loading: store.loading
                 });
             }
 
@@ -177,6 +204,63 @@ function GlobalStoreContextProvider(props) {
                 type: GlobalStoreActionType.CHANGE_MODAL,
                 payload: null
             });
+    }
+
+    store.toggleLoading = function () {
+            storeReducer({
+                type: GlobalStoreActionType.TOGGLE_LOADING,
+            });
+    }
+
+    store.changeDisplayName = async function (newDisplayName) {
+        try {
+            const response = await AuthAPI.updateProfile(store.user.profileImage, newDisplayName, store.user.bio)
+
+            if (response.status === 200) {
+                try {
+                    const response2 = await AuthAPI.getProfile(store.user.id)
+
+                    if (response2.status === 200) 
+                        store.updateUser(response2.data);
+                    return;
+                }
+                catch (err) {
+                    /* Do nothing - pass error down */
+                }
+            }
+        }
+        catch (err) {
+            /* Do nothing - pass error down */
+        }
+    }
+
+    store.changeBio = async function (newBio) {
+        try {
+            const response = await AuthAPI.updateProfile(store.user.profileImage, store.user.displayName, newBio)
+
+            if (response.status === 200) {
+                try {
+                    const response2 = await AuthAPI.getProfile(store.user.id)
+
+                    if (response2.status === 200) 
+                        store.updateUser(response2.data);
+                    return;
+                }
+                catch (err) {
+                    /* Do nothing - pass error down */
+                }
+            }
+        }
+        catch (err) {
+            /* Do nothing - pass error down */
+        }
+    }
+
+    store.updateUser = function (newUser) {
+        storeReducer({
+            type: GlobalStoreActionType.UPDATE_USER,
+            payload: newUser
+        });
     }
 
     store.getMyId = function () {

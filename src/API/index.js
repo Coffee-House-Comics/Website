@@ -5,7 +5,7 @@ import axios from 'axios'
 axios.defaults.withCredentials = true;
 
 const backend = axios.create({
-    baseURL: 'https://coffeehousecomics.com',
+    baseURL: 'http://localhost:3000',
 })
 
 const API = {
@@ -502,6 +502,15 @@ API.Comic.unsubscribe = function (id) {
     return backend.delete(`/comic/subscribe/user/${id}`, {});
 }
 
+API.Comic.getProfile = function (id) {
+    /* get Comic creator profile------------
+       method: get
+       route: /comic/profile/${id}
+       Request body: {}
+   */
+    return backend.get(`/comic/profile/${id}`, {});
+}
+
 API.Story.explore = function () {
     /* Explore Stories ------------
        method: get
@@ -835,6 +844,15 @@ API.Story.unsubscribe = function (id) {
        Request body: {}
    */
     return backend.delete(`/story/subscribe/user/${id}`, {});
+}
+
+API.Story.getProfile = function (id) {
+    /* get Story creator profile------------
+       method: get
+       route: /story/profile/${id}
+       Request body: {}
+   */
+    return backend.get(`/story/profile/${id}`, {});
 }
 
 //

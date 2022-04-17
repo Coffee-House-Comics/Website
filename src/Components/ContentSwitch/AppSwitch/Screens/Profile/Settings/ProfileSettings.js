@@ -15,9 +15,9 @@ import types from '../../../../../../Common/Types';
 export default function ProfileSettings(props) { 
     const { store } = useContext(GlobalStoreContext);
 
-    const [imageURI, setImageURI] = useState("/Images/krtek2.png");
-    const [displayName, setDisplayName] = useState("Display nameee");
-    const [bio, setBio] = useState("My Default Bio...");
+    const [imageURI, setImageURI] = useState(store.user.profileImage);
+    const [displayName, setDisplayName] = useState(store.user.displayName);
+    const [bio, setBio] = useState(store.user.bio);
 
     const handleChangeDisplayName = function (event) {
         setDisplayName(event.target.value);
@@ -25,6 +25,7 @@ export default function ProfileSettings(props) {
 
     const handleSubmitDisplayName = function () {
         console.log("Trying to submit new display name...");
+        store.changeDisplayName(displayName);
     };
 
     const handleChangeBio = function (event) {
@@ -33,6 +34,7 @@ export default function ProfileSettings(props) {
 
     const handleSubmitBio = function () {
         console.log("Trying to submit new bio...");
+        store.changeBio(bio);
     };
 
     const readURI = function (e) {
