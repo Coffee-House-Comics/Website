@@ -290,7 +290,9 @@ function GlobalStoreContextProvider(props) {
         const { username, password } = loginInfo;
 
         try {
+            store.toggleLoading()
             const response = await AuthAPI.loginUser(username, password);
+            store.toggleLoading()
 
             if (response.status === 200) {
                 console.log("Logged in with user:", response.data, response.data.id);
@@ -318,7 +320,9 @@ function GlobalStoreContextProvider(props) {
     store.logout = async function () {
 
         try {
+            store.toggleLoading()
             const response = await AuthAPI.logoutUser();
+            store.toggleLoading()
 
             if (response.status === 200) {
                 storeReducer({
@@ -346,8 +350,9 @@ function GlobalStoreContextProvider(props) {
         const displayName = firstName + " " + lastName;
 
         try {
+            store.toggleLoading()
             const response = await AuthAPI.register(username, password, email, confirmPass, displayName);
-
+            store.toggleLoading()
             if (response.status === 200) {
                 //User is not logged in until they confirm email
                 console.log("Registering a success");
