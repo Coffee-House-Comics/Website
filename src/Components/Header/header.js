@@ -1,5 +1,4 @@
 import { useState, useContext } from 'react'
-import { GlobalStoreContext } from '../../Store'
 import { useTheme } from '@mui/material/styles'
 import types from '../../Common/Types'
 import {
@@ -9,6 +8,8 @@ import {
 import MenuIcon from '@mui/icons-material/Menu';
 import CHCIcon from '../Icons/CHCIcon';
 import SearchIcon from '@mui/icons-material/Search';
+import { GlobalStoreContext } from '../../Store';
+
 
 function Header(props) {
 
@@ -26,7 +27,7 @@ function Header(props) {
     // In the case of being logged in or not
     if (store.isLoggedIn === false) {
         pages = [appTabs.children.EXPLORE, appTabs.children.SUBSCRIPTIONS]; // TODO: Remove subscriptions
-        settings = [appTabs.children.PROFILE, authTabs.children.REGISTER, authTabs.children.LOGIN];
+        settings = [authTabs.children.REGISTER, authTabs.children.LOGIN];
     }
     else {
         pages = [appTabs.children.EXPLORE, appTabs.children.SUBSCRIPTIONS];
@@ -147,7 +148,7 @@ function Header(props) {
                     settings.map((setting) => (
                         <MenuItem key={setting.name} onClick={() => handleCloseUserMenu(setting.fullRoute)}>
                             <Typography textAlign="center" sx={{ color: theme.palette.olive_drab_7.main }}>
-                                {setting.name}
+                                {setting.name} 
                             </Typography>
                         </MenuItem>)
                     )

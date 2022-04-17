@@ -29,7 +29,7 @@ const CssTextField = styled(TextField)({
 
 export default function smallTextField(props) {
 
-    const { fieldName, helperText, onChange, sx, defaultValue } = props;
+    const { fieldName, helperText, onChange, sx, defaultValue, type } = props;
 
     return (
         <CssTextField
@@ -38,6 +38,7 @@ export default function smallTextField(props) {
             onChange={onChange}
             defaultValue={defaultValue}
             sx={sx}
+            type={type!=null?type:"text"}
         ></CssTextField>
     );
 }

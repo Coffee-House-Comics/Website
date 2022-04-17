@@ -72,7 +72,7 @@ types.TabType = {
                 fullRoute: "/app/edit/:id"
             },
             PROFILE: {
-                name: "Profile",
+                name: "2",
                 route: "profile/:id",
                 fullRoute: "/app/profile/:id",
             },

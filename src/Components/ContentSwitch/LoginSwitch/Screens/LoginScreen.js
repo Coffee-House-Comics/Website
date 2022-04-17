@@ -79,6 +79,7 @@ function LoginScreen() {
                     fieldName={"Password"}
                     helperText={"Please enter your password."}
                     onChange={handlePassChange}
+                    type="password"
                     sx={{
                         width: "100%"
                     }}

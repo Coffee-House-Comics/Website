@@ -137,6 +137,7 @@ function RegisterScreen() {
                     fieldName={"Password"}
                     helperText={"Please enter your password."}
                     onChange={handlePassChange}
+                    type="password"
                     sx={{
                         width: "100%"
                     }}
@@ -147,6 +148,7 @@ function RegisterScreen() {
                     fieldName={"Confirm Password"}
                     helperText={"Please re-enter your password."}
                     onChange={handleConfirmPassChange}
+                    type="password"
                     sx={{
                         width: "100%"
                     }}
