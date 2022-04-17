@@ -231,6 +231,49 @@ API.Comic.editMetadata = function (id, name, description, coverPhoto, series) {
     });
 }
 
+API.Comic.publish = function (id, series) {
+    /* Publish Comic ------------
+       method: post
+       route: /comic/publish/${id}
+       Request body: {
+           series: String
+       }
+   */
+    return backend.post(`/comic/publish/${id}`, {
+        series: series
+    });
+}
+
+API.Comic.toggleForum = function () {
+    /* Toggle Comic Forum------------
+       method: post
+       route: /comic/user/toggleForum
+       Request body: {}
+   */
+    return backend.post(`/comic/user/toggleForum`, {});
+}
+
+API.Comic.delete = function (id) {
+    /* Delete Comic------------
+       method: delete
+       route: /comic/${id}
+       Request body: {}
+   */
+    return backend.delete(`/comic/${id}`, {});
+}
+
+API.Comic.deleteSticker = function (sticker) {
+    /* Delete Sticker------------
+       method: delete
+       route: /comic/sticker
+       Request body: {
+           sticker: JSON
+       }
+   */
+    return backend.delete(`/comic/sticker`, {
+        sticker: sticker
+    });
+}
 
 API.Story.explore = function () {
     /* Explore Stories ------------
@@ -309,6 +352,37 @@ API.Story.editMetadata = function (id, name, description, coverPhoto, series) {
         coverPhoto: coverPhoto,
         series: series
     });
+}
+
+API.Story.publish = function (id, series) {
+    /* Publish Story ------------
+       method: post
+       route: /story/publish/${id}
+       Request body: {
+           series: String
+       }
+   */
+    return backend.post(`/story/publish/${id}`, {
+        series: series
+    });
+}
+
+API.Story.toggleForum = function () {
+    /* Toggle Story Forum------------
+       method: post
+       route: /story/user/toggleForum
+       Request body: {}
+   */
+    return backend.post(`/story/user/toggleForum`, {});
+}
+
+API.Story.delete = function (id) {
+    /* Delete Story------------
+       method: delete
+       route: /story/${id}
+       Request body: {}
+   */
+    return backend.delete(`/story/${id}`, {});
 }
 //
 
