@@ -11,11 +11,10 @@ import { styled } from '@mui/material/styles';
 import SmallTextField from '../../../../../TextFields/SmallTextField';
 import SubmitButton from '../../../../../Buttons/SubmitButton';
 import types from '../../../../../../Common/Types';
+import Utils from '../../../../../../Utils';
 
 export default function ProfileSettings(props) { 
     const { store } = useContext(GlobalStoreContext);
-
-    const [imageURI, setImageURI] = useState(store.user.profileImage);
     const [displayName, setDisplayName] = useState(store.user.displayName);
     const [bio, setBio] = useState(store.user.bio);
 
@@ -57,25 +56,18 @@ export default function ProfileSettings(props) {
         });
     };
 
-    const readURI = function (e) {
-        if (e.target.files && e.target.files[0]) {
-            let reader = new FileReader();
-            reader.onload = function (ev) {
-                setImageURI(ev.target.result);
-            }.bind(this);
-            reader.readAsDataURL(e.target.files[0]);
+
+    const handleUploadImage = async function (e) {
+        const response = await Utils.uploadFileFromInput(e);
+        if(response.status === 200){
+            store.changeProfileImage(response.data.imageURL);
         }
-    }
-
-    const handleUploadImage = function (e) {
-        readURI(e);
-
     }
 
     const buildImage = function () {
         let imgTag = null;
-        if (imageURI !== null)
-            imgTag = <img className="thumbnail" src={imageURI}></img>
+        if (store.user.profileImage !== null)
+            imgTag = <img className="thumbnail" src={store.user.profileImage}></img>
         return imgTag;
     };
 
