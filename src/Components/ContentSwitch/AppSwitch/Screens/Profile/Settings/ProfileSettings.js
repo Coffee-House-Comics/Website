@@ -15,8 +15,6 @@ import Utils from '../../../../../../Utils';
 
 export default function ProfileSettings(props) { 
     const { store } = useContext(GlobalStoreContext);
-
-    const [imageURI, setImageURI] = useState(store.user.profileImage);
     const [displayName, setDisplayName] = useState(store.user.displayName);
     const [bio, setBio] = useState(store.user.bio);
 
@@ -68,8 +66,8 @@ export default function ProfileSettings(props) {
 
     const buildImage = function () {
         let imgTag = null;
-        if (imageURI !== null)
-            imgTag = <img className="thumbnail" src={imageURI}></img>
+        if (store.user.profileImage !== null)
+            imgTag = <img className="thumbnail" src={store.user.profileImage}></img>
         return imgTag;
     };
 
