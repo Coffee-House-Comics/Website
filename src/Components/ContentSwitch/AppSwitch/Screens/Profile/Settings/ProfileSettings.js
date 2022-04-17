@@ -25,7 +25,16 @@ export default function ProfileSettings(props) {
 
     const handleSubmitDisplayName = function () {
         console.log("Trying to submit new display name...");
-        store.changeDisplayName(displayName);
+
+        const metadata = {
+            title: "Are you sure that you want to change your display name to " + displayName + "?",
+            body: "Your new display name will be shown for your account.",
+            action: "Yes, please change the display name."
+        };
+
+        store.createModal(metadata, function () {
+            store.changeDisplayName(displayName);
+        }, true);
     };
 
     const handleChangeBio = function (event) {
@@ -34,7 +43,16 @@ export default function ProfileSettings(props) {
 
     const handleSubmitBio = function () {
         console.log("Trying to submit new bio...");
-        store.changeBio(bio);
+
+        const metadata = {
+            title: "Are you sure that you want to change your bio?",
+            body: "Your new bio will be shown for your account.",
+            action: "Yes, please change the bio."
+        };
+
+        store.createModal(metadata, function () {
+            store.changeBio(bio);
+        }, true);
     };
 
     const readURI = function (e) {
@@ -93,7 +111,7 @@ export default function ProfileSettings(props) {
                     />
                 </Grid>
                 <Grid item xs={12}>
-                    <Typography variant="h6" sx={{marginTop: 3}}>Username:</Typography>
+                    <Typography variant="h6" sx={{marginTop: 3}}>Display Name:</Typography>
                 </Grid>
                 <Grid item xs={12}>
                     <SmallTextField
