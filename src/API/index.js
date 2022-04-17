@@ -415,6 +415,39 @@ API.Comic.deleteCommentOnForumPost = function (id, forumPostId, forumOwnerId) {
     });
 }
 
+API.Comic.viewProfile = function (id) {
+    /* View Comic Profile------------
+       method: get
+       route: /comic/profile/${id}
+       Request body: {}
+   */
+    return backend.get(`/comic/profile/${id}`, {});
+}
+
+API.Comic.subscribe = function (id) {
+    /* Subscribe to Comic creator------------
+       method: post
+       route: /comic/subscribe/user/${id}
+       Request body: {}
+   */
+    return backend.post(`/comic/subscribe/user/${id}`, {});
+}
+
+API.Comic.createForumPost = function (id, title, body) {
+    /* Create Comic Forum Post------------
+       method: post
+       route: /comic/forumPost/${id}
+       Request body: {
+           title: String,
+           body: String
+       }
+   */
+    return backend.post(`/comic/forumPost/${id}`, {
+        title: title,
+        body: body
+    });
+}
+
 API.Story.explore = function () {
     /* Explore Stories ------------
        method: get
@@ -661,6 +694,39 @@ API.Story.deleteCommentOnForumPost = function (id, forumPostId, forumOwnerId) {
     return backend.delete(`/story/forumPost/comment/${id}`, {
         forumPostId: forumPostId,
         forumOwnerId: forumOwnerId
+    });
+}
+
+API.Story.viewProfile = function (id) {
+    /* View Story Profile------------
+       method: get
+       route: /story/profile/${id}
+       Request body: {}
+   */
+    return backend.get(`/story/profile/${id}`, {});
+}
+
+API.Story.subscribe = function (id) {
+    /* Subscribe to Story creator------------
+       method: post
+       route: /story/subscribe/user/${id}
+       Request body: {}
+   */
+    return backend.post(`/story/subscribe/user/${id}`, {});
+}
+
+API.Story.createForumPost = function (id, title, body) {
+    /* Create Story Forum Post------------
+       method: post
+       route: /story/forumPost/${id}
+       Request body: {
+           title: String,
+           body: String
+       }
+   */
+    return backend.post(`/story/forumPost/${id}`, {
+        title: title,
+        body: body
     });
 }
 //
