@@ -6,6 +6,7 @@ import Saved from './Saved';
 import ProfileContent from './ProfileContent';
 import Settings from './Settings';
 import ProfileCard from '../../../../Cards/ProfileCard';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
     Typography,
     Grid,
@@ -36,6 +37,19 @@ function ProfileRouter() {
         loadHelper(id);
     }, []);
 
+    const location = useLocation()
+    useEffect(() => {
+        console.log("Fetching the user with id:", id);
+
+        async function loadHelper(id) {
+            const fetchedUser = await store.fetchProfile(id);
+            console.log("Fetched User:", fetchedUser);
+            setUser(fetchedUser);
+        }
+
+        loadHelper(id);
+    }, [location])
+
     console.log("Curent user being viewed:", user);
 
     const PROFILE_TABS = {
@@ -50,16 +64,16 @@ function ProfileRouter() {
     if (user === null)
         return mutateText("Loading Profile...");
 
-    if(store.user) {
+    if (store.user) {
         console.log("IDS:", user.id, store.user.id);
         isMyProfile = user.id === store.user.id;
     }
-        
+
     console.log("isMyProfile:", isMyProfile);
 
     function changeTab(tab) {
         console.log("Changing to..:", tab);
-        
+
         // Not allow restricted tab actions
         if (!isMyProfile && tab === PROFILE_TABS.SETTINGS) {
             return;
@@ -68,7 +82,7 @@ function ProfileRouter() {
         if (!isMyProfile && tab === PROFILE_TABS.SAVED) {
             return;
         }
-        
+
         setProfileTab(tab);
     }
 
@@ -115,7 +129,7 @@ function ProfileRouter() {
                 justifyContent: "center",
                 alignItems: "center"
             }}>
-                <ProfileCard user={user} isMyProfile={isMyProfile}/>
+                <ProfileCard user={user} isMyProfile={isMyProfile} />
             </Box>
             <Box sx={{
                 // bgcolor: theme.palette.fuzzy_wuzzy.main,
@@ -152,14 +166,14 @@ function ProfileRouter() {
                             sx={{
                                 ...backgroundCSS(PROFILE_TABS.SAVED),
                             }}>
-                            {(isMyProfile)? mutateText("Saved"): ""}
+                            {(isMyProfile) ? mutateText("Saved") : ""}
                         </Grid>
                         <Grid item xs={2}
                             onClick={() => changeTab(PROFILE_TABS.SETTINGS)}
                             sx={{
                                 ...backgroundCSS(PROFILE_TABS.SETTINGS),
                             }}>
-                            {(isMyProfile)? mutateText("Settings") : ""}
+                            {(isMyProfile) ? mutateText("Settings") : ""}
                         </Grid>
                         <Grid item xs={3} sx={{
                             borderBottom: lineCss,
