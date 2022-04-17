@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import types from '../Common/Types';
 
 import API from '../API';
@@ -73,11 +73,35 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
-    const ref = useRef(store);
-
     // Auxilliary Information
 
     const navigate = useNavigate();
+    // const location = useLocation();
+
+    const usePrevious = (value) => {
+        const ref = useRef();
+        useEffect(() => { ref.current = value });
+
+        return ref.current
+    }
+
+    const useLocationChange = (action) => {
+        const location = useLocation()
+        const prevLocation = usePrevious(location)
+        useEffect(() => {
+            action(location, prevLocation)
+        }, [location])
+    }
+
+    useLocationChange((location, prevLocation) => {
+        if (!prevLocation || !location)
+            return;
+
+        console.log('changed from', prevLocation.pathname, 'to', location.pathname)
+
+        if (location.pathname !== prevLocation.pathname)
+            store.reRoute(location.pathname);
+    })
 
     // Store functions
     store.switchAppMode = function () {
@@ -105,8 +129,10 @@ function GlobalStoreContextProvider(props) {
             fullRoute = modifiedRoute;
         }
 
-        if (fullRoute)
+        if (fullRoute) {
+            console.log("Navigating to ");
             navigate(fullRoute);
+        }
     }
 
     store.newContent = function () {
@@ -165,12 +191,18 @@ function GlobalStoreContextProvider(props) {
     //AUTH related functions ------------------------------------
 
     // Once the state logged in stuff is complete - run this code
-    useEffect(function () {
-        console.log("Logged in...");
-        store.reRoute(types.TabType.APP.children.EXPLORE.fullRoute);
-    }, [store.isLoggedIn]);
+    // useEffect(function () {
+    //     if (store.isLoggedIn === true) {
+    //         console.log("Logged in...");
+    //         store.reRoute(types.TabType.APP.children.EXPLORE.fullRoute);
+    //     }
+    //     else {
+    //         console.log("Logging out...");
+    //     }
+    // }, [store.isLoggedIn]);
 
     store.login = async function (loginInfo) {
+        console.log("Store login function...");
         const { username, password } = loginInfo;
 
         try {
@@ -183,6 +215,7 @@ function GlobalStoreContextProvider(props) {
                     // Set the whole user TODO: maybe reduce to id???
                     payload: response.data
                 });
+                store.reRoute(types.TabType.APP.children.EXPLORE.fullRoute);
                 return;
             }
         }
@@ -360,7 +393,7 @@ function GlobalStoreContextProvider(props) {
         });
     }
 
-    store.fetchProfile = async function(id) {
+    store.fetchProfile = async function (id) {
         try {
             const response = await API.Comic.viewProfile(id);
 
@@ -370,7 +403,7 @@ function GlobalStoreContextProvider(props) {
                 return response.data;
             }
         }
-        catch(err) { }
+        catch (err) { }
 
         // Give this default title
         return ({
