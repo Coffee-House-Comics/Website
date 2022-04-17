@@ -13,10 +13,15 @@ import SubmitButton from '../../../../../Buttons/SubmitButton';
 import types from '../../../../../../Common/Types';
 import Utils from '../../../../../../Utils';
 
-export default function ProfileSettings(props) { 
+export default function ProfileSettings(props) {
     const { store } = useContext(GlobalStoreContext);
     const [displayName, setDisplayName] = useState(store.user.displayName);
     const [bio, setBio] = useState(store.user.bio);
+
+    const triggerChange = function () {
+        store.reRoute(types.TabType.APP.children.PROFILE.fullRoute, store.user.id);
+    }
+
 
     const handleChangeDisplayName = function (event) {
         setDisplayName(event.target.value);
@@ -31,9 +36,10 @@ export default function ProfileSettings(props) {
             action: "Yes"
         };
 
-        store.createModal(metadata, function () {
-            store.changeDisplayName(displayName);
-           //props.setTrigger(!props.trigger)
+        store.createModal(metadata, async function () {
+            await store.changeDisplayName(displayName);
+            //props.setTrigger(!props.trigger)
+            triggerChange();
         });
     };
 
@@ -50,17 +56,19 @@ export default function ProfileSettings(props) {
             action: "Yes, please change the bio."
         };
 
-        store.createModal(metadata, function () {
-            store.changeBio(bio);
-           // props.setTrigger(!props.trigger)
+        store.createModal(metadata, async function () {
+            await store.changeBio(bio);
+            // props.setTrigger(!props.trigger)
+            triggerChange();
         });
     };
 
 
     const handleUploadImage = async function (e) {
         const response = await Utils.uploadFileFromInput(e);
-        if(response.status === 200){
-            store.changeProfileImage(response.data.imageURL);
+        if (response.status === 200) {
+            await store.changeProfileImage(response.data.imageURL);
+            triggerChange();
         }
     }
 
@@ -105,7 +113,7 @@ export default function ProfileSettings(props) {
                     />
                 </Grid>
                 <Grid item xs={12}>
-                    <Typography variant="h6" sx={{marginTop: 3}}>Display Name:</Typography>
+                    <Typography variant="h6" sx={{ marginTop: 3 }}>Display Name:</Typography>
                 </Grid>
                 <Grid item xs={12}>
                     <SmallTextField
@@ -122,7 +130,7 @@ export default function ProfileSettings(props) {
                     <SubmitButton text={"CHANGE DISPLAY NAME"} onClick={handleSubmitDisplayName} />
                 </Grid>
                 <Grid item xs={12}>
-                    <Typography variant="h6" sx={{marginTop: 3}}>Bio:</Typography>
+                    <Typography variant="h6" sx={{ marginTop: 3 }}>Bio:</Typography>
                 </Grid>
                 <Grid item xs={12}>
                     <SmallTextField
