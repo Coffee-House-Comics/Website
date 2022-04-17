@@ -118,7 +118,10 @@ function GlobalStoreContextProvider(props) {
                         // Set the whole user TODO: maybe reduce to id???
                         payload: response.data
                     });
-                    store.reRoute(types.TabType.APP.children.EXPLORE.fullRoute);
+
+                    // Allow the route to wherever we wanted to go
+
+                    //store.reRoute(types.TabType.APP.children.EXPLORE.fullRoute);
                     return;
                 }
             }

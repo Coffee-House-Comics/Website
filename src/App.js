@@ -20,7 +20,7 @@ function App() {
         <LoadingOverlay
           active={store.loading}
           spinner
-          text='Loading...'
+          text='Brewing...'
         >
         <div id="header-wrapper">
           <Header />

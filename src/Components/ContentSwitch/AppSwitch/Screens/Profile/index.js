@@ -34,7 +34,7 @@ function ProfileRouter() {
         }
 
         loadHelper(id);
-    }, [trigger]);
+    }, [store.user]);
 
     console.log("Curent user being viewed: user");
 
@@ -115,7 +115,7 @@ function ProfileRouter() {
                 justifyContent: "center",
                 alignItems: "center"
             }}>
-                <ProfileCard user={user}/>
+                <ProfileCard user={user} isMyProfile={isMyProfile}/>
             </Box>
             <Box sx={{
                 // bgcolor: theme.palette.fuzzy_wuzzy.main,
