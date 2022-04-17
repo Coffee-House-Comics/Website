@@ -19,6 +19,7 @@ function ProfileRouter() {
     const theme = useTheme();
 
     const [user, setUser] = useState(null);
+    const [trigger, setTrigger] = useState(false);
 
     let isMyProfile = false;
 
@@ -33,7 +34,7 @@ function ProfileRouter() {
         }
 
         loadHelper(id);
-    }, []);
+    }, [trigger]);
 
     console.log("Curent user being viewed: user");
 
@@ -80,7 +81,7 @@ function ProfileRouter() {
     else if (profileTab === PROFILE_TABS.SAVED)
         activeScreen = <Saved user={user} />;
     else if (profileTab === PROFILE_TABS.SETTINGS)
-        activeScreen = <Settings user={user} />;
+        activeScreen = <Settings user={user} trigger={trigger} setTrigger={setTrigger} />;
 
     const lineCss = "3px solid " + theme.palette.coffee.main;
 
