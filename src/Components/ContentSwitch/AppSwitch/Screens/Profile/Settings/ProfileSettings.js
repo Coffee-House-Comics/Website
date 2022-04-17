@@ -11,6 +11,7 @@ import { styled } from '@mui/material/styles';
 import SmallTextField from '../../../../../TextFields/SmallTextField';
 import SubmitButton from '../../../../../Buttons/SubmitButton';
 import types from '../../../../../../Common/Types';
+import Utils from '../../../../../../Utils';
 
 export default function ProfileSettings(props) { 
     const { store } = useContext(GlobalStoreContext);
@@ -55,19 +56,12 @@ export default function ProfileSettings(props) {
         }, true);
     };
 
-    const readURI = function (e) {
-        if (e.target.files && e.target.files[0]) {
-            let reader = new FileReader();
-            reader.onload = function (ev) {
-                setImageURI(ev.target.result);
-            }.bind(this);
-            reader.readAsDataURL(e.target.files[0]);
+
+    const handleUploadImage = async function (e) {
+        const response = Utils.uploadFileFromInput(e);
+        if(response.status === 200){
+            store.changeImage(response.data.imageURL);
         }
-    }
-
-    const handleUploadImage = function (e) {
-        readURI(e);
-
     }
 
     const buildImage = function () {

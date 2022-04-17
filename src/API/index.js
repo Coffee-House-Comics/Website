@@ -11,7 +11,8 @@ const backend = axios.create({
 const API = {
     Auth: {},
     Comic: {},
-    Story: {}
+    Story: {},
+    Common: {}
 };
 
 
@@ -85,18 +86,18 @@ API.Auth.confirmCode = function (id) {
     return backend.get(`auth/confirmCode/${id}`)
 }
 
-API.Auth.updateProfile = function (image, displayName, bio) {
+API.Auth.updateProfile = function (imageURL, displayName, bio) {
     /* Update Profile ------------
         method: put
         route: /auth/updateProfile
         Request body: {
-            image: Image,
+            profileImage: String (URL),
             displayName: String,
             bio: String,
         }
     */
     return backend.put('/auth/updateProfile', {
-        image: image,
+        profileImage: imageURL,
         displayName: displayName,
         bio: bio
     });
@@ -859,7 +860,14 @@ API.Story.getProfile = function (id) {
     return backend.get(`/story/profile/${id}`, {});
 }
 
-//
+//Upload an image
+API.Common.uploadImage = function(formData){
+    return backend.post('/images/upload', formData, {
+        headers: {
+            "Content-Type": "multipart/form-data"
+        }
+    });
+}
 
 export default API;
 
