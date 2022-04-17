@@ -238,51 +238,6 @@ function GlobalStoreContextProvider(props) {
             type: GlobalStoreActionType.TOGGLE_LOADING,
         });
     }
-    store.changeDisplayName = async function (newDisplayName) {
-        try {
-            const response = await AuthAPI.updateProfile(store.user.profileImage, newDisplayName, store.user.bio)
-
-            if (response.status === 200) {
-                try {
-                    const response2 = await AuthAPI.getProfile(store.user.id)
-
-                    if (response2.status === 200)
-                        store.updateUser(response2.data);
-                    return;
-                }
-                catch (err) {
-                    /* Do nothing - pass error down */
-                }
-            }
-        }
-        catch (err) {
-            /* Do nothing - pass error down */
-        }
-    }
-
-    store.changeBio = async function (newBio) {
-        try {
-            const response = await AuthAPI.updateProfile(store.user.profileImage, store.user.displayName, newBio)
-
-            if (response.status === 200) {
-                try {
-                    const response2 = await AuthAPI.getProfile(store.user.id)
-
-                    if (response2.status === 200)
-                        store.updateUser(response2.data);
-                    return;
-                }
-                catch (err) {
-                    /* Do nothing - pass error down */
-                }
-            }
-        }
-        catch (err) {
-            /* Do nothing - pass error down */
-        }
-
-        console.log("Error updating the bio");
-    }
 
     store.changeImage = async function (image) {
         try {
