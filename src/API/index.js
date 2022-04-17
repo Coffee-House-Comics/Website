@@ -5,7 +5,7 @@ import axios from 'axios'
 axios.defaults.withCredentials = true;
 
 const backend = axios.create({
-    baseURL: 'http://localhost:3000',
+    baseURL: 'https://coffeehousecomics.com',
 })
 
 const API = {
