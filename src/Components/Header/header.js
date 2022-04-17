@@ -52,7 +52,16 @@ function Header(props) {
 
     const handleCloseUserMenu = (routeName) => {
         setAnchorElUser(null);
-        store.reRoute(routeName);
+
+        // We have to handle a few special cases - like how logout actually requires more than a redirect
+        if (routeName === types.TabType.AUTH.children.LOGOUT.fullRoute) {
+            console.log("We are trying to log out...", routeName);
+            store.logout();
+            routeName = types.TabType.AUTH.children.LOGIN.fullRoute;
+        }
+
+        if (routeName)
+            store.reRoute(routeName);
     };
 
     // TODO:
@@ -148,7 +157,7 @@ function Header(props) {
                     settings.map((setting) => (
                         <MenuItem key={setting.name} onClick={() => handleCloseUserMenu(setting.fullRoute)}>
                             <Typography textAlign="center" sx={{ color: theme.palette.olive_drab_7.main }}>
-                                {setting.name} 
+                                {setting.name}
                             </Typography>
                         </MenuItem>)
                     )
@@ -212,12 +221,12 @@ function Header(props) {
                     <Typography variant="h4">{mode}</Typography>
                 </Grid>
                 {tabButtons}
-                <Grid item lg/>
-                <Grid item xs lg={5} sx={{marginInline: "20px"}}>
+                <Grid item lg />
+                <Grid item xs lg={5} sx={{ marginInline: "20px" }}>
                     {searchBar}
                 </Grid>
-                <Grid item lg/>
-                <Grid item lg/>
+                <Grid item lg />
+                <Grid item lg />
                 <Grid item xs="auto" >
                     <button className='create-app' onClick={handleCreateAppPost}>
                         {"+ Create " + singular}

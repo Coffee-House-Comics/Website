@@ -147,79 +147,105 @@ function GlobalStoreContextProvider(props) {
 
     //AUTH related functions ------------------------------------
 
-    store.login = async function(loginInfo) {
+    // Once the state logged in stuff is complete - run this code
+    useEffect(function() {
+        console.log("Logged in...");
+        store.reRoute(types.TabType.APP.children.EXPLORE.fullRoute);
+    }, [store.isLoggedIn]);
+
+
+    store.login = async function (loginInfo) {
         const { username, password } = loginInfo;
 
-        const response = await AuthAPI.loginUser(username, password);
+        try {
+            const response = await AuthAPI.loginUser(username, password);
 
-        if(response.status === 200) {
-            console.log("Logged in!")
-            storeReducer({
-                type: GlobalStoreActionType.LOGIN_USER,
-                payload: response.data.id
-            });
-            store.reRoute(types.TabType.APP.children.EXPLORE.fullRoute);
+            if (response.status === 200) {
+                console.log("Logged in with user:", response.data);
+                storeReducer({
+                    type: GlobalStoreActionType.LOGIN_USER,
+                    payload: response.data.id
+                });
+                return;
+            }
+        }
+        catch (err) {
+            /* Do nothing - pass error down */
         }
 
-        else {
-            console.log("Not logged in :/");
-            store.createModal({
-                title: "Error logging in",
-                body: "You could not be logged in. Please try again.",
-                action: ""
-            });
-        }
+        console.log("Not logged in :/");
+        store.createModal({
+            title: "Error logging in",
+            body: "You could not be logged in. Please try again.",
+            action: ""
+        });
     }
 
-    store.logout = async function() {
-        const response = await AuthAPI.logoutUser();
+    store.logout = async function () {
 
-        if(response.status === 200) {
-            storeReducer({
-                type: GlobalStoreActionType.LOGOUT_USER,
-                payload: null
-            });
-            store.reRoute(types.TabType.AUTH.fullRoute);
-        } 
+        try {
+            const response = await AuthAPI.logoutUser();
 
-        else {
-            store.createModal({
-                title: "Error logging out",
-                body: "You could not be logged out. Please try again.",
-                action: ""
-            });
+            if (response.status === 200) {
+                storeReducer({
+                    type: GlobalStoreActionType.LOGOUT_USER,
+                    payload: null
+                });
+                store.reRoute(types.TabType.AUTH.fullRoute);
+                return;
+            }
         }
+        catch (err) {
+            /* Do nothing here...pass error down */
+        }
+
+        store.createModal({
+            title: "Error logging out",
+            body: "You could not be logged out. Please try again.",
+            action: ""
+        });
     }
 
-    store.register = async function(registerInfo) {
+    store.register = async function (registerInfo) {
         const { firstName, lastName, username, email, password, confirmPass } = registerInfo; //Do fitst, last, email get used?
 
         const displayName = firstName + " " + lastName;
 
-        const response = await AuthAPI.register(username, password, email, confirmPass, displayName);
+        try {
+            const response = await AuthAPI.register(username, password, email, confirmPass, displayName);
 
-        if(response.status === 200) {
-            //User is not logged in until they confirm email
-            console.log("Registering a success");
-            store.reRoute(types.TabType.DEFAULT.fullRoute);
+            if (response.status === 200) {
+                //User is not logged in until they confirm email
+                console.log("Registering a success");
+                store.createModal({
+                    title: "Register Sucessful",
+                    body: "Check your email to confirm your account. Most emails arrive within a few minutes",
+                    action: "Continue to login"
+                }, function () {
+                    store.reRoute(types.TabType.AUTH.children.LOGIN.fullRoute);
+                });
+
+                return;
+            }
         }
-        else {
-            const errorMessage = response.data.error;
-            store.createModal({
-                title: "Error registering",
-                body: errorMessage + ". Please try again.",
-                action: ""
-            });
-        } 
+        catch (err) {
+            /* Do nothing here...pass error down */
+        }
+
+        store.createModal({
+            title: "Error registering",
+            body: "Please try again.",
+            action: ""
+        });
     }
 
-    store.forgotPassword = async function(forgotPasswordInfo) {
+    store.forgotPassword = async function (forgotPasswordInfo) {
 
-        const {username, email} = forgotPasswordInfo;
+        const { username, email } = forgotPasswordInfo;
 
         const response = await AuthAPI.forgotPassword(username, email);
 
-        if(response.status === 200) {
+        if (response.status === 200) {
             //Create modal to confirm success
             store.createModal({
                 title: "Password reset successfully",
@@ -234,17 +260,17 @@ function GlobalStoreContextProvider(props) {
                 body: errorMessage,
                 action: ""
             });
-        } 
+        }
 
     }
 
-    store.changeUsername = async function(newUsername) {
+    store.changeUsername = async function (newUsername) {
 
         //Provide new username to request
         console.log("Changeing user store");
         const response = await AuthAPI.changeUserName(newUsername);
 
-        if(response.status === 200) {
+        if (response.status === 200) {
             //Create modal to confirm success
             store.createModal({
                 title: "Username change",
@@ -259,15 +285,15 @@ function GlobalStoreContextProvider(props) {
                 body: errorMessage,
                 action: ""
             });
-        } 
+        }
     }
 
-    store.changePassword = async function(passwordInfo) {
-        const {oldPassword, newPassword, confirmNewPass} = passwordInfo;
+    store.changePassword = async function (passwordInfo) {
+        const { oldPassword, newPassword, confirmNewPass } = passwordInfo;
 
         const response = await AuthAPI.changePassword(oldPassword, newPassword, confirmNewPass);
 
-        if(response.status === 200) {
+        if (response.status === 200) {
             //Create modal to confirm success
             store.createModal({
                 title: "Password change",
@@ -286,10 +312,10 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
-    store.changeEmail = async function(newEmail) {
+    store.changeEmail = async function (newEmail) {
         const response = await AuthAPI.changeEmail(newEmail);
 
-        if(response.status === 200) {
+        if (response.status === 200) {
             //Create modal to confirm success
             store.createModal({
                 title: "Email change",

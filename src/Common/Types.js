@@ -28,8 +28,8 @@ types.TabType = {
             },
             LOGOUT: {
                 name: "Logout",
-                route: "login",
-                fullRoute: "/auth/login"
+                route: "logout",
+                fullRoute: "/auth/logout"
             },
             FORGOTPASSWORD: {
                 name: "Forgot Password",
@@ -57,7 +57,7 @@ types.TabType = {
             SUBSCRIPTIONS: {
                 name: "Subscriptions",
                 route: "subscriptions",
-                fullRoute: "/app/subscriptions"
+                fullRoute: "/app/subscriptions",
             },
             // Used for viewing a published story or comic
             VIEW: {
@@ -72,7 +72,7 @@ types.TabType = {
                 fullRoute: "/app/edit/:id"
             },
             PROFILE: {
-                name: "2",
+                name: "My Profile",
                 route: "profile/:id",
                 fullRoute: "/app/profile/:id",
             },
@@ -94,6 +94,10 @@ types.TabType = {
                 fullRoute: "/edit/story/:id",
             }
         }
+    },
+    MODIFY_TO_ID: function (fullRoute, id) {
+        // TODO:
+        const modifiedRoute = fullRoute.slice(0, 1)
     }
 };
 

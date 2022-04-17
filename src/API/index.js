@@ -68,6 +68,7 @@ API.Auth.logoutUser = function () {
         route: /auth/logout
         Request body: {}
     */
+    console.log("Trying to logout...");
     return backend.post('/auth/logout', {});
 }
 
