@@ -19,7 +19,8 @@ export default function ProfileSettings(props) {
     const [bio, setBio] = useState(store.user.bio);
 
     const triggerChange = function () {
-        store.reRoute(types.TabType.APP.children.PROFILE.fullRoute, store.user.id);
+        console.log("I WANT TO REROUTEEE");
+        //store.reRoute(types.TabType.APP.children.PROFILE.fullRoute, store.user.id);
     }
 
 
