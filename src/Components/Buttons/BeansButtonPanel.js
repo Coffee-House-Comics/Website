@@ -1,4 +1,4 @@
-import React from 'react'
+import {useState, React} from 'react'
 import ArrowUpwardOutlinedIcon from '@mui/icons-material/ArrowUpwardOutlined';
 import ArrowDownwardOutlinedIcon from '@mui/icons-material/ArrowDownwardOutlined';
 import UpArrowIcon from '../Icons/UpArrowIcon';
@@ -16,13 +16,32 @@ import { Theme } from '../../Common/Theme';
  *  currentVote: Number (-1, 0, 1)
  */
 export default function BeansButtonPanel(props) {
-    let upIcon = (props.currentVote == 1) ? <UpArrowIcon style={{filter: Theme.palette.green.filter, overflow: "visible"}} fontSize="small" /> : <UpArrowIcon fontSize="small" sx={{overflow: "visible"}}/>
-    let downIcon = (props.currentVote == -1) ? <DownArrowIcon style={{filter: Theme.palette.red.filter, overflow: "visible"}} fontSize="small" /> : <DownArrowIcon fontSize="small" sx={{overflow: "visible"}}/>
+
+    const [vote, setVote] = useState(props.currentVote);
+    const [beans, setBeans] = useState(props.numBeans)
+
+
+    let upIcon = (vote == 1) ? <UpArrowIcon style={{filter: Theme.palette.green.filter, overflow: "visible"}} fontSize="small" /> : <UpArrowIcon fontSize="small" sx={{overflow: "visible"}}/>
+    let downIcon = (vote == -1) ? <DownArrowIcon style={{filter: Theme.palette.red.filter, overflow: "visible"}} fontSize="small" /> : <DownArrowIcon fontSize="small" sx={{overflow: "visible"}}/>
 
     const handleUpvoteClick = function(event){
         if (event.stopPropagation) {
             event.stopPropagation();
         }
+
+        if(vote == 1){
+            setVote(0);
+            setBeans(beans - 1);
+        }
+        else{
+            let inc = 1;
+            if(vote < 0)
+                inc = 2;
+
+            setVote(1);
+            setBeans(beans + inc);
+        }
+        
         props.onUpvote();
     }
 
@@ -30,6 +49,20 @@ export default function BeansButtonPanel(props) {
         if (event.stopPropagation) {
             event.stopPropagation();
         }
+
+        if(vote == -1){
+            setVote(0);
+            setBeans(beans + 1);
+        }
+        else{
+            let dec = 1;
+            if(vote > 0)
+                dec = 2;
+
+            setVote(-1);
+            setBeans(beans - dec);
+        }
+
         props.onDownvote();
     }
     return (
@@ -41,7 +74,7 @@ export default function BeansButtonPanel(props) {
             <Grid container direction="column" justifyContent="center" alignItems="center">
                 <BeansIcon sx={{marginLeft: 0.25}}/>
                 <Typography variant="caption">
-                    {props.numBeans}
+                    {beans}
                 </Typography>
             </Grid>
                 <IconButton onClick={handleDownvoteClick} sx={{ marginInline:-1}}>
