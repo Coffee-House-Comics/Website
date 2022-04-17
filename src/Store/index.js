@@ -105,6 +105,33 @@ function GlobalStoreContextProvider(props) {
     const navigate = useNavigate();
     // const location = useLocation();
 
+    // On load lets start the session if possible
+    useEffect(function () {
+        async function startupHelper() {
+            try {
+                const response = await AuthAPI.currentProfile();
+
+                if (response.status === 200) {
+                    console.log("Logged in with user:", response.data, response.data.id);
+                    storeReducer({
+                        type: GlobalStoreActionType.LOGIN_USER,
+                        // Set the whole user TODO: maybe reduce to id???
+                        payload: response.data
+                    });
+                    store.reRoute(types.TabType.APP.children.EXPLORE.fullRoute);
+                    return;
+                }
+            }
+            catch (err) {
+                /* Do nothing - pass error down */
+            }
+
+            console.log("We didnt have a session...");
+        }
+
+        startupHelper();
+    }, []);
+
     const usePrevious = (value) => {
         const ref = useRef();
         useEffect(() => { ref.current = value });
@@ -207,9 +234,9 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.toggleLoading = function () {
-            storeReducer({
-                type: GlobalStoreActionType.TOGGLE_LOADING,
-            });
+        storeReducer({
+            type: GlobalStoreActionType.TOGGLE_LOADING,
+        });
     }
 
     store.changeDisplayName = async function (newDisplayName) {
@@ -220,7 +247,7 @@ function GlobalStoreContextProvider(props) {
                 try {
                     const response2 = await AuthAPI.getProfile(store.user.id)
 
-                    if (response2.status === 200) 
+                    if (response2.status === 200)
                         store.updateUser(response2.data);
                     return;
                 }
@@ -242,7 +269,7 @@ function GlobalStoreContextProvider(props) {
                 try {
                     const response2 = await AuthAPI.getProfile(store.user.id)
 
-                    if (response2.status === 200) 
+                    if (response2.status === 200)
                         store.updateUser(response2.data);
                     return;
                 }

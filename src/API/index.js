@@ -32,6 +32,10 @@ API.Auth.register = function (username, password, email, confirmPassord, display
     });
 }
 
+API.Auth.currentProfile = function () {
+    return backend.get('/auth/currentProfile', {});
+}
+
 API.Auth.loginUser = function (username, password) {
     /* 
         method: POST
