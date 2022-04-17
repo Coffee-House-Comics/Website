@@ -241,7 +241,8 @@ function GlobalStoreContextProvider(props) {
     store.changeUsername = async function(newUsername) {
 
         //Provide new username to request
-        const response = await AuthAPI.changeUsername(newUsername);
+        console.log("Changeing user store");
+        const response = await AuthAPI.changeUserName(newUsername);
 
         if(response.status === 200) {
             //Create modal to confirm success
