@@ -20,6 +20,9 @@ function ProfileRouter() {
 
     const [user, setUser] = useState(null);
 
+    let isMyProfile = false;
+    console.log("isMyProfile:", isMyProfile);
+
     // Fetch this user
     useEffect(function () {
         console.log("Fetching the user with id:", id);
@@ -44,13 +47,22 @@ function ProfileRouter() {
 
     const [profileTab, setProfileTab] = useState(PROFILE_TABS.VIEW);
 
+    if (user === null)
+        return mutateText("Loading Profile...");
+
+    if(store.user)
+        isMyProfile = user.id === store.user.id;
+
     function changeTab(tab) {
         console.log("Changing to..:", tab);
+        
+        
+        
+        
         setProfileTab(tab);
     }
 
-    if (user === null)
-        return mutateText("Loading Profile...");;
+    // Now we should check if this is our forum so we can see more options (or less if its not ours...)
 
     // Get the active Screen
     let activeScreen = <ProfileContent user={user} />;
