@@ -27,7 +27,8 @@ function GlobalStoreContextProvider(props) {
         user: null,
         isLoggedIn: false,
         modal: null,
-        loading: false
+        loading: false,
+        trigger: false
     });
 
     const storeReducer = (action) => {
@@ -40,7 +41,8 @@ function GlobalStoreContextProvider(props) {
                     user: payload,
                     isLoggedIn: true,
                     modal: null,
-                    loading: store.loading
+                    loading: store.loading,
+                    trigger: store.trigger
                 });
             }
 
@@ -50,7 +52,8 @@ function GlobalStoreContextProvider(props) {
                     user: null,
                     isLoggedIn: false,
                     modal: null,
-                    loading: store.loading
+                    loading: store.loading,
+                    trigger: store.trigger
                 })
             }
 
@@ -60,7 +63,8 @@ function GlobalStoreContextProvider(props) {
                     user: store.user,
                     isLoggedIn: store.isLoggedIn,
                     modal: null,
-                    loading: store.loading
+                    loading: store.loading,
+                    trigger: store.trigger
                 });
             }
 
@@ -71,7 +75,8 @@ function GlobalStoreContextProvider(props) {
                     user: store.user,
                     isLoggedIn: store.isLoggedIn,
                     modal: payload,
-                    loading: store.loading
+                    loading: store.loading,
+                    trigger: store.trigger
                 });
             }
 
@@ -81,7 +86,8 @@ function GlobalStoreContextProvider(props) {
                     user: store.user,
                     isLoggedIn: store.isLoggedIn,
                     modal: store.modal,
-                    loading: !store.loading
+                    loading: !store.loading,
+                    trigger: store.trigger
                 });
             }
 
@@ -91,7 +97,8 @@ function GlobalStoreContextProvider(props) {
                     user: payload,
                     isLoggedIn: store.isLoggedIn,
                     modal: store.modal,
-                    loading: store.loading
+                    loading: store.loading,
+                    trigger: true,
                 });
             }
 
@@ -269,6 +276,12 @@ function GlobalStoreContextProvider(props) {
             payload: newUser
         });
     }
+
+    useEffect(function () {
+        if (store.trigger === true) {
+            store.reRoute(types.TabType.APP.children.PROFILE.fullRoute, store.user.id);
+        }
+    }, [store.trigger]);
 
     store.getMyId = function () {
         if (store.user && store.user.id) {

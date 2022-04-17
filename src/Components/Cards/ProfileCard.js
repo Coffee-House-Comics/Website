@@ -24,14 +24,13 @@ export default function ProfileCard(props) {
     let description = user.bio;
     let profileImage = user.profileImage;
 
-    let SubscribeButton = store.isLoggedIn && !props.isMyProfile ?
-    styled(Button)(({ theme }) => ({
+    let SubscribeButton = styled(Button)(({ theme }) => ({
         color: theme.palette.ivory.main,
         backgroundColor: theme.palette.cg_blue.main,
         '&:hover': {
             backgroundColor: theme.palette.cadet_blue.main
         }
-    })):"";
+    }));
 
     const profileStatistics =
         <Grid container direction="column" justifyContent="flex-start" alignItems="flex-start" width="100%" sx={{border: "0px solid black", borderRadius:"4px", marginTop: "10px", marginBottom: "10px", padding: "10px"}}>
