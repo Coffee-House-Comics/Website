@@ -123,7 +123,7 @@ API.Auth.changeUserName = function (newUserName) {
         }
     */
     return backend.put('/auth/changeUserName', {
-        newUserName: newUserName,
+        newUserName: newUserName
     });
 }
 
@@ -136,7 +136,7 @@ API.Auth.changeEmail = function (newEmail) {
        }
    */
     return backend.put('/auth/changeEmail', {
-        newEmail: newEmail,
+        newEmail: newEmail
     });
 }
 
@@ -328,6 +328,93 @@ API.Comic.comment = function (id, text) {
     });
 }
 
+API.Comic.getAllForumPosts = function (id) {
+    /* Get all Comic forum posts------------
+       method: get
+       route: /comic/allForumPosts/${id}
+       Request body: {}
+   */
+    return backend.get(`/comic/allForumPosts/${id}`, {});
+}
+
+API.Comic.voteOnForumPost = function (id, type, forumOwnerId) {
+    /* Vote on Comic forum posts------------
+       method: post
+       route: /comic/vote/forumPost/${id}
+       Request body: {
+           type, String,
+           forumOwnerId, Id
+       }
+   */
+    return backend.post(`/comic/vote/forumPost/${id}`, {
+        type: type,
+        forumOwnerId: forumOwnerId
+    });
+}
+
+API.Comic.commentOnForumPost = function (id, text, forumOwnerId) {
+    /* Comment on Comic forum posts------------
+       method: post
+       route: /comic/comment/forumPost/${id}
+       Request body: {
+           text, String,
+           forumOwnerId, Id
+       }
+   */
+    return backend.post(`/comic/comment/forumPost/${id}`, {
+        text: text,
+        forumOwnerId: forumOwnerId
+    });
+}
+
+API.Comic.voteComment = function (id, type, postId) {
+    /* Vote on Comic comment------------
+       method: post
+       route: /comic/vote/comment/${id}
+       Request body: {
+           type, String,
+           postId, Id
+       }
+   */
+    return backend.post(`/comic/vote/comment/${id}`, {
+        type: type,
+        postId: postId
+    });
+}
+
+API.Comic.voteCommentOnForumPost = function (id, type, forumPostId, forumOwnerId) {
+    /* Vote on Comic Forum Post comment------------
+       method: post
+       route: /comic/vote/forumPost/comment/${id}
+       Request body: {
+           type, String,
+           forumPostId, Id,
+           forumOwnerId, Id
+       }
+   */
+    return backend.post(`/comic/vote/forumPost/comment/${id}`, {
+        type: type,
+        forumPostId: forumPostId,
+        forumOwnerId: forumOwnerId
+    });
+}
+
+
+API.Comic.deleteCommentOnForumPost = function (id, forumPostId, forumOwnerId) {
+    /* Delete comment on Comic Forum Post------------
+       method: delete
+       route: /comic/forumPost/comment/${id}
+       Request body: {
+           forumPostId, Id,
+           forumOwnerId, Id
+       }
+   */
+    return backend.delete(`/comic/forumPost/comment/${id}`, {
+        forumPostId: forumPostId,
+        forumOwnerId: forumOwnerId
+    });
+}
+
 API.Story.explore = function () {
     /* Explore Stories ------------
        method: get
@@ -488,6 +575,92 @@ API.Story.comment = function (id, text) {
    */
     return backend.post(`/story/comment/${id}`, {
         text: text
+    });
+}
+
+API.Story.getAllForumPosts = function (id) {
+    /* Get all Story forum posts------------
+       method: get
+       route: /story/allForumPosts/${id}
+       Request body: {}
+   */
+    return backend.get(`/story/allForumPosts/${id}`, {});
+}
+
+API.Story.voteOnForumPost = function (id, type, forumOwnerId) {
+    /* Vote on Story forum posts------------
+       method: post
+       route: /story/vote/forumPost/${id}
+       Request body: {
+           type, String,
+           forumOwnerId, Id
+       }
+   */
+    return backend.post(`/story/vote/forumPost/${id}`, {
+        type: type,
+        forumOwnerId: forumOwnerId
+    });
+}
+
+API.Story.commentOnForumPost = function (id, text, forumOwnerId) {
+    /* Comment on Story forum posts------------
+       method: post
+       route: /story/comment/forumPost/${id}
+       Request body: {
+           text, String,
+           forumOwnerId, Id
+       }
+   */
+    return backend.post(`/story/comment/forumPost/${id}`, {
+        text: text,
+        forumOwnerId: forumOwnerId
+    });
+}
+
+API.Story.voteComment = function (id, type, postId) {
+    /* Vote on Story comment------------
+       method: post
+       route: /story/vote/comment/${id}
+       Request body: {
+           type, String,
+           postId, Id
+       }
+   */
+    return backend.post(`/story/vote/comment/${id}`, {
+        type: type,
+        postId: postId
+    });
+}
+
+API.Story.voteCommentOnForumPost = function (id, type, forumPostId, forumOwnerId) {
+    /* Vote on Story Forum Post comment------------
+       method: post
+       route: /story/vote/forumPost/comment/${id}
+       Request body: {
+           type, String,
+           forumPostId, Id,
+           forumOwnerId, Id
+       }
+   */
+    return backend.post(`/story/vote/forumPost/comment/${id}`, {
+        type: type,
+        forumPostId: forumPostId,
+        forumOwnerId: forumOwnerId
+    });
+}
+
+API.Story.deleteCommentOnForumPost = function (id, forumPostId, forumOwnerId) {
+    /* Delete comment on Story Forum Post------------
+       method: delete
+       route: /story/forumPost/comment/${id}
+       Request body: {
+           forumPostId, Id,
+           forumOwnerId, Id
+       }
+   */
+    return backend.delete(`/story/forumPost/comment/${id}`, {
+        forumPostId: forumPostId,
+        forumOwnerId: forumOwnerId
     });
 }
 //
