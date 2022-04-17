@@ -239,7 +239,7 @@ function GlobalStoreContextProvider(props) {
         });
     }
 
-    store.changeImage = async function (image) {
+    store.changeProfileImage = async function (image) {
         try {
             const response = await AuthAPI.updateProfile(image, store.user.displayName, store.user.bio);
 
