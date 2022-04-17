@@ -177,7 +177,7 @@ function GlobalStoreContextProvider(props) {
             const response = await AuthAPI.loginUser(username, password);
 
             if (response.status === 200) {
-                console.log("Logged in with user:", response.data);
+                console.log("Logged in with user:", response.data, response.data.id);
                 storeReducer({
                     type: GlobalStoreActionType.LOGIN_USER,
                     // Set the whole user TODO: maybe reduce to id???

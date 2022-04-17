@@ -4,7 +4,10 @@ import { testStories } from '../../../../../App';
 import PostCard from '../../../../Cards/PostCard';
 import PostsSection, { PADDING_BTWN_CARDS } from '../../../../Cards/PostsSection';
 
-export default function Saved() {
+export default function Saved(props) {
+    
+    const { user } = props;
+    
     //TODO
     /**
      * Format:

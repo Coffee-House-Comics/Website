@@ -12,7 +12,7 @@ import SmallTextField from '../../../../../TextFields/SmallTextField';
 import SubmitButton from '../../../../../Buttons/SubmitButton';
 import types from '../../../../../../Common/Types';
 
-export default function ProfileSettings() {
+export default function ProfileSettings(props) { 
     const { store } = useContext(GlobalStoreContext);
 
     const [imageURI, setImageURI] = useState("/Images/krtek2.png");

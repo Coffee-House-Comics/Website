@@ -5,7 +5,10 @@ import { testStories } from '../../../../../App';
 import PostCard from '../../../../Cards/PostCard';
 import PostsSection, { PADDING_BTWN_CARDS } from '../../../../Cards/PostsSection';
 
-export default function ProfileContent() {    
+export default function ProfileContent(props) {    
+    
+    const { user } = props;
+    
     //TODO
     /**
      * Format:

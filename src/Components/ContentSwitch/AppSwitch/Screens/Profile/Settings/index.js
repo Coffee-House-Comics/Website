@@ -12,7 +12,9 @@ import ProfileSettings from './ProfileSettings';
 import AccountSettings from './AccountSettings';
 
 
-export default function Settings() {
+export default function Settings(props) {
+    const { user } = props;
+   
     const { store } = useContext(GlobalStoreContext);
     const { id } = useParams();
     const theme = useTheme();

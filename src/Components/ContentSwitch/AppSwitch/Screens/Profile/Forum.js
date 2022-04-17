@@ -3,7 +3,8 @@ import ForumPost from "../../../../Cards/ForumPost";
 
 
 export default function Forum(props) {
-
+    const { user } = props;
+    
     let allPosts = [
         {
             heading: "You're comics are awesome!!!",
