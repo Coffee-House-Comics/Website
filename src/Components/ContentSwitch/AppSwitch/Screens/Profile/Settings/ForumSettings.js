@@ -34,6 +34,11 @@ export default function ForumSettings() {
     const { store } = useContext(GlobalStoreContext);
     const theme = useTheme();
 
+    const triggerChange = function () {
+        console.log("I WANT TO REROUTEEE");
+        window.location.reload(false);
+    }
+
     const hardCodedInit = true;
 
     const [forumText, setForumText] = useState((hardCodedInit) ? 'Enabled' : 'Disabled');

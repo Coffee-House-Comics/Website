@@ -23,6 +23,11 @@ export default function AccountSettings() {
         setUsername(event.target.value);
     }
 
+    const triggerChange = function () {
+        console.log("I WANT TO REROUTEEE");
+        window.location.reload(false);
+    }
+
     function handleSubmitUsername() {
         console.log("Submitting username change:", username);
         const metadata = {
@@ -31,9 +36,10 @@ export default function AccountSettings() {
             action: "Yes, please change the username."
         };
 
-        store.createModal(metadata, function () {
-            store.changeUsername(username);
-        }, true);
+        store.createModal(metadata, async function () {
+            await store.changeUsername(username);
+            triggerChange();
+        });
     }
 
     function handleEmailChange(event) {
@@ -53,9 +59,10 @@ export default function AccountSettings() {
             action: "Yes, please change the email."
         };
 
-        store.createModal(metadata, function () {
-            store.changeEmail(email);
-        }, true);
+        store.createModal(metadata, async function () {
+            await store.changeEmail(email);
+            triggerChange();
+        });
     }
 
     return (
@@ -81,7 +88,7 @@ export default function AccountSettings() {
                     <SubmitButton text={"CHANGE USERNAME"} onClick={handleSubmitUsername} />
                 </Grid>
                 <Grid item xs={12}>
-                    <Typography variant="h6" sx={{marginTop: 5}}>Email:</Typography>
+                    <Typography variant="h6" sx={{ marginTop: 5 }}>Email:</Typography>
                 </Grid>
                 <Grid item xs={12}>
                     <SmallTextField
@@ -98,7 +105,7 @@ export default function AccountSettings() {
                     <SubmitButton text={"CHANGE EMAIL"} onClick={handleSubmitEmailChange} />
                 </Grid>
                 <Grid item xs={12}>
-                    <Typography variant="h6" sx={{marginTop: 5}}>Change Password:</Typography>
+                    <Typography variant="h6" sx={{ marginTop: 5 }}>Change Password:</Typography>
                 </Grid>
                 <Grid item xs={12}>
                     <SubmitButton text={"CHANGE PASSWORD HERE"} onClick={handleChangePassword} />
