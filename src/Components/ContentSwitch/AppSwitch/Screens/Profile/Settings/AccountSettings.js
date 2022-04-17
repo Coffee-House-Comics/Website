@@ -17,7 +17,7 @@ export default function AccountSettings() {
     const { store } = useContext(GlobalStoreContext);
 
     const [username, setUsername] = useState(store.userName);
-    const [email, setEmail] = useState("OLD EMAIL");
+    const [email, setEmail] = useState(store.email);
 
     function handleUsernameChange(event) {
         setUsername(event.target.value);
