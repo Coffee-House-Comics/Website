@@ -21,7 +21,6 @@ function ProfileRouter() {
     const [user, setUser] = useState(null);
 
     let isMyProfile = false;
-    console.log("isMyProfile:", isMyProfile);
 
     // Fetch this user
     useEffect(function () {
@@ -50,14 +49,24 @@ function ProfileRouter() {
     if (user === null)
         return mutateText("Loading Profile...");
 
-    if(store.user)
+    if(store.user) {
+        console.log("IDS:", user.id, store.user.id);
         isMyProfile = user.id === store.user.id;
+    }
+        
+    console.log("isMyProfile:", isMyProfile);
 
     function changeTab(tab) {
         console.log("Changing to..:", tab);
         
-        
-        
+        // Not allow restricted tab actions
+        if (!isMyProfile && tab === PROFILE_TABS.SETTINGS) {
+            return;
+        }
+
+        if (!isMyProfile && tab === PROFILE_TABS.SAVED) {
+            return;
+        }
         
         setProfileTab(tab);
     }
@@ -142,14 +151,14 @@ function ProfileRouter() {
                             sx={{
                                 ...backgroundCSS(PROFILE_TABS.SAVED),
                             }}>
-                            {mutateText("Saved")}
+                            {(isMyProfile)? mutateText("Saved"): ""}
                         </Grid>
                         <Grid item xs={2}
                             onClick={() => changeTab(PROFILE_TABS.SETTINGS)}
                             sx={{
                                 ...backgroundCSS(PROFILE_TABS.SETTINGS),
                             }}>
-                            {mutateText("Settings")}
+                            {(isMyProfile)? mutateText("Settings") : ""}
                         </Grid>
                         <Grid item xs={3} sx={{
                             borderBottom: lineCss,

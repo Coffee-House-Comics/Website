@@ -50,7 +50,7 @@ function Header(props) {
         store.reRoute(routeName);
     };
 
-    const handleCloseUserMenu = (routeName) => {
+    const handleCloseUserMenu = (e, routeName) => {
         setAnchorElUser(null);
 
         // We have to handle a few special cases - like how logout actually requires more than a redirect
@@ -66,8 +66,10 @@ function Header(props) {
             return;
         }
 
-        if (routeName)
+        if (routeName) {
+            console.log("Route name:", routeName);
             store.reRoute(routeName);
+        }
     };
 
     // TODO:
@@ -157,11 +159,11 @@ function Header(props) {
                     horizontal: 'right',
                 }}
                 open={Boolean(anchorElUser)}
-                onClose={handleCloseUserMenu}
+                onClose={(e) => {handleCloseUserMenu(e, null)}}
             >
                 {
                     settings.map((setting) => (
-                        <MenuItem key={setting.name} onClick={() => handleCloseUserMenu(setting.fullRoute)}>
+                        <MenuItem key={setting.name} onClick={(e) => handleCloseUserMenu(e, setting.fullRoute)}>
                             <Typography textAlign="center" sx={{ color: theme.palette.olive_drab_7.main }}>
                                 {setting.name}
                             </Typography>
