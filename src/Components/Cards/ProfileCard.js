@@ -7,16 +7,18 @@ import CoffeeIcon from '@mui/icons-material/Coffee';
 import styled from '@emotion/styled';
 
 export default function ProfileCard(props) {
-    const profile = props.profile;
+    const { user } = props;
 
     const theme = useTheme();
 
     //Remove the following hardcoded values
-    let comicBeans = 17;
-    let storyBeans = 8;
-    let comicSubscribers = 3;
-    let storySubscribers = 9;
-    let description = "Welcome to my CHC Profile!!! Excited to have fans.  BTW Shadow is the cutest dog... :D :D";
+    let userName = user.userName;
+    let displayName = user.displayName;
+    let comicBeans = user.comicBeans;
+    let storyBeans = user.storyBeans;
+    let comicSubscribers = user.comicSubscribers;
+    let storySubscribers = user.storySubscribers;
+    let description = user.bio;
 
     let SubscribeButton = styled(Button)(({ theme }) => ({
         color: theme.palette.ivory.main,
@@ -128,10 +130,10 @@ export default function ProfileCard(props) {
                     ></Avatar>
                 </Grid>
                 <Grid item>
-                    <Typography variant="h4" sx={{ fontWeight: 'bold', marginTop: '10px' }}> Krtek </Typography>
+                    <Typography variant="h4" sx={{ fontWeight: 'bold', marginTop: '10px' }}> {displayName} </Typography>
                 </Grid>
                 <Grid item>
-                    <Typography variant="subtitle1">@krtek</Typography>
+                    <Typography variant="subtitle1">{"@" + userName}</Typography>
                 </Grid>
                 <Grid item width="100%">
                     {profileStatistics}

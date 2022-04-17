@@ -1,5 +1,3 @@
-import { Global } from '@emotion/react';
-import { RepeatOneSharp, StoreTwoTone } from '@mui/icons-material';
 import { createContext, useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import types from '../Common/Types';
@@ -95,8 +93,18 @@ function GlobalStoreContextProvider(props) {
         }, true);
     }
 
-    store.reRoute = function (fullRoute) {
+    store.reRoute = function (fullRoute, id) {
         console.log("Store reroute:", fullRoute);
+        fullRoute = "" + fullRoute;
+        if (fullRoute.indexOf(':id') !== -1 && id) {
+            console.log("replacing id...");
+            let modifiedRoute = fullRoute.slice(0, fullRoute.length - 3);
+            console.log(modifiedRoute);
+            modifiedRoute = "" + modifiedRoute + id;
+            console.log(modifiedRoute);
+            fullRoute = modifiedRoute;
+        }
+
         if (fullRoute)
             navigate(fullRoute);
     }
@@ -145,14 +153,22 @@ function GlobalStoreContextProvider(props) {
             });
     }
 
+    store.getMyId = function () {
+        if (store.user && store.user.id) {
+            return store.user.id;
+        }
+
+        // The case of not being logged in.
+        return -1;
+    }
+
     //AUTH related functions ------------------------------------
 
     // Once the state logged in stuff is complete - run this code
-    useEffect(function() {
+    useEffect(function () {
         console.log("Logged in...");
         store.reRoute(types.TabType.APP.children.EXPLORE.fullRoute);
     }, [store.isLoggedIn]);
-
 
     store.login = async function (loginInfo) {
         const { username, password } = loginInfo;
@@ -164,7 +180,8 @@ function GlobalStoreContextProvider(props) {
                 console.log("Logged in with user:", response.data);
                 storeReducer({
                     type: GlobalStoreActionType.LOGIN_USER,
-                    payload: response.data.id
+                    // Set the whole user TODO: maybe reduce to id???
+                    payload: response.data
                 });
                 return;
             }
@@ -240,98 +257,131 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.forgotPassword = async function (forgotPasswordInfo) {
-
         const { username, email } = forgotPasswordInfo;
 
-        const response = await AuthAPI.forgotPassword(username, email);
+        try {
+            const response = await AuthAPI.forgotPassword(username, email);
 
-        if (response.status === 200) {
-            //Create modal to confirm success
-            store.createModal({
-                title: "Password reset successfully",
-                body: "Check your email for a temporary password to use. Most emails arrive within a few minutes",
-                action: ""
-            });
-        }
-        else {
-            const errorMessage = response.data.error;
-            store.createModal({
-                title: "Password reset error",
-                body: errorMessage,
-                action: ""
-            });
-        }
+            if (response.status === 200) {
+                //Create modal to confirm success
+                store.createModal({
+                    title: "Password reset successfully",
+                    body: "Check your email for a temporary password to use. Most emails arrive within a few minutes",
+                    action: ""
+                });
 
+                store.reRoute(types.TabType.AUTH.children.LOGIN.fullRoute);
+                return;
+            }
+        }
+        catch (err) { }
+
+        store.createModal({
+            title: "Password reset error",
+            body: "Server error in reseting the password",
+            action: ""
+        });
     }
 
     store.changeUsername = async function (newUsername) {
 
         //Provide new username to request
         console.log("Changeing user store");
-        const response = await AuthAPI.changeUserName(newUsername);
 
-        if (response.status === 200) {
-            //Create modal to confirm success
-            store.createModal({
-                title: "Username change",
-                body: "Your username has been successfully changed!",
-                action: ""
-            });
+        try {
+            const response = await AuthAPI.changeUserName(newUsername);
+
+            if (response.status === 200) {
+                //Create modal to confirm success
+                store.createModal({
+                    title: "Username change",
+                    body: "Your username has been successfully changed!",
+                    action: ""
+                });
+                return;
+            }
         }
-        else {
-            const errorMessage = response.data.error;
-            store.createModal({
-                title: "Error changing username",
-                body: errorMessage,
-                action: ""
-            });
-        }
+        catch (err) { }
+
+        store.createModal({
+            title: "Error changing username",
+            body: "Error when trying to change username",
+            action: ""
+        });
     }
 
     store.changePassword = async function (passwordInfo) {
         const { oldPassword, newPassword, confirmNewPass } = passwordInfo;
 
-        const response = await AuthAPI.changePassword(oldPassword, newPassword, confirmNewPass);
+        try {
+            const response = await AuthAPI.changePassword(oldPassword, newPassword, confirmNewPass);
 
-        if (response.status === 200) {
-            //Create modal to confirm success
-            store.createModal({
-                title: "Password change",
-                body: "Your password has been successfully changed!",
-                action: ""
-            });
+            if (response.status === 200) {
+                //Create modal to confirm success
+                store.createModal({
+                    title: "Password change",
+                    body: "Your password has been successfully changed!",
+                    action: ""
+                });
+                return;
+            }
         }
+        catch (err) { }
 
-        else {
-            const errorMessage = response.data.error;
-            store.createModal({
-                title: "Error changing password",
-                body: errorMessage,
-                action: ""
-            });
-        }
+        store.createModal({
+            title: "Error changing password",
+            body: "",
+            action: ""
+        });
     }
 
     store.changeEmail = async function (newEmail) {
-        const response = await AuthAPI.changeEmail(newEmail);
 
-        if (response.status === 200) {
-            //Create modal to confirm success
-            store.createModal({
-                title: "Email change",
-                body: "Your email has been successfully changed!",
-                action: ""
-            });
-        }
 
-        else {
-            const errorMessage = response.data.error;
-            store.createModal({
-                title: "Error changing email",
-                body: errorMessage,
-                action: ""
-            });
+        try {
+            const response = await AuthAPI.changeEmail(newEmail);
+
+            if (response.status === 200) {
+                //Create modal to confirm success
+                store.createModal({
+                    title: "Email change",
+                    body: "Your email has been successfully changed!",
+                    action: ""
+                });
+                return;
+            }
         }
+        catch (err) { }
+
+        store.createModal({
+            title: "Error changing email",
+            body: "",
+            action: ""
+        });
+    }
+
+    store.fetchProfile = async function(id) {
+        try {
+            const response = await API.Comic.viewProfile(id);
+
+            if (response.status === 200) {
+                console.log("Response:", response);
+
+                return response.data;
+            }
+        }
+        catch(err) { }
+
+        // Give this default title
+        return ({
+            id: -1,
+            displayName: "Profile does not exist",
+            bio: "This user does not exist.",
+            profileImage: null,
+
+            storyBeans: 0,
+            comicBeans: 0,
+        });
     }
 
 

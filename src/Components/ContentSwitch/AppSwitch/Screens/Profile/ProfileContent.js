@@ -1,11 +1,12 @@
 import { Grid, Typography } from '@mui/material';
+import { useParams } from 'react-router-dom';
 import React from 'react'
 import { testStories } from '../../../../../App';
 import PostCard from '../../../../Cards/PostCard';
 import PostsSection, { PADDING_BTWN_CARDS } from '../../../../Cards/PostsSection';
 
-export default function ProfileContent() {
-//TODO
+export default function ProfileContent() {    
+    //TODO
     /**
      * Format:
      *    [{

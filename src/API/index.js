@@ -2,7 +2,7 @@ import axios from 'axios'
 
 // TODO: Set to true once we correct cors on the server to just accept from 
 //      coffeehousecomics.com
-axios.defaults.withCredentials = false;
+axios.defaults.withCredentials = true;
 
 const backend = axios.create({
     baseURL: 'https://coffeehousecomics.com',

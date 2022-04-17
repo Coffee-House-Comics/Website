@@ -59,6 +59,12 @@ function Header(props) {
             store.logout();
             routeName = types.TabType.AUTH.children.LOGIN.fullRoute;
         }
+        else if (routeName === types.TabType.APP.children.PROFILE.fullRoute) {
+            console.log("View my profile,", store.getMyId());
+            store.reRoute(routeName, store.getMyId());
+
+            return;
+        }
 
         if (routeName)
             store.reRoute(routeName);

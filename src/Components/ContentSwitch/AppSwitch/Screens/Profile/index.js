@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom';
-import { useState, useContext } from 'react'
+import { useState, useContext, useEffect } from 'react'
 import { GlobalStoreContext } from '../../../../../Store';
 import Forum from './Forum';
 import Saved from './Saved';
@@ -18,6 +18,23 @@ function ProfileRouter() {
     const { id } = useParams();
     const theme = useTheme();
 
+    const [user, setUser] = useState(null);
+
+    // Fetch this user
+    useEffect(function () {
+        console.log("Fetching the user with id:", id);
+
+        async function loadHelper(id) {
+            const fetchedUser = await store.fetchProfile(id);
+            console.log("Fetched User:", fetchedUser);
+            setUser(fetchedUser);
+        }
+
+        loadHelper(id);
+    }, []);
+
+    console.log("Curent user being viewed: user");
+
     const PROFILE_TABS = {
         FORUM: 0,
         SAVED: 1,
@@ -32,14 +49,17 @@ function ProfileRouter() {
         setProfileTab(tab);
     }
 
+    if (user === null)
+        return mutateText("Loading Profile...");;
+
     // Get the active Screen
-    let activeScreen = <ProfileContent />;
+    let activeScreen = <ProfileContent user={user} />;
     if (profileTab === PROFILE_TABS.FORUM)
-        activeScreen = <Forum />;
+        activeScreen = <Forum user={user} />;
     else if (profileTab === PROFILE_TABS.SAVED)
-        activeScreen = <Saved />;
+        activeScreen = <Saved user={user} />;
     else if (profileTab === PROFILE_TABS.SETTINGS)
-        activeScreen = <Settings />;
+        activeScreen = <Settings user={user} />;
 
     const lineCss = "3px solid " + theme.palette.coffee.main;
 
@@ -73,7 +93,7 @@ function ProfileRouter() {
                 justifyContent: "center",
                 alignItems: "center"
             }}>
-                <ProfileCard/>
+                <ProfileCard user={user}/>
             </Box>
             <Box sx={{
                 // bgcolor: theme.palette.fuzzy_wuzzy.main,

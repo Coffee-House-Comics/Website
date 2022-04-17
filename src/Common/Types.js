@@ -94,10 +94,6 @@ types.TabType = {
                 fullRoute: "/edit/story/:id",
             }
         }
-    },
-    MODIFY_TO_ID: function (fullRoute, id) {
-        // TODO:
-        const modifiedRoute = fullRoute.slice(0, 1)
     }
 };
 
