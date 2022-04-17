@@ -19,6 +19,7 @@ export default function ProfileCard(props) {
     let comicSubscribers = user.comicSubscribers;
     let storySubscribers = user.storySubscribers;
     let description = user.bio;
+    let profileImage = user.profileImage;
 
     let SubscribeButton = styled(Button)(({ theme }) => ({
         color: theme.palette.ivory.main,
@@ -115,10 +116,9 @@ export default function ProfileCard(props) {
         >
             <Grid container direction="column" justifyContent="center" alignItems="center" width="100%" marginBottom="10px">
                 <Grid item xs={12}>
-                    {/* TODO Change this to profile picture image */}
                     <Avatar
                         alt="profilePicture"
-                        src="/Images/krtek2.png"
+                        src={profileImage}
                         sx={{
                             width: 200,
                             height: 200,

@@ -6,7 +6,7 @@ import React from 'react'
  * Button which displays the author's profile image and name
  * 
  * Expected props:
- *  author: {name: String}
+ *  author: {name: String, profileImage: String (URL)}
  *  onClick: function
  */
 export default function AuthorButton(props) {
@@ -17,8 +17,7 @@ export default function AuthorButton(props) {
     <Box onClick={onClick} style={{ cursor: "pointer", minWidth:"70px"}}>
       <Grid container direction="row" justifyContent="left" alignItems="center">
         <Grid item>
-          <Avatar alt={author.name} sx={{ width: 12, height: 12 }}>
-            {/* TODO: Change this to src prop and make actual image */}
+          <Avatar alt={author.name} sx={{ width: 12, height: 12 }} src={author.profileImage}>
             {author.name[0]}
           </Avatar>
         </Grid>
