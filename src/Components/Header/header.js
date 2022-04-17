@@ -26,7 +26,7 @@ function Header(props) {
 
     // In the case of being logged in or not
     if (store.isLoggedIn === false) {
-        pages = [appTabs.children.EXPLORE, appTabs.children.SUBSCRIPTIONS]; // TODO: Remove subscriptions
+        pages = [appTabs.children.EXPLORE];
         settings = [authTabs.children.REGISTER, authTabs.children.LOGIN];
     }
     else {
