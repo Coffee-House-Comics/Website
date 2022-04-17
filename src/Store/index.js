@@ -352,7 +352,7 @@ function GlobalStoreContextProvider(props) {
                     type: GlobalStoreActionType.LOGOUT_USER,
                     payload: null
                 });
-                store.reRoute(types.TabType.AUTH.fullRoute);
+                store.reRoute(types.TabType.AUTH.children.LOGIN.fullRoute);
                 return;
             }
         }
