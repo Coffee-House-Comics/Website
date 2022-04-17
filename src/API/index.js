@@ -275,6 +275,59 @@ API.Comic.deleteSticker = function (sticker) {
     });
 }
 
+API.Comic.bookmark = function (id) {
+    /* Bookmark Comic------------
+       method: post
+       route: /comic/bookmark/${id}
+       Request body: {}
+   */
+    return backend.post(`/comic/bookmark${id}`, {});
+}
+
+API.Comic.saved = function () {
+    /* Get saved Comics------------
+       method: get
+       route: /comic/user/saved
+       Request body: {}
+   */
+    return backend.get(`comic/user/saved`, {});
+}
+
+API.Comic.viewPublished = function (id) {
+    /* View published Comic------------
+       method: get
+       route: /comic/published/${id}
+       Request body: {}
+   */
+    return backend.get(`/comic/published/${id}`, {});
+}
+
+API.Comic.vote = function (id, type) {
+    /* Vote on Comic------------
+       method: post
+       route: /comic/vote/${id}
+       Request body: {
+           type: String
+       }
+   */
+    return backend.post(`/comic/vote/${id}`, {
+        type: type
+    });
+}
+
+API.Comic.comment = function (id, text) {
+    /* Comment on Comic------------
+       method: post
+       route: /comic/comment/${id}
+       Request body: {
+           text: String
+       }
+   */
+    return backend.post(`/comic/comment/${id}`, {
+        text: text
+    });
+}
+
 API.Story.explore = function () {
     /* Explore Stories ------------
        method: get
@@ -383,6 +436,59 @@ API.Story.delete = function (id) {
        Request body: {}
    */
     return backend.delete(`/story/${id}`, {});
+}
+
+API.Story.bookmark = function (id) {
+    /* Bookmark Story------------
+       method: post
+       route: /story/bookmark/${id}
+       Request body: {}
+   */
+    return backend.post(`/story/bookmark${id}`, {});
+}
+
+API.Story.saved = function () {
+    /* Get saved Stories------------
+       method: get
+       route: /story/user/saved
+       Request body: {}
+   */
+    return backend.get(`story/user/saved`, {});
+}
+
+API.Story.viewPublished = function (id) {
+    /* View published Story------------
+       method: get
+       route: /story/published/${id}
+       Request body: {}
+   */
+    return backend.get(`/story/published/${id}`, {});
+}
+
+API.Story.vote = function (id, type) {
+    /* Vote on Story------------
+       method: post
+       route: /story/vote/${id}
+       Request body: {
+           type: String
+       }
+   */
+    return backend.post(`/story/vote/${id}`, {
+        type: type
+    });
+}
+
+API.Story.comment = function (id, text) {
+    /* Comment on Story------------
+       method: post
+       route: /story/comment/${id}
+       Request body: {
+           text: String
+       }
+   */
+    return backend.post(`/story/comment/${id}`, {
+        text: text
+    });
 }
 //
 
