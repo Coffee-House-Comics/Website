@@ -34,7 +34,7 @@ function ProfileRouter() {
         }
 
         loadHelper(id);
-    }, [trigger]);
+    }, [store.user]);
 
     console.log("Curent user being viewed: user");
 

@@ -34,8 +34,8 @@ export default function ProfileSettings(props) {
 
         store.createModal(metadata, function () {
             store.changeDisplayName(displayName);
-            props.setTrigger(!props.trigger)
-        }, true);
+           //props.setTrigger(!props.trigger)
+        });
     };
 
     const handleChangeBio = function (event) {
@@ -53,8 +53,8 @@ export default function ProfileSettings(props) {
 
         store.createModal(metadata, function () {
             store.changeBio(bio);
-            props.setTrigger(!props.trigger)
-        }, true);
+           // props.setTrigger(!props.trigger)
+        });
     };
 
     const readURI = function (e) {
