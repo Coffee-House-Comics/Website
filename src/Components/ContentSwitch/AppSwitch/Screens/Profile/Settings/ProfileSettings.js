@@ -20,6 +20,7 @@ export default function ProfileSettings(props) {
 
     const triggerChange = function () {
         console.log("I WANT TO REROUTEEE");
+        window.location.reload(false);
     }
 
 

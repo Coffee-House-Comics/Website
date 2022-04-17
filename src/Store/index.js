@@ -31,8 +31,6 @@ function GlobalStoreContextProvider(props) {
         trigger: false
     });
 
-    const [triggerProfile, setTriggerProfile] = useState(false);
-
     const storeReducer = (action) => {
         const { type, payload } = action;
         switch (type) {
