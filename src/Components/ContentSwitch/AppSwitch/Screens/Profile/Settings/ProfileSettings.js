@@ -20,7 +20,6 @@ export default function ProfileSettings(props) {
 
     const triggerChange = function () {
         console.log("I WANT TO REROUTEEE");
-        store.reRoute(types.TabType.APP.children.PROFILE.fullRoute, store.user.id);
     }
 
 
