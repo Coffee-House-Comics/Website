@@ -16,7 +16,7 @@ import { TrendingUpRounded } from '@mui/icons-material';
 export default function AccountSettings() {
     const { store } = useContext(GlobalStoreContext);
 
-    const [username, setUsername] = useState("USERRRR");
+    const [username, setUsername] = useState(store.userName);
     const [email, setEmail] = useState("OLD EMAIL");
 
     function handleUsernameChange(event) {

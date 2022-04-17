@@ -93,7 +93,7 @@ export default function ProfileSettings(props) {
                     />
                 </Grid>
                 <Grid item xs={12}>
-                    <Typography variant="h6" sx={{marginTop: 3}}>Username:</Typography>
+                    <Typography variant="h6" sx={{marginTop: 3}}>Display Name:</Typography>
                 </Grid>
                 <Grid item xs={12}>
                     <SmallTextField
