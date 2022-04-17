@@ -448,6 +448,59 @@ API.Comic.createForumPost = function (id, title, body) {
     });
 }
 
+API.Comic.subscriptions = function () {
+    /* Get Comic subscriptions------------
+       method: get
+       route: /comic/subscriptions
+       Request body: {}
+   */
+    return backend.get(`/comic/subscriptions`, {});
+}
+
+API.Comic.deleteForumPost = function (id, forumUserId) {
+    /* Delete Comic Forum Post------------
+       method: delete
+       route: /comic/forumPost/${id}
+       Request body: {
+           forumUserId: forumUserId
+       }
+   */
+    return backend.delete(`/comic/forumPost/${id}`, {
+        forumUserId: forumUserId
+    });
+}
+
+API.Comic.deleteComment = function (id, postId) {
+    /* Delete Comic Comment------------
+       method: delete
+       route: /comic/comment/${id}
+       Request body: {
+           postId: id
+       }
+   */
+    return backend.delete(`/comic/comment/${id}`, {
+        postId: postId
+    });
+}
+
+API.Comic.unsave = function (id) {
+    /* unsave Comic------------
+       method: delete
+       route: /comic/bookmark/${id}
+       Request body: {}
+   */
+    return backend.delete(`/comic/bookmark/${id}`, {});
+}
+
+API.Comic.unsubscribe = function (id) {
+    /* unsubscribe from Comic creator------------
+       method: delete
+       route: /comic/subscribe/user/${id}
+       Request body: {}
+   */
+    return backend.delete(`/comic/subscribe/user/${id}`, {});
+}
+
 API.Story.explore = function () {
     /* Explore Stories ------------
        method: get
@@ -729,6 +782,60 @@ API.Story.createForumPost = function (id, title, body) {
         body: body
     });
 }
+
+API.Story.subscriptions = function () {
+    /* Get Story subscriptions------------
+       method: get
+       route: /story/subscriptions
+       Request body: {}
+   */
+    return backend.get(`/story/subscriptions`, {});
+}
+
+API.Story.deleteForumPost = function (id, forumUserId) {
+    /* Delete Story Forum Post------------
+       method: delete
+       route: /story/forumPost/${id}
+       Request body: {
+           forumUserId: forumUserId
+       }
+   */
+    return backend.delete(`/story/forumPost/${id}`, {
+        forumUserId: forumUserId
+    });
+}
+
+API.Story.deleteComment = function (id, postId) {
+    /* Delete Story Comment------------
+       method: delete
+       route: /story/comment/${id}
+       Request body: {
+           postId: id
+       }
+   */
+    return backend.delete(`/story/comment/${id}`, {
+        postId: postId
+    });
+}
+
+API.Story.unsave = function (id) {
+    /* unsave Story------------
+       method: delete
+       route: /story/bookmark/${id}
+       Request body: {}
+   */
+    return backend.delete(`/story/bookmark/${id}`, {});
+}
+
+API.Story.unsubscribe = function (id) {
+    /* unsubscribe from Story creator------------
+       method: delete
+       route: /story/subscribe/user/${id}
+       Request body: {}
+   */
+    return backend.delete(`/story/subscribe/user/${id}`, {});
+}
+
 //
 
 export default API;
