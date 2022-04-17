@@ -138,11 +138,13 @@ function Header(props) {
         </div>
     );
 
+    const profileAvatar = (store.isLoggedIn) ? <Avatar alt="Profile" src={store.user.profileImage}/> : <Avatar alt="Profile" />
+
     const profileMenuButton =
         <div>
             <Tooltip title="Profile Menu">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                    <Avatar alt="Remy Sharp" />
+                    {profileAvatar}
                 </IconButton>
             </Tooltip>
             <Menu

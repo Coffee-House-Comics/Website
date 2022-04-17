@@ -263,6 +263,7 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.updateUser = function (newUser) {
+        console.log("Store update user: ", newUser);
         storeReducer({
             type: GlobalStoreActionType.UPDATE_USER,
             payload: newUser

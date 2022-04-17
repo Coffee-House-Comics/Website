@@ -36,7 +36,7 @@ function ProfileRouter() {
         loadHelper(id);
     }, [store.user]);
 
-    console.log("Curent user being viewed: user");
+    console.log("Curent user being viewed:", user);
 
     const PROFILE_TABS = {
         FORUM: 0,
