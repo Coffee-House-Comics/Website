@@ -1,8 +1,8 @@
 import { Grid, Typography, Box, TextField } from '@mui/material'
 import React, {useState} from 'react'
 import EditorButtonPanel from '../../../../Buttons/EditorButtons/EditorButtonPanel'
-import { Editor } from "react-draft-wysiwyg";
-import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
+//import { Editor } from "react-draft-wysiwyg";
+//import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { EditorState } from 'draft-js';
 
 
@@ -36,7 +36,7 @@ export default function TextEditor(props) {
             <Grid item xs sx={{
                 width:"100%",
             }}>
-                <Editor
+                {/* <Editor
                     editorState={editorState}
                     toolbarClassName="toolbarClassName"
                     wrapperClassName="wrapperClassName"
@@ -48,7 +48,7 @@ export default function TextEditor(props) {
                         width:"100%",
                         height:"300px"
                     }}
-                />
+                /> */}
             </Grid>
 
 

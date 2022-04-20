@@ -1,4 +1,5 @@
-import { Divider, Grid, IconButton, Typography } from '@mui/material'
+import { Divider, Grid, IconButton, Typography, Box } from '@mui/material'
+//import { Stage, Layer, Rect, Circle } from 'react-konva';
 import React, { useState } from 'react'
 import EditorButtonPanel from '../../../Buttons/EditorButtons/EditorButtonPanel'
 import CreateIcon from '@mui/icons-material/Create';
@@ -6,7 +7,7 @@ import InterestsIcon from '@mui/icons-material/Interests';
 import FormatColorFillIcon from '@mui/icons-material/FormatColorFill';
 import { handleBreakpoints } from '@mui/system';
 import EraserIcon from '../../../Icons/EraserIcon';
-import HorizontalScroll from 'react-scroll-horizontal';
+import { ScrollMenu, VisibilityContext, } from 'react-horizontal-scrolling-menu';
 
 const STICKER_TAB_TYPE = {
     PREFAB_TAB: "Prefab",
@@ -22,7 +23,7 @@ export default function ComicCreationScreen() {
     let prefabsTabBackgroundColor = stickersSectionBackgroundColor
     let stickersTabBackgroundColor = "transparent"
 
-    switch(stickerTab){
+    switch (stickerTab) {
         case STICKER_TAB_TYPE.PREFAB_TAB:
             prefabsTabBackgroundColor = stickersSectionBackgroundColor;
             stickersTabBackgroundColor = "transparent"
@@ -75,14 +76,33 @@ export default function ComicCreationScreen() {
 
     //TODO
     const pageHeight = 120
-    let pages=[]
-    for(let i=0; i < 20; i++){
+    let pages = []
+    for (let i = 0; i < 20; i++) {
         pages.push(
-            <div style={{ backgroundColor: "white", height: 100, width: pageHeight, margin: 10, border: "1px solid black"}} />
+            {
+                index: i
+            }
         )
     }
 
+    function pageComponent({ i }) {
+        return (
+            <Box itemId={i} key={i}>
+                <div style={{ backgroundColor: "white", height: pageHeight, width: pageHeight, margin: 10, border: "1px solid black" }} />
+            </Box>
+        );
+    }
 
+    const buildPages = function () {
+        //console.log("~>", pages);
+        return pages.map((pageJSON, i) => {
+            return (
+                pageComponent({
+                    i: i
+                })
+            );
+        });
+    }
 
 
     let toolbar =
@@ -145,18 +165,25 @@ export default function ComicCreationScreen() {
     //TODO
     const editorWindow =
         <div style={{ backgroundColor: "white", width: "100%", height: "100%", border: "1px solid black" }}>
-            COMIC EDIT WINDOW
+            {/* <Stage width={"100%"} height={"100%"}>
+                <Layer>
+                    <Rect width={50} height={50} fill="red" />
+                    <Circle x={200} y={200} stroke="black" radius={50} />
+                </Layer>
+            </Stage> */}
         </div>
 
     //TODO
-    const pagesSection = 
-        <HorizontalScroll reverseScroll={true} style={{height: pageHeight*1.1}}>
-            {pages}
-        </HorizontalScroll>
+    const pagesSection = (
+        <ScrollMenu >
+            {buildPages()}
+        </ScrollMenu>
+    );
+
 
     return (
         <Grid container direction="row" width="100%" height="100%">
-            <Grid item height="100%" width={300}>
+            <Grid item height="100%" width={300} xs={3}>
                 <Grid container direction="column" spacing={2} sx={{ height: "100%" }}>
                     <Grid item>
                         <EditorButtonPanel />
@@ -175,15 +202,21 @@ export default function ComicCreationScreen() {
             <Grid item xs="auto">
                 <Divider orientation="vertical" variant="middle" sx={{ marginRight: 2, marginLeft: 3 }} />
             </Grid>
-            <Grid item xs height="100%">
-                <Grid container direction="column" sx={{ height: "100%" }}>
-                    <Grid item xs>
-                        {editorWindow}
-                    </Grid>
-                    <Grid item xs="auto">
-                        {pagesSection}
-                    </Grid>
-                </Grid>
+            <Grid item xs={8} height="100%">
+                <Box sx={{
+                    height: "calc(100% - 200px)",
+                    width: "100%"
+                }}>
+                    {editorWindow}
+                </Box>
+                <Box sx={{
+                    height: pageHeight + 20,
+                    width: "100%",
+                    paddingTop: "20px",
+                    position: "relative"
+                }}>
+                    {pagesSection}
+                </Box>
             </Grid>
         </Grid>
 

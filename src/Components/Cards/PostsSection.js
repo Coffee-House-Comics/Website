@@ -1,6 +1,6 @@
 import { Typography } from '@mui/material'
 import React from 'react'
-import HorizontalScroll from 'react-scroll-horizontal'
+import { ScrollMenu, VisibilityContext, } from 'react-horizontal-scrolling-menu';
 import PostCard, { PostCardHeight } from './PostCard'
 
 /**
@@ -16,7 +16,7 @@ export default function PostsSection(props) {
   const buildCards = function (posts) {
     return posts.map((post, index) => {
       return <div key={index} style={{ paddingInline: PADDING_BTWN_CARDS }}>
-        <PostCard key={index} post={post} />
+        <PostCard itemId={index} key={index} post={post} />
       </div>
     });
   }
@@ -26,9 +26,9 @@ export default function PostsSection(props) {
       <Typography variant="h4" sx={{ marginBottom: "5px", marginTop: "20px" }}>
         {props.name}
       </Typography>
-      <HorizontalScroll reverseScroll={true} style={{ width: "100%", height: PostCardHeight * 1.1 }}>
+      <ScrollMenu>
         {buildCards(props.posts)}
-      </HorizontalScroll>
+      </ScrollMenu>
     </div>
   )
 }
