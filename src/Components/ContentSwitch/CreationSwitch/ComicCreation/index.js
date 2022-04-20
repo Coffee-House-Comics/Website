@@ -1,5 +1,5 @@
 import { Divider, Grid, IconButton, Typography, Box } from '@mui/material'
-//import { Stage, Layer, Rect, Circle } from 'react-konva';
+import { Stage, Layer, Rect, Circle, Line } from 'react-konva';
 import React, { useState } from 'react'
 import EditorButtonPanel from '../../../Buttons/EditorButtons/EditorButtonPanel'
 import CreateIcon from '@mui/icons-material/Create';
@@ -15,7 +15,26 @@ const STICKER_TAB_TYPE = {
 }
 
 export default function ComicCreationScreen() {
-    const [stickerTab, setStickerTab] = useState(STICKER_TAB_TYPE.PREFAB_TAB)
+    const [stickerTab, setStickerTab] = useState(STICKER_TAB_TYPE.PREFAB_TAB);
+
+    // Konva Related things ------------------------
+    const stageRef = React.useRef();
+
+    const toolType = {
+        NONE: "",
+        pencil: "pencil",
+        eraser: "eraser",
+        bucket: "bucket",
+    };
+
+    const [tool, setTool] = React.useState(toolType.NONE);
+    const [lines, setLines] = React.useState([]);
+    const isDrawing = React.useRef(false);
+
+
+
+
+    // ------------------------------------------------------------------------------------------------------------------------
 
     const stickersSectionBackgroundColor = "rgba(170,170,170, 1)"
 
@@ -35,12 +54,18 @@ export default function ComicCreationScreen() {
 
     //TODO
     const handlePencilClick = function () {
-
+        if (tool === toolType.pencil)
+            setTool(toolType.NONE);
+        else
+            setTool(toolType.pencil);
     }
 
     //TODO
     const handleEraserClick = function () {
-
+        if (tool === toolType.eraser)
+            setTool(toolType.NONE);
+        else
+            setTool(toolType.eraser);
     }
 
     //TODO
@@ -85,9 +110,9 @@ export default function ComicCreationScreen() {
         )
     }
 
-    function pageComponent({ i }) {
+    function pageComponent({ key }) {
         return (
-            <Box itemId={i} key={i}>
+            <Box itemId={key} key={key}>
                 <div style={{ backgroundColor: "white", height: pageHeight, width: pageHeight, margin: 10, border: "1px solid black" }} />
             </Box>
         );
@@ -98,7 +123,7 @@ export default function ComicCreationScreen() {
         return pages.map((pageJSON, i) => {
             return (
                 pageComponent({
-                    i: i
+                    key: i
                 })
             );
         });
@@ -162,16 +187,84 @@ export default function ComicCreationScreen() {
             </Grid>
         </Grid>
 
+    // ------------------------------------------------------------------------------------------------------------------------
+
+
+    const handleMouseMove = (e) => {
+        // no drawing - skipping
+        if (!isDrawing.current) {
+            return;
+        }
+        const stage = e.target.getStage();
+        const point = stage.getPointerPosition();
+        let lastLine = lines[lines.length - 1];
+        // add point
+        lastLine.points = lastLine.points.concat([point.x, point.y]);
+
+        // replace last
+        lines.splice(lines.length - 1, 1, lastLine);
+        setLines(lines.concat());
+    };
+
+    const handleMouseDown = (e) => {
+
+        if (tool === toolType.pencil) {
+            isDrawing.current = true;
+            const pos = e.target.getStage().getPointerPosition();
+            setLines([...lines, { tool, points: [pos.x, pos.y] }]);
+        }
+    };
+
+    const handleMouseUp = () => {
+        isDrawing.current = false;
+    };
+
+
+
     //TODO
     const editorWindow =
-        <div style={{ backgroundColor: "white", width: "100%", height: "100%", border: "1px solid black" }}>
-            {/* <Stage width={"100%"} height={"100%"}>
+        <div style={{ width: "100%", height: "100%", justifyContent: "center", display: "flex" }}>
+            <Stage
+                width={900}
+                height={900}
+                ref={stageRef}
+                style={{ border: "1px solid black", background: "white" }}
+                onMouseDown={handleMouseDown}
+                onMousemove={handleMouseMove}
+                onMouseup={handleMouseUp}
+            >
                 <Layer>
-                    <Rect width={50} height={50} fill="red" />
-                    <Circle x={200} y={200} stroke="black" radius={50} />
+                    <Rect width={50} height={50} fill="red" draggable />
+                    <Circle x={200} y={200} stroke="black" radius={50} draggable />
+
+                    {/* The Lines */}
+                    {
+                        lines.map((line, i) => (
+                            <Line
+                                key={i}
+                                points={line.points}
+                                stroke="#df4b26"
+                                strokeWidth={5}
+                                tension={0.5}
+                                lineCap="round"
+                                globalCompositeOperation={
+                                    line.tool === 'eraser' ? 'destination-out' : 'source-over'
+                                }
+                            />
+                        ))
+                    }
                 </Layer>
-            </Stage> */}
+            </Stage>
         </div>
+
+
+
+
+
+
+
+
+    // ------------------------------------------------------------------------------------------------------------------------
 
     //TODO
     const pagesSection = (
@@ -182,8 +275,16 @@ export default function ComicCreationScreen() {
 
 
     return (
-        <Grid container direction="row" width="100%" height="100%">
-            <Grid item height="100%" width={300} xs={3}>
+        <Box sx={{
+            height: "100%",
+            width: "100%",
+            display: "flex"
+        }}>
+            <Box sx={{
+                height: "100%",
+                width: "300px",
+                float: "left"
+            }}>
                 <Grid container direction="column" spacing={2} sx={{ height: "100%" }}>
                     <Grid item>
                         <EditorButtonPanel />
@@ -198,11 +299,12 @@ export default function ComicCreationScreen() {
                         {stickersSection}
                     </Grid>
                 </Grid>
-            </Grid>
-            <Grid item xs="auto">
-                <Divider orientation="vertical" variant="middle" sx={{ marginRight: 2, marginLeft: 3 }} />
-            </Grid>
-            <Grid item xs={8} height="100%">
+            </Box>
+            <Divider orientation="vertical" variant="middle" sx={{ marginRight: 2, marginLeft: 3 }} />
+            <Box sx={{
+                height: "100%",
+                width: "calc(100% - 400px)"
+            }}>
                 <Box sx={{
                     height: "calc(100% - 200px)",
                     width: "100%"
@@ -217,8 +319,7 @@ export default function ComicCreationScreen() {
                 }}>
                     {pagesSection}
                 </Box>
-            </Grid>
-        </Grid>
-
-    )
+            </Box>
+        </Box>
+    );
 }
