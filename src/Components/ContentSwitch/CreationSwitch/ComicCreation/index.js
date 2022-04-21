@@ -30,7 +30,7 @@ const transactionType = {
     },
     shapes: {
         name: "shapes",
-        // May be a collection of item id and positions
+        // May be a collection of item id and positions idk yet honestly
         history: [],
         historyStep: 0
     }
@@ -43,11 +43,6 @@ export default function ComicCreationScreen() {
     const stageRef = React.useRef();
 
     const [tool, setTool] = React.useState(toolType.NONE);
-
-
-    //const [lines, setLines] = React.useState([]);
-
-
 
     const isDrawing = React.useRef(false);
 
@@ -62,6 +57,7 @@ export default function ComicCreationScreen() {
 
     const [historyState, setHistoryState] = useState({
         mostRecent: null,
+        // Lines is the collection of lines to show
         lines: [],
         shapes: transactionType.shapes.history[0]
     });
@@ -227,8 +223,11 @@ export default function ComicCreationScreen() {
     const handleEraserClick = function () {
         if (tool === toolType.eraser)
             setTool(toolType.NONE);
-        else
+        else {
+            console.log("Setting eraser");
             setTool(toolType.eraser);
+        }
+            
     }
 
     //TODO
@@ -371,7 +370,7 @@ export default function ComicCreationScreen() {
 
     const handleMouseDown = (e) => {
 
-        if (tool === toolType.pencil) {
+        if (tool === toolType.pencil || tool === toolType.eraser) {
             isDrawing.current = true;
             const pos = e.target.getStage().getPointerPosition();
             addOp(transactionType.lines.name, [...historyState.lines, { tool, points: [pos.x, pos.y] }]);
@@ -379,7 +378,6 @@ export default function ComicCreationScreen() {
     };
 
     const handleMouseUp = () => {
-        // If we were drawing we have to save this transaction so we can undo/redo
         if (isDrawing.current === true) {
             console.log("Mouse up...");
         }
@@ -410,7 +408,7 @@ export default function ComicCreationScreen() {
                                 key={i}
                                 points={line.points}
                                 stroke="#df4b26"
-                                strokeWidth={5}
+                                strokeWidth={line.tool === 'eraser' ? 20 : 5}
                                 tension={0.5}
                                 lineCap="round"
                                 globalCompositeOperation={
