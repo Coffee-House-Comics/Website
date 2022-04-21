@@ -3,7 +3,7 @@ import React from 'react'
 import SaveButtonPanel from './SaveButtonPanel'
 import TransactionButtonPanel from './TransactionButtonPanel'
 
-export default function EditorButtonPanel() {
+export default function EditorButtonPanel({ undoHook, redoHook }) {
     return (
         <Grid container direction="row" width="max-content" justifyContent="center" alignItems="center">
             <Grid item>
@@ -11,7 +11,7 @@ export default function EditorButtonPanel() {
             </Grid>
             <Divider orientation="vertical" variant="middle" flexItem sx={{ marginRight: 2, marginLeft: 3 }} />
             <Grid item>
-                <TransactionButtonPanel />
+                <TransactionButtonPanel undoHook={undoHook} redoHook={redoHook} />
             </Grid>
         </Grid>
     )

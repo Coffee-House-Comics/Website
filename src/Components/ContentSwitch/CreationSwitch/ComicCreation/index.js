@@ -14,25 +14,188 @@ const STICKER_TAB_TYPE = {
     STICKER_TAB: "Sticker"
 }
 
+const toolType = {
+    NONE: "",
+    pencil: "pencil",
+    eraser: "eraser",
+    bucket: "bucket",
+};
+
+const transactionType = {
+    lines: {
+        name: "line",
+        // History will contain all the undone lines
+        history: [],
+        historyStep: 0
+    },
+    shapes: {
+        name: "shapes",
+        // May be a collection of item id and positions
+        history: [],
+        historyStep: 0
+    }
+};
+
 export default function ComicCreationScreen() {
     const [stickerTab, setStickerTab] = useState(STICKER_TAB_TYPE.PREFAB_TAB);
 
     // Konva Related things ------------------------
     const stageRef = React.useRef();
 
-    const toolType = {
-        NONE: "",
-        pencil: "pencil",
-        eraser: "eraser",
-        bucket: "bucket",
-    };
-
     const [tool, setTool] = React.useState(toolType.NONE);
-    const [lines, setLines] = React.useState([]);
+
+
+    //const [lines, setLines] = React.useState([]);
+
+
+
     const isDrawing = React.useRef(false);
 
+    // ------------------------------------------------------------------------------------------------------------------------
 
 
+
+
+
+
+    // ------------------------------------------------------------------------------------------------------------------------
+
+    const [historyState, setHistoryState] = useState({
+        mostRecent: null,
+        lines: [],
+        shapes: transactionType.shapes.history[0]
+    });
+
+    const historyReducer = function ({ action, payload }) {
+        switch (action) {
+            case transactionType.lines.name:
+                return setHistoryState({
+                    mostRecent: transactionType.lines.name,
+                    lines: payload,
+                    shapes: historyState.shapes
+                });
+
+            case transactionType.shapes.name:
+                return ({
+                    mostRecent: transactionType.shapes.name,
+                    lines: historyState.lines,
+                    shapes: payload
+                });
+
+            default:
+                break;
+        }
+    };
+
+    const undoHook = function () {
+        const recentState = historyState.mostRecent;
+        console.log("Trying to undo...", recentState);
+
+        if (recentState) {
+            handleUndo(recentState);
+        }
+    };
+
+    const redoHook = function () {
+        const recentState = historyState.mostRecent;
+        console.log("Trying to redo...", recentState);
+
+        if (recentState) {
+            handleRedo(recentState);
+        }
+    };
+
+    const addOp = function (typeName, op) {
+        if (typeName === transactionType.lines.name) {
+            const ts = transactionType.lines;
+            ts.historyStep += 1;
+
+            historyReducer({
+                action: transactionType.lines.name,
+                payload: op
+            });
+        }
+        else if (typeName === transactionType.shapes.name) {
+
+        }
+        else {
+            console.log("Unsupported transaction");
+        }
+    };
+
+    const handleUndo = function (typeName) {
+        if (typeName === transactionType.lines.name) {
+            const ts = transactionType.lines;
+            if (historyState.lines.length === 0) {
+                return;
+            }
+
+            ts.history = [...ts.history, historyState.lines.pop()];
+
+            ts.historyStep -= 1;
+
+            console.log("Setting (from undo) to:", historyState.lines, ts.history);
+
+            historyReducer({
+                action: transactionType.lines.name,
+                payload: historyState.lines
+            });
+        }
+        else if (typeName === transactionType.shapes.name) {
+            const ts = transactionType.shapes;
+            if (ts.historyStep === 0) {
+                return;
+            }
+
+            ts.historyStep -= 1;
+            const previous = ts.history[ts.historyStep];
+
+            historyReducer({
+                action: transactionType.shapes.name,
+                payload: previous
+            });
+        }
+        else {
+            console.log("Unsupported transaction");
+        }
+    };
+
+    const handleRedo = function (typeName) {
+        if (typeName === transactionType.lines.name) {
+            const ts = transactionType.lines;
+            if (ts.history.length === 0) {
+                return;
+            }
+
+            console.log(historyState.lines);
+
+            ts.historyStep += 1;
+
+            const newLines = [...historyState.lines, ts.history.pop()]
+
+            historyReducer({
+                action: transactionType.lines.name,
+                payload: newLines
+            });
+
+        }
+        else if (typeName === transactionType.shapes.name) {
+            const ts = transactionType.shapes;
+            if (ts.historyStep === ts.history.length - 1) {
+                return;
+            }
+            ts.historyStep += 1;
+            const next = ts.history[ts.historyStep];
+
+            historyReducer({
+                action: transactionType.shapes.name,
+                payload: next
+            });
+        }
+        else {
+            console.log("Unsupported transaction");
+        }
+    };
 
     // ------------------------------------------------------------------------------------------------------------------------
 
@@ -197,13 +360,13 @@ export default function ComicCreationScreen() {
         }
         const stage = e.target.getStage();
         const point = stage.getPointerPosition();
-        let lastLine = lines[lines.length - 1];
+        let lastLine = historyState.lines[historyState.lines.length - 1];
         // add point
         lastLine.points = lastLine.points.concat([point.x, point.y]);
 
         // replace last
-        lines.splice(lines.length - 1, 1, lastLine);
-        setLines(lines.concat());
+        historyState.lines.splice(historyState.lines.length - 1, 1, lastLine);
+        addOp(transactionType.lines.name, historyState.lines.concat());
     };
 
     const handleMouseDown = (e) => {
@@ -211,15 +374,18 @@ export default function ComicCreationScreen() {
         if (tool === toolType.pencil) {
             isDrawing.current = true;
             const pos = e.target.getStage().getPointerPosition();
-            setLines([...lines, { tool, points: [pos.x, pos.y] }]);
+            addOp(transactionType.lines.name, [...historyState.lines, { tool, points: [pos.x, pos.y] }]);
         }
     };
 
     const handleMouseUp = () => {
+        // If we were drawing we have to save this transaction so we can undo/redo
+        if (isDrawing.current === true) {
+            console.log("Mouse up...");
+        }
+
         isDrawing.current = false;
     };
-
-
 
     //TODO
     const editorWindow =
@@ -237,9 +403,9 @@ export default function ComicCreationScreen() {
                     <Rect width={50} height={50} fill="red" draggable />
                     <Circle x={200} y={200} stroke="black" radius={50} draggable />
 
-                    {/* The Lines */}
+                    {/* The Lines for free draw support */}
                     {
-                        lines.map((line, i) => (
+                        historyState.lines.map((line, i) => (
                             <Line
                                 key={i}
                                 points={line.points}
@@ -266,13 +432,11 @@ export default function ComicCreationScreen() {
 
     // ------------------------------------------------------------------------------------------------------------------------
 
-    //TODO
     const pagesSection = (
         <ScrollMenu >
             {buildPages()}
         </ScrollMenu>
     );
-
 
     return (
         <Box sx={{
@@ -287,7 +451,7 @@ export default function ComicCreationScreen() {
             }}>
                 <Grid container direction="column" spacing={2} sx={{ height: "100%" }}>
                     <Grid item>
-                        <EditorButtonPanel />
+                        <EditorButtonPanel undoHook={undoHook} redoHook={redoHook} />
                     </Grid>
                     <Grid item>
                         <hr style={{ width: "100%" }} />

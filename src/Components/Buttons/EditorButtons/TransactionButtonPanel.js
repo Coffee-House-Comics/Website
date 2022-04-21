@@ -4,16 +4,16 @@ import RedoIcon from '@mui/icons-material/Redo';
 import { Grid, IconButton, Typography } from '@mui/material';
 
 
-export default function TransactionButtonPanel() {
+export default function TransactionButtonPanel({ undoHook, redoHook }) {
 
     //TODO
     const handleUndo = function () {
-
+        undoHook();
     }
 
     //TODO
     const handleRedo = function () {
-
+        redoHook();
     }
 
     return (
