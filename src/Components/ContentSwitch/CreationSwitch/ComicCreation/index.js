@@ -24,19 +24,11 @@ const toolType = {
     bucket: "bucket",
 };
 
-const transactionType = {
-    lines: {
-        name: "line",
-        // History will contain all the undone lines
-        history: [],
-        historyStep: 0
-    },
-    shapes: {
-        name: "shapes",
-        // May be a collection of item id and positions idk yet honestly
-        history: [],
-        historyStep: 0
-    }
+let undoStack = [];
+
+const supportedShapes = {
+    line: "line",
+    image: "image",
 };
 
 export default function ComicCreationScreen() {
@@ -55,72 +47,59 @@ export default function ComicCreationScreen() {
 
     const isDrawing = React.useRef(false);
 
+    // ------------------------------------------------------------------------------------------------------------------------  
+
+
+    const [serialization, setSerialization] = useState([]);
+
+    function constructEntry(typeName, data) {
+        return ({
+            typeName: typeName,
+            data: data
+        });
+    }
+
+    function peekSerial() {
+        return serialization[serialization.length - 1];
+    }
+
+    function peekUndoStack() {
+        return undoStack[undoStack.length - 1];
+    }
+
+    // Either returns last one or undefined
+    function getLastOfType(typeName) {
+        return serialization.filter(function (elem) {
+            return elem.typeName === typeName;
+        }).reverse()[0];
+    }
+
+
     // ------------------------------------------------------------------------------------------------------------------------
-
-
-
-
-
-
-    // ------------------------------------------------------------------------------------------------------------------------
-
-    const [historyState, setHistoryState] = useState({
-        mostRecent: null,
-        // Lines is the collection of lines to show
-        lines: [],
-        shapes: transactionType.shapes.history[0]
-    });
-
-    const historyReducer = function ({ action, payload }) {
-        switch (action) {
-            case transactionType.lines.name:
-                return setHistoryState({
-                    mostRecent: transactionType.lines.name,
-                    lines: payload,
-                    shapes: historyState.shapes
-                });
-
-            case transactionType.shapes.name:
-                return ({
-                    mostRecent: transactionType.shapes.name,
-                    lines: historyState.lines,
-                    shapes: payload
-                });
-
-            default:
-                break;
-        }
-    };
 
     const undoHook = function () {
-        const recentState = historyState.mostRecent;
-        console.log("Trying to undo...", recentState);
+        //const recentState = historyState.mostRecent;
+        console.log("Trying to undo...");
 
-        if (recentState) {
-            handleUndo(recentState);
-        }
+        handleUndo();
     };
 
     const redoHook = function () {
-        const recentState = historyState.mostRecent;
-        console.log("Trying to redo...", recentState);
+        //const recentState = historyState.mostRecent;
+        console.log("Trying to redo...");
 
-        if (recentState) {
-            handleRedo(recentState);
-        }
+        handleRedo();
     };
 
     const addOp = function (typeName, op) {
-        if (typeName === transactionType.lines.name) {
-            const ts = transactionType.lines;
-            ts.historyStep += 1;
+        if (typeName === supportedShapes.line) {
+            // serialization = [...serialization, op];
 
-            historyReducer({
-                action: transactionType.lines.name,
-                payload: op
-            });
+            // console.log("Adding op:", op);
+
+            setSerialization(op);
         }
-        else if (typeName === transactionType.shapes.name) {
+        else if (typeName === supportedShapes.image) {
 
         }
         else {
@@ -128,37 +107,26 @@ export default function ComicCreationScreen() {
         }
     };
 
-    const handleUndo = function (typeName) {
-        if (typeName === transactionType.lines.name) {
-            const ts = transactionType.lines;
-            if (historyState.lines.length === 0) {
+    const handleUndo = function () {
+        const last = peekSerial();
+
+        if (!last)
+            return;
+
+        if (last.typeName === supportedShapes.line) {
+            //console.log("Setting (from undo) to:", undoStack, serialization);
+            if (serialization.length === 0) {
                 return;
             }
 
-            ts.history = [...ts.history, historyState.lines.pop()];
+            undoStack = [...undoStack, peekSerial()];
 
-            ts.historyStep -= 1;
+            //console.log("Setting (from undo) to:", undoStack, serialization);
 
-            console.log("Setting (from undo) to:", historyState.lines, ts.history);
-
-            historyReducer({
-                action: transactionType.lines.name,
-                payload: historyState.lines
-            });
+            setSerialization(serialization.slice(0, -1));
         }
-        else if (typeName === transactionType.shapes.name) {
-            const ts = transactionType.shapes;
-            if (ts.historyStep === 0) {
-                return;
-            }
+        else if (last.typeName === supportedShapes.image) {
 
-            ts.historyStep -= 1;
-            const previous = ts.history[ts.historyStep];
-
-            historyReducer({
-                action: transactionType.shapes.name,
-                payload: previous
-            });
         }
         else {
             console.log("Unsupported transaction");
@@ -166,36 +134,24 @@ export default function ComicCreationScreen() {
     };
 
     const handleRedo = function (typeName) {
-        if (typeName === transactionType.lines.name) {
-            const ts = transactionType.lines;
-            if (ts.history.length === 0) {
+        const last = peekUndoStack();
+
+        if (!last)
+            return;
+
+        if (last.typeName === supportedShapes.line) {
+            if (undoStack.length === 0) {
                 return;
             }
 
-            console.log(historyState.lines);
+            const newSerialization = [...serialization, undoStack.pop()];
 
-            ts.historyStep += 1;
+            //console.log("Setting (from redo) to:", undoStack, newSerialization);
 
-            const newLines = [...historyState.lines, ts.history.pop()]
-
-            historyReducer({
-                action: transactionType.lines.name,
-                payload: newLines
-            });
-
+            setSerialization(newSerialization);
         }
-        else if (typeName === transactionType.shapes.name) {
-            const ts = transactionType.shapes;
-            if (ts.historyStep === ts.history.length - 1) {
-                return;
-            }
-            ts.historyStep += 1;
-            const next = ts.history[ts.historyStep];
+        else if (last.typeName === supportedShapes.image) {
 
-            historyReducer({
-                action: transactionType.shapes.name,
-                payload: next
-            });
         }
         else {
             console.log("Unsupported transaction");
@@ -374,13 +330,15 @@ export default function ComicCreationScreen() {
         }
         const stage = e.target.getStage();
         const point = stage.getPointerPosition();
-        let lastLine = historyState.lines[historyState.lines.length - 1];
+        let lastLineEntry = getLastOfType(supportedShapes.line);
+        // console.log("lle:", lastLineEntry);
+        let lastLine = lastLineEntry.data;
         // add point
         lastLine.points = lastLine.points.concat([point.x, point.y]);
 
         // replace last
-        historyState.lines.splice(historyState.lines.length - 1, 1, lastLine);
-        addOp(transactionType.lines.name, historyState.lines.concat());
+        serialization.splice(serialization.length - 1, 1, lastLineEntry);
+        addOp(supportedShapes.line, serialization.concat());
     };
 
     const handleMouseDown = (e) => {
@@ -388,7 +346,10 @@ export default function ComicCreationScreen() {
         if (tool === toolType.pencil || tool === toolType.eraser) {
             isDrawing.current = true;
             const pos = e.target.getStage().getPointerPosition();
-            addOp(transactionType.lines.name, [...historyState.lines, { tool, points: [pos.x, pos.y], color: currentColor }]);
+            const entry = constructEntry(supportedShapes.line, { tool, points: [pos.x, pos.y], color: currentColor });
+            // console.log("Adding entry:", entry);
+
+            addOp(supportedShapes.line, [...serialization, entry]);
         }
     };
 
@@ -399,6 +360,9 @@ export default function ComicCreationScreen() {
 
         isDrawing.current = false;
     };
+
+    // console.log("sss:", serialization);
+
 
     //TODO
     const editorWindow =
@@ -418,19 +382,24 @@ export default function ComicCreationScreen() {
 
                     {/* The Lines for free draw support */}
                     {
-                        historyState.lines.map((line, i) => (
-                            <Line
-                                key={i}
-                                points={line.points}
-                                stroke={line.color}
-                                strokeWidth={line.tool === 'eraser' ? 20 : 5}
-                                tension={0.5}
-                                lineCap="round"
-                                globalCompositeOperation={
-                                    line.tool === 'eraser' ? 'destination-out' : 'source-over'
-                                }
-                            />
-                        ))
+                        serialization.map((shape, i) => {
+                            if (shape.typeName === supportedShapes.line) {
+                                const line = shape.data;
+                                return (
+                                    <Line
+                                        key={i}
+                                        points={line.points}
+                                        stroke={line.color}
+                                        strokeWidth={line.tool === 'eraser' ? 20 : 5}
+                                        tension={0.5}
+                                        lineCap="round"
+                                        globalCompositeOperation={
+                                            line.tool === 'eraser' ? 'destination-out' : 'source-over'
+                                        }
+                                    />
+                                );
+                            }
+                        })
                     }
                 </Layer>
             </Stage>
