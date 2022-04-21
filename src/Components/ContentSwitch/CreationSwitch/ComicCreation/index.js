@@ -8,6 +8,9 @@ import FormatColorFillIcon from '@mui/icons-material/FormatColorFill';
 import { handleBreakpoints } from '@mui/system';
 import EraserIcon from '../../../Icons/EraserIcon';
 import { ScrollMenu, VisibilityContext, } from 'react-horizontal-scrolling-menu';
+import { SliderPicker } from 'react-color';
+import { Colors } from '../../../../Common/Theme';
+
 
 const STICKER_TAB_TYPE = {
     PREFAB_TAB: "Prefab",
@@ -38,6 +41,12 @@ const transactionType = {
 
 export default function ComicCreationScreen() {
     const [stickerTab, setStickerTab] = useState(STICKER_TAB_TYPE.PREFAB_TAB);
+
+    const [currentColor, setCurrentColor] = useState("#775940");
+
+    const handleColorChange = function (color) {
+        setCurrentColor(color.hex);
+    }
 
     // Konva Related things ------------------------
     const stageRef = React.useRef();
@@ -215,8 +224,11 @@ export default function ComicCreationScreen() {
     const handlePencilClick = function () {
         if (tool === toolType.pencil)
             setTool(toolType.NONE);
-        else
+        else {
+
             setTool(toolType.pencil);
+        }
+
     }
 
     //TODO
@@ -227,7 +239,7 @@ export default function ComicCreationScreen() {
             console.log("Setting eraser");
             setTool(toolType.eraser);
         }
-            
+
     }
 
     //TODO
@@ -292,6 +304,8 @@ export default function ComicCreationScreen() {
     }
 
 
+    const borderSpecs = "2px solid " + Colors.olive_drab_7;
+
     let toolbar =
         <Grid container direction="column">
             <Grid item>
@@ -301,15 +315,16 @@ export default function ComicCreationScreen() {
             </Grid>
             <Grid item>
                 <Grid container direction="row" justifyContent="space-between">
-                    <IconButton onClick={handlePencilClick}>
-                        <CreateIcon sx={{ width: 35, height: 35, color: "black" }} />
+                    <IconButton onClick={handlePencilClick} sx={{ border: (tool === toolType.pencil) ? borderSpecs : "" }}>
+                        <CreateIcon sx={{ width: 35, height: 35, color: currentColor }} />
                     </IconButton>
-                    <IconButton onClick={handleEraserClick}>
+                    <IconButton onClick={handleEraserClick} sx={{ border: (tool === toolType.eraser) ? borderSpecs : "" }}>
                         <EraserIcon sx={{ width: 30, height: 30 }} />
                     </IconButton>
-                    <IconButton onClick={handleFillClick}>
-                        <FormatColorFillIcon sx={{ width: 35, height: 35, color: "black" }} />
+                    <IconButton onClick={handleFillClick} sx={{ border: (tool === toolType.bucket) ? borderSpecs : "" }}>
+                        <FormatColorFillIcon sx={{ width: 35, height: 35, color: currentColor }} />
                     </IconButton>
+                    {/* // TODO: */}
                     <IconButton onClick={handleShapesClick}>
                         <InterestsIcon sx={{ width: 35, height: 35, color: "black" }} />
                     </IconButton>
@@ -373,7 +388,7 @@ export default function ComicCreationScreen() {
         if (tool === toolType.pencil || tool === toolType.eraser) {
             isDrawing.current = true;
             const pos = e.target.getStage().getPointerPosition();
-            addOp(transactionType.lines.name, [...historyState.lines, { tool, points: [pos.x, pos.y] }]);
+            addOp(transactionType.lines.name, [...historyState.lines, { tool, points: [pos.x, pos.y], color: currentColor }]);
         }
     };
 
@@ -407,7 +422,7 @@ export default function ComicCreationScreen() {
                             <Line
                                 key={i}
                                 points={line.points}
-                                stroke="#df4b26"
+                                stroke={line.color}
                                 strokeWidth={line.tool === 'eraser' ? 20 : 5}
                                 tension={0.5}
                                 lineCap="round"
@@ -457,7 +472,10 @@ export default function ComicCreationScreen() {
                     <Grid item>
                         {toolbar}
                     </Grid>
-                    <Grid item sx={{ height: "calc(100% - 200px)" }}>
+                    <Grid item>
+                        <SliderPicker color={currentColor} onChange={handleColorChange} />
+                    </Grid>
+                    <Grid item sx={{ height: "calc(100% - 275px)" }}>
                         {stickersSection}
                     </Grid>
                 </Grid>
