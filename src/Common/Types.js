@@ -83,6 +83,11 @@ types.TabType = {
         route: "/edit",
 
         children: {
+            METADATA: {
+                name: "Edit Metadata",
+                route: "metadata/:id",
+                fullRoute: "/edit/metadata/:id"
+            },
             COMIC: {
                 name: "Edit Comic",
                 route: "comic/:id",

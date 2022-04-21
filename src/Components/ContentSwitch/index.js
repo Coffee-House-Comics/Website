@@ -19,7 +19,8 @@ import {
 
 import {
     StoryCreation,
-    ComicCreation
+    ComicCreation,
+    MetadataEditor
 } from './CreationSwitch'
 
 function ContentSwitch() {
@@ -44,6 +45,7 @@ function ContentSwitch() {
                     <Route path={appChildren.PROFILE.route} element={<Profile />} />
                 </Route>
                 <Route path={types.TabType.CREATION.route}>
+                    <Route path={createChildren.METADATA.route} element={<MetadataEditor />} />
                     <Route path={createChildren.COMIC.route} element={<ComicCreation />} />
                     <Route path={createChildren.STORY.route} element={<StoryCreation />} />
                 </Route>
