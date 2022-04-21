@@ -79,6 +79,13 @@ export default function ComicCreationScreen() {
         );
     }
 
+    // Thumbnail related stuff
+    const buildThumbnail = function () {
+        
+    }
+
+
+
     const [currentPage, setCurrentPage] = useState(pages[0].data);
 
     const onPageClick = function (index) {
