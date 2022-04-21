@@ -38,7 +38,7 @@ export default function ComicCreationScreen() {
 
     const handlePenSizeChange = (event, newValue) => {
         setPenSize(newValue);
-      };
+    };
 
     const marks = [];
     for (let i = 0; i <= 100; i += 10) {
@@ -66,8 +66,28 @@ export default function ComicCreationScreen() {
 
     // ------------------------------------------------------------------------------------------------------------------------  
 
+    // Array of all the pages (TODO: Fetch them)
+    const pages = [];
 
-    const [serialization, setSerialization] = useState([]);
+    const pageHeight = 120
+    for (let i = 0; i < 20; i++) {
+        pages.push(
+            {
+                index: i,
+                data: [],
+            }
+        );
+    }
+
+    const [currentPage, setCurrentPage] = useState(pages[0].data);
+
+    const onPageClick = function (index) {
+        console.log("Trying to change to page with index:", index);
+        setCurrentPage(pages[index].data);
+    }
+
+    // The serialization for the comic page we are viewing
+    const [serialization, setSerialization] = useState(currentPage);
 
     function constructEntry(typeName, data) {
         return ({
@@ -246,20 +266,9 @@ export default function ComicCreationScreen() {
         )
     }
 
-    //TODO
-    const pageHeight = 120
-    let pages = []
-    for (let i = 0; i < 20; i++) {
-        pages.push(
-            {
-                index: i
-            }
-        )
-    }
-
     function pageComponent({ key }) {
         return (
-            <Box itemId={key} key={key}>
+            <Box itemId={key} key={key} onClick={(event) => onPageClick(key)}>
                 <div style={{ backgroundColor: "white", height: pageHeight, width: pageHeight, margin: 10, border: "1px solid black" }} />
             </Box>
         );
@@ -363,7 +372,7 @@ export default function ComicCreationScreen() {
         if (tool === toolType.pencil || tool === toolType.eraser) {
             isDrawing.current = true;
             const pos = e.target.getStage().getPointerPosition();
-            const entry = constructEntry(supportedShapes.line, { tool, points: [pos.x, pos.y], color: currentColor, penSize: penSize  });
+            const entry = constructEntry(supportedShapes.line, { tool, points: [pos.x, pos.y], color: currentColor, penSize: penSize });
             // console.log("Adding entry:", entry);
 
             addOp(supportedShapes.line, [...serialization, entry]);
@@ -383,7 +392,7 @@ export default function ComicCreationScreen() {
 
     //TODO
     const editorWindow =
-        <div style={{ width: "100%", height: "100%", justifyContent: "center", display: "flex" }}>
+        <div style={{ width: "900px", height: "900px", justifyContent: "center", display: "flex" }}>
             <Stage
                 width={900}
                 height={900}
@@ -471,7 +480,7 @@ export default function ComicCreationScreen() {
                             marks={marks}
                             onChange={handlePenSizeChange}
                             sx={{
-                                color: ( tool === toolType.eraser)? "black" : currentColor
+                                color: (tool === toolType.eraser) ? "black" : currentColor
                             }}
                         />
                     </Grid>
