@@ -1,16 +1,14 @@
-import { Divider, Grid, IconButton, Typography, Box } from '@mui/material'
+import { Divider, Grid, IconButton, Typography, Box, Slider } from '@mui/material'
 import { Stage, Layer, Rect, Circle, Line } from 'react-konva';
 import React, { useState } from 'react'
 import EditorButtonPanel from '../../../Buttons/EditorButtons/EditorButtonPanel'
 import CreateIcon from '@mui/icons-material/Create';
 import InterestsIcon from '@mui/icons-material/Interests';
 import FormatColorFillIcon from '@mui/icons-material/FormatColorFill';
-import { handleBreakpoints } from '@mui/system';
 import EraserIcon from '../../../Icons/EraserIcon';
 import { ScrollMenu, VisibilityContext, } from 'react-horizontal-scrolling-menu';
 import { SliderPicker } from 'react-color';
 import { Colors } from '../../../../Common/Theme';
-
 
 const STICKER_TAB_TYPE = {
     PREFAB_TAB: "Prefab",
@@ -35,6 +33,25 @@ export default function ComicCreationScreen() {
     const [stickerTab, setStickerTab] = useState(STICKER_TAB_TYPE.PREFAB_TAB);
 
     const [currentColor, setCurrentColor] = useState("#775940");
+
+    const [penSize, setPenSize] = useState(5);
+
+    const handlePenSizeChange = (event, newValue) => {
+        setPenSize(newValue);
+      };
+
+    const marks = [];
+    for (let i = 0; i <= 100; i += 10) {
+        marks.push({
+            value: i,
+            label: "" + i
+        });
+    }
+
+    function valuetext(value) {
+        return `${value}`;
+    }
+
 
     const handleColorChange = function (color) {
         setCurrentColor(color.hex);
@@ -346,7 +363,7 @@ export default function ComicCreationScreen() {
         if (tool === toolType.pencil || tool === toolType.eraser) {
             isDrawing.current = true;
             const pos = e.target.getStage().getPointerPosition();
-            const entry = constructEntry(supportedShapes.line, { tool, points: [pos.x, pos.y], color: currentColor });
+            const entry = constructEntry(supportedShapes.line, { tool, points: [pos.x, pos.y], color: currentColor, penSize: penSize  });
             // console.log("Adding entry:", entry);
 
             addOp(supportedShapes.line, [...serialization, entry]);
@@ -390,7 +407,7 @@ export default function ComicCreationScreen() {
                                         key={i}
                                         points={line.points}
                                         stroke={line.color}
-                                        strokeWidth={line.tool === 'eraser' ? 20 : 5}
+                                        strokeWidth={line.penSize}
                                         tension={0.5}
                                         lineCap="round"
                                         globalCompositeOperation={
@@ -444,7 +461,21 @@ export default function ComicCreationScreen() {
                     <Grid item>
                         <SliderPicker color={currentColor} onChange={handleColorChange} />
                     </Grid>
-                    <Grid item sx={{ height: "calc(100% - 275px)" }}>
+                    <Grid item>
+                        <Slider
+                            aria-label="Pen size"
+                            value={penSize}
+                            getAriaValueText={valuetext}
+                            step={1}
+                            valueLabelDisplay="auto"
+                            marks={marks}
+                            onChange={handlePenSizeChange}
+                            sx={{
+                                color: ( tool === toolType.eraser)? "black" : currentColor
+                            }}
+                        />
+                    </Grid>
+                    <Grid item sx={{ height: "calc(100% - 350px)" }}>
                         {stickersSection}
                     </Grid>
                 </Grid>
