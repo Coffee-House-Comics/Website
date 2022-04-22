@@ -7,8 +7,15 @@ import InterestsIcon from '@mui/icons-material/Interests';
 import FormatColorFillIcon from '@mui/icons-material/FormatColorFill';
 import EraserIcon from '../../../Icons/EraserIcon';
 import { ScrollMenu, VisibilityContext, } from 'react-horizontal-scrolling-menu';
-import { SliderPicker } from 'react-color';
+import { SliderPicker, PhotoshopPicker, SketchPicker } from 'react-color';
 import { Colors } from '../../../../Common/Theme';
+import StickerCreation from './StickerCreation';
+import SubmitButton from '../../../Buttons/SubmitButton';
+
+const viewType = {
+    main: "main",
+    sticker: "sticker"
+}
 
 const STICKER_TAB_TYPE = {
     PREFAB_TAB: "Prefab",
@@ -30,12 +37,22 @@ const supportedShapes = {
 };
 
 export default function ComicCreationScreen() {
+    const [view, setView] = useState(viewType.main);
+
     const [stickerTab, setStickerTab] = useState(STICKER_TAB_TYPE.PREFAB_TAB);
 
-    const [currentColor, setCurrentColor] = useState("#775940");
+    const [currentColor, setCurrentColor] = useState({
+        r: '119',
+        g: '89',
+        b: '64',
+        a: '1',
+    });
+
+    function rgbaToCss() {
+        return `rgba(${currentColor.r},${currentColor.g},${currentColor.b},${currentColor.a})`;
+    }
 
     const [penSize, setPenSize] = useState(5);
-
     const handlePenSizeChange = (event, newValue) => {
         setPenSize(newValue);
     };
@@ -54,7 +71,7 @@ export default function ComicCreationScreen() {
 
 
     const handleColorChange = function (color) {
-        setCurrentColor(color.hex);
+        setCurrentColor(color.rgb);
     }
 
     // Konva Related things ------------------------
@@ -81,7 +98,7 @@ export default function ComicCreationScreen() {
 
     // Thumbnail related stuff
     const buildThumbnail = function () {
-        
+
     }
 
 
@@ -305,18 +322,23 @@ export default function ComicCreationScreen() {
             <Grid item>
                 <Grid container direction="row" justifyContent="space-between">
                     <IconButton onClick={handlePencilClick} sx={{ border: (tool === toolType.pencil) ? borderSpecs : "" }}>
-                        <CreateIcon sx={{ width: 35, height: 35, color: currentColor }} />
+                        <CreateIcon sx={{ width: 35, height: 35, color: rgbaToCss() }} />
                     </IconButton>
                     <IconButton onClick={handleEraserClick} sx={{ border: (tool === toolType.eraser) ? borderSpecs : "" }}>
                         <EraserIcon sx={{ width: 30, height: 30 }} />
                     </IconButton>
                     <IconButton onClick={handleFillClick} sx={{ border: (tool === toolType.bucket) ? borderSpecs : "" }}>
-                        <FormatColorFillIcon sx={{ width: 35, height: 35, color: currentColor }} />
+                        <FormatColorFillIcon sx={{ width: 35, height: 35, color: rgbaToCss() }} />
                     </IconButton>
                     {/* // TODO: */}
                     <IconButton onClick={handleShapesClick}>
                         <InterestsIcon sx={{ width: 35, height: 35, color: "black" }} />
                     </IconButton>
+                    <SubmitButton text={"Create Sticker"} onClick={
+                        function () {
+                            setView(viewType.sticker);
+                        }
+                    } />
                 </Grid>
             </Grid>
         </Grid>
@@ -379,7 +401,7 @@ export default function ComicCreationScreen() {
         if (tool === toolType.pencil || tool === toolType.eraser) {
             isDrawing.current = true;
             const pos = e.target.getStage().getPointerPosition();
-            const entry = constructEntry(supportedShapes.line, { tool, points: [pos.x, pos.y], color: currentColor, penSize: penSize });
+            const entry = constructEntry(supportedShapes.line, { tool, points: [pos.x, pos.y], color: rgbaToCss(), penSize: penSize });
             // console.log("Adding entry:", entry);
 
             addOp(supportedShapes.line, [...serialization, entry]);
@@ -410,8 +432,8 @@ export default function ComicCreationScreen() {
                 onMouseup={handleMouseUp}
             >
                 <Layer>
-                    <Rect width={50} height={50} fill="red" draggable />
-                    <Circle x={200} y={200} stroke="black" radius={50} draggable />
+                    {/* <Rect width={50} height={50} fill="red" draggable />
+                    <Circle x={200} y={200} stroke="black" radius={50} draggable /> */}
 
                     {/* The Lines for free draw support */}
                     {
@@ -475,7 +497,16 @@ export default function ComicCreationScreen() {
                         {toolbar}
                     </Grid>
                     <Grid item>
-                        <SliderPicker color={currentColor} onChange={handleColorChange} />
+                        <Box sx={{
+                            justifyContent: "center",
+                            display: "flex"
+                        }}>
+                            <SketchPicker
+                                color={rgbaToCss()}
+                                onChange={handleColorChange}
+                                presetColors={Object.values(Colors)}
+                            />
+                        </Box>
                     </Grid>
                     <Grid item>
                         <Slider
@@ -487,11 +518,11 @@ export default function ComicCreationScreen() {
                             marks={marks}
                             onChange={handlePenSizeChange}
                             sx={{
-                                color: (tool === toolType.eraser) ? "black" : currentColor
+                                color: (tool === toolType.eraser) ? "black" : rgbaToCss(),
                             }}
                         />
                     </Grid>
-                    <Grid item sx={{ height: "calc(100% - 350px)" }}>
+                    <Grid item sx={{ height: "calc(100% - 700px)" }}>
                         {stickersSection}
                     </Grid>
                 </Grid>
@@ -501,20 +532,34 @@ export default function ComicCreationScreen() {
                 height: "100%",
                 width: "calc(100% - 400px)"
             }}>
-                <Box sx={{
-                    height: "calc(100% - 200px)",
-                    width: "100%"
-                }}>
-                    {editorWindow}
-                </Box>
-                <Box sx={{
-                    height: pageHeight + 20,
-                    width: "100%",
-                    paddingTop: "20px",
-                    position: "relative"
-                }}>
-                    {pagesSection}
-                </Box>
+                {
+                    (view === viewType.main) ? (
+                        <div>
+                            <Box sx={{
+                                height: "calc(100% - 200px)",
+                                width: "100%"
+                            }}>
+                                {editorWindow}
+                            </Box>
+                            <Box sx={{
+                                height: pageHeight + 20,
+                                width: "100%",
+                                paddingTop: "20px",
+                                position: "relative"
+                            }}>
+                                {pagesSection}
+                            </Box>
+                        </div>
+                    ) : (
+                        <div style={{ width: "100%" }}>
+                            <StickerCreation
+                                onDoneHook={function () {
+                                    setView(viewType.main);
+                                }}
+                            />
+                        </div>
+                    )
+                }
             </Box>
         </Box>
     );
