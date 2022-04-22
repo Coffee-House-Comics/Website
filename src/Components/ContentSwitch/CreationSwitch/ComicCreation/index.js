@@ -13,6 +13,8 @@ import StickerCreation from './StickerCreation';
 import SubmitButton from '../../../Buttons/SubmitButton';
 import useImage from 'use-image';
 
+import prefabs from '../../../../prefab.json';
+
 const viewType = {
     main: "main",
     sticker: "sticker"
