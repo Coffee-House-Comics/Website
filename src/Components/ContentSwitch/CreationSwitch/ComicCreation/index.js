@@ -17,6 +17,8 @@ import prefabs from '../../../../prefab.json';
 import { elementAcceptingRef } from '@mui/utils';
 import { LineAxis } from '@mui/icons-material';
 
+const editorSize = 750;
+
 const viewType = {
     main: "main",
     sticker: "sticker"
@@ -52,8 +54,17 @@ function createTransEntry(name, before, after, id) {
         id: id
     };
 
-    transactions = [...transactions, entry];
-    transactionIndex++;
+    // console.log("BEFORE:", transactions);
+
+    if ((transactionIndex < 0) || (transactionIndex < (transactions.length - 1))) {
+        for (let i = transactions.length - 1; i > transactionIndex; i--) {
+            transactions.splice(i, 1);
+        }
+    }
+
+    // console.log("AFTER:", transactions);
+
+    transactions[++transactionIndex] = entry;
 }
 
 function peekTransStack() {
@@ -62,8 +73,6 @@ function peekTransStack() {
 
 
 let undoStack = [];
-
-
 
 
 // All supported shapes 
@@ -347,7 +356,7 @@ export default function ComicCreationScreen() {
         }
     };
 
-    const handleRedo = function (typeName) {
+    const handleRedo = function () {
         transactionIndex++;
         const transaction = peekTransStack();
         console.log("t", transaction);
@@ -432,9 +441,13 @@ export default function ComicCreationScreen() {
 
                 setSerialization(serialization.concat());
             }
+            else{
+                transactionIndex--;
+            }
         }
         else {
             console.log("Unsupported transaction");
+            transactionIndex--;
         }
     };
 
@@ -665,7 +678,6 @@ export default function ComicCreationScreen() {
 
     // console.log("sss:", serialization);
 
-
     //TODO
     const editorWindow =
         <div
@@ -683,11 +695,11 @@ export default function ComicCreationScreen() {
                 addOp(supportedShapes.image, [...serialization, entry], transactionTypes.createImage, true);
             }}
             onDragOver={(e) => e.preventDefault()}
-            style={{ width: "900px", height: "900px", justifyContent: "center", display: "flex" }}
+            style={{ width: editorSize + "px", height: editorSize + "px", justifyContent: "center", display: "flex" }}
         >
             <Stage
-                width={900}
-                height={900}
+                width={editorSize}
+                height={editorSize}
                 ref={stageRef}
                 style={{ border: "1px solid black", background: "white" }}
                 onMouseDown={handleMouseDown}
