@@ -1,6 +1,6 @@
 import { Divider, Grid, IconButton, Typography, Box, Slider } from '@mui/material'
-import { Stage, Layer, Rect, Circle, Line } from 'react-konva';
-import React, { useState } from 'react'
+import { Stage, Layer, Rect, Circle, Line, Image } from 'react-konva';
+import React, { useEffect, useState } from 'react'
 import EditorButtonPanel from '../../../Buttons/EditorButtons/EditorButtonPanel'
 import CreateIcon from '@mui/icons-material/Create';
 import InterestsIcon from '@mui/icons-material/Interests';
@@ -11,6 +11,7 @@ import { SliderPicker, PhotoshopPicker, SketchPicker } from 'react-color';
 import { Colors } from '../../../../Common/Theme';
 import StickerCreation from './StickerCreation';
 import SubmitButton from '../../../Buttons/SubmitButton';
+import useImage from 'use-image';
 
 const viewType = {
     main: "main",
@@ -34,6 +35,30 @@ let undoStack = [];
 const supportedShapes = {
     line: "line",
     image: "image",
+};
+
+// function from https://stackoverflow.com/a/15832662/512042
+function downloadURI(uri, name) {
+    var link = document.createElement('a');
+    link.download = name;
+    link.href = uri;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+const URLImage = ({ image }) => {
+    const [img] = useImage(image.src);
+    return (
+        <Image
+            image={img}
+            x={image.x}
+            y={image.y}
+            // I will use offset to set origin to the center of the image
+            offsetX={img ? img.width / 2 : 0}
+            offsetY={img ? img.height / 2 : 0}
+        />
+    );
 };
 
 export default function ComicCreationScreen() {
@@ -77,6 +102,8 @@ export default function ComicCreationScreen() {
     // Konva Related things ------------------------
     const stageRef = React.useRef();
 
+    const dragUrl = React.useRef();
+
     const [tool, setTool] = React.useState(toolType.NONE);
 
     const isDrawing = React.useRef(false);
@@ -101,9 +128,16 @@ export default function ComicCreationScreen() {
 
     }
 
+    // If in sticker view then we have an empty page
+    const defaultPage = (view === viewType.main) ? pages[0].data : [];
+    const [currentPage, setCurrentPage] = useState(defaultPage);
 
-
-    const [currentPage, setCurrentPage] = useState(pages[0].data);
+    useEffect(function () {
+        if (view === stickerTab) {
+            console.log("Setting the sticker page");
+            setCurrentPage([]);
+        }
+    }, [view]);
 
     const onPageClick = function (index) {
         console.log("Trying to change to page with index:", index);
@@ -112,6 +146,17 @@ export default function ComicCreationScreen() {
 
     // The serialization for the comic page we are viewing
     const [serialization, setSerialization] = useState(currentPage);
+
+    const onFinishSticker = function () {
+        console.log("Finished Making the sticker:", serialization);
+
+        // Export the serialization
+
+        const uri = stageRef.current.toDataURL();
+        //console.log(uri);
+
+        downloadURI(uri, 'stage.png');
+    }
 
     function constructEntry(typeName, data) {
         return ({
@@ -161,6 +206,10 @@ export default function ComicCreationScreen() {
             setSerialization(op);
         }
         else if (typeName === supportedShapes.image) {
+
+
+            setSerialization(op);
+
 
         }
         else {
@@ -421,7 +470,23 @@ export default function ComicCreationScreen() {
 
     //TODO
     const editorWindow =
-        <div style={{ width: "900px", height: "900px", justifyContent: "center", display: "flex" }}>
+        <div
+            onDrop={(e) => {
+                e.preventDefault();
+                // register event position
+                stageRef.current.setPointersPositions(e);
+                // add image
+
+                const entry = constructEntry(supportedShapes.image, {
+                    ...stageRef.current.getPointerPosition(),
+                    src: dragUrl.current,
+                });
+
+                addOp(supportedShapes.image, [...serialization, entry]);
+            }}
+            onDragOver={(e) => e.preventDefault()}
+            style={{ width: "900px", height: "900px", justifyContent: "center", display: "flex" }}
+        >
             <Stage
                 width={900}
                 height={900}
@@ -452,6 +517,11 @@ export default function ComicCreationScreen() {
                                             line.tool === 'eraser' ? 'destination-out' : 'source-over'
                                         }
                                     />
+                                );
+                            }
+                            else if (shape.typeName === supportedShapes.image) {
+                                return (
+                                    <URLImage image={shape.data} />
                                 );
                             }
                         })
@@ -532,15 +602,23 @@ export default function ComicCreationScreen() {
                 height: "100%",
                 width: "calc(100% - 400px)"
             }}>
+                <Box sx={{
+                    height: "calc(100% - 200px)",
+                    width: "100%"
+                }}>
+                    <img
+                        alt="lion"
+                        src="https://konvajs.org/assets/lion.png"
+                        draggable="true"
+                        onDragStart={(e) => {
+                            dragUrl.current = e.target.src;
+                        }}
+                    />
+                    {editorWindow}
+                </Box>
                 {
                     (view === viewType.main) ? (
                         <div>
-                            <Box sx={{
-                                height: "calc(100% - 200px)",
-                                width: "100%"
-                            }}>
-                                {editorWindow}
-                            </Box>
                             <Box sx={{
                                 height: pageHeight + 20,
                                 width: "100%",
@@ -552,11 +630,7 @@ export default function ComicCreationScreen() {
                         </div>
                     ) : (
                         <div style={{ width: "100%" }}>
-                            <StickerCreation
-                                onDoneHook={function () {
-                                    setView(viewType.main);
-                                }}
-                            />
+                            <SubmitButton text={"Return"} onClick={onFinishSticker} />
                         </div>
                     )
                 }

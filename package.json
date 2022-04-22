@@ -20,7 +20,8 @@
     "react-loading-overlay-ts": "^2.0.0",
     "react-router-dom": "^6.2.1",
     "react-scripts": "^5.0.1",
-    "react-split-pane": "^0.1.92"
+    "react-split-pane": "^0.1.92",
+    "use-image": "^1.0.12"
   },
   "scripts": {
     "start": "react-scripts start",
