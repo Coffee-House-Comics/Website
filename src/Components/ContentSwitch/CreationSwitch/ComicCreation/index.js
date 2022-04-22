@@ -37,22 +37,27 @@ const toolType = {
 
 
 let transactions = [];
-let transactionIndex = 0;
+let transactionIndex = -1;
 const transactionTypes = {
     createLine: "createLine",
     createImage: "createImage",
     moveImage: "moveImage",
 };
 
-function createTransEntry(name, before, now) {
+function createTransEntry(name, before, after, id) {
     const entry = {
         transactionName: name,
         before: before,
-        now: now,
+        after: after,
+        id: id
     };
 
     transactions = [...transactions, entry];
     transactionIndex++;
+}
+
+function peekTransStack() {
+    return transactions[transactionIndex];
 }
 
 
@@ -214,10 +219,6 @@ export default function ComicCreationScreen() {
         return serialization[serialization.length - 1];
     }
 
-    function peekTransStack() {
-        return transactions[transactions.length - 1];
-    }
-
     function peekUndoStack() {
         return undoStack[undoStack.length - 1];
     }
@@ -246,7 +247,7 @@ export default function ComicCreationScreen() {
         handleRedo();
     };
 
-    const addOp = function (typeName, op, transactionName, modify) {
+    const addOp = function (typeName, op, transactionName, modify, before, now, id) {
         if (transactionName === transactionTypes.createLine) {
             if (modify) {
                 console.log("Created entry...");
@@ -263,11 +264,10 @@ export default function ComicCreationScreen() {
             setSerialization(op);
         }
         else if (transactionName === transactionTypes.moveImage) {
+            if (modify)
+                createTransEntry(transactionTypes.moveImage, before, now, id)
 
-
-
-
-
+            setSerialization(op);
         }
         else {
             console.log("Unsupported transaction");
@@ -277,7 +277,12 @@ export default function ComicCreationScreen() {
     const handleUndo = function () {
         const transaction = peekTransStack();
 
-        if (transactions.length === 0 || transactionIndex === 0)
+        console.log("t", transaction, transactions);
+
+        if (!transaction)
+            return;
+
+        if (transactions.length === 0 || transactionIndex < 0)
             return
 
         if (transaction.transactionName === transactionTypes.createLine) {
@@ -311,7 +316,31 @@ export default function ComicCreationScreen() {
             setSerialization(serialization.slice(0, -1));
         }
         else if (transaction.transactionName === transactionTypes.moveImage) {
+            const id = transaction.id;
 
+            const before = transaction.before;
+            const after = transaction.after;
+
+            console.log("before, after:", before, after);
+
+            const x = before.x;
+            const y = before.y;
+
+            const oldX = after.x;
+            const oldY = after.y;
+
+            const elem = serialization[id];
+
+            if (elem) {
+                elem.data.x = x;
+                elem.data.y = y;
+
+                serialization.splice(id, 1, elem);
+
+                transactionIndex--;
+
+                setSerialization(serialization.concat());
+            }
         }
         else {
             console.log("Unsupported transaction");
@@ -319,18 +348,31 @@ export default function ComicCreationScreen() {
     };
 
     const handleRedo = function (typeName) {
+        transactionIndex++;
         const transaction = peekTransStack();
+        console.log("t", transaction);
 
-        if (transactions.length === 0)
-            return
+        if (!peekTransStack()) {
+            transactionIndex--;
+            return;
+        }
+
+
+        if (transactions.length === 0) {
+            transactionIndex--;
+            return;
+        }
 
         if (transaction.transactionName === transactionTypes.createLine) {
             const last = peekUndoStack();
 
-            if (!last)
+            if (!last) {
+                transactionIndex--;
                 return;
+            }
 
             if (undoStack.length === 0) {
+                transactionIndex--;
                 return;
             }
 
@@ -338,7 +380,7 @@ export default function ComicCreationScreen() {
 
             //console.log("Setting (from redo) to:", undoStack, newSerialization);
 
-            transactionIndex++;
+            //transactionIndex++;
 
             setSerialization(newSerialization);
 
@@ -346,10 +388,13 @@ export default function ComicCreationScreen() {
         else if (transaction.transactionName === transactionTypes.createImage) {
             const last = peekUndoStack();
 
-            if (!last)
+            if (!last) {
+                transactionIndex--;
                 return;
+            }
 
             if (undoStack.length === 0) {
+                transactionIndex--;
                 return;
             }
 
@@ -357,12 +402,36 @@ export default function ComicCreationScreen() {
 
             //console.log("Setting (from redo) to:", undoStack, newSerialization);
 
-            transactionIndex++;
+            //transactionIndex++;
 
             setSerialization(newSerialization);
         }
         else if (transaction.transactionName === transactionTypes.moveImage) {
+            const id = transaction.id;
 
+            const before = transaction.before;
+            const after = transaction.after;
+
+            console.log("before, after:", before, after);
+
+            const x = before.x;
+            const y = before.y;
+
+            const oldX = after.x;
+            const oldY = after.y;
+
+            const elem = serialization[id];
+
+            if (elem) {
+                elem.data.x = oldX;
+                elem.data.y = oldY;
+
+                serialization.splice(id, 1, elem);
+
+                //transactionIndex++;
+
+                setSerialization(serialization.concat());
+            }
         }
         else {
             console.log("Unsupported transaction");
@@ -388,13 +457,7 @@ export default function ComicCreationScreen() {
     }
 
     // TODO: Do we have to do anything here???
-    const handleDragMove = function (e, id) {
-        // const elem = serialization[id];
-
-        // if (elem) {
-        //     console.log("hdm:", type, id, e);
-        // }
-    }
+    const handleDragMove = function (e, id) { }
 
     const handleDragEnd = function (e, id) {
         const elem = serialization[id];
@@ -406,12 +469,15 @@ export default function ComicCreationScreen() {
             if (elem.typeName === supportedShapes.image) {
                 console.log("x y", elem.data, x, y);
 
+                const oldX = elem.data.x;
+                const oldY = elem.data.y;
+
                 elem.data.x = x;
                 elem.data.y = y;
 
                 serialization.splice(id, 1, elem);
 
-                addOp(supportedShapes.image, serialization.concat());
+                addOp(supportedShapes.image, serialization.concat(), transactionTypes.moveImage, true, { x: oldX, y: oldY }, { x: x, y: y }, id);
             }
             else if (elem.typeName === supportedShapes.line) {
                 console.log("x y", elem.data.points, x, y, e);
@@ -420,12 +486,10 @@ export default function ComicCreationScreen() {
     }
 
 
-
     const handlePencilClick = function () {
         if (tool === toolType.pencil)
             setTool(toolType.NONE);
         else {
-
             setTool(toolType.pencil);
         }
 
