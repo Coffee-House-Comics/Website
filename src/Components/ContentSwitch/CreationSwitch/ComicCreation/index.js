@@ -291,7 +291,7 @@ export default function ComicCreationScreen() {
                 return;
             }
 
-            undoStack = [...undoStack, peekSerial()];
+            undoStack = [...undoStack, last];
 
             //console.log("Setting (from undo) to:", undoStack, serialization);
 
@@ -300,7 +300,15 @@ export default function ComicCreationScreen() {
             setSerialization(serialization.slice(0, -1));
         }
         else if (transaction.transactionName === transactionTypes.createImage) {
+            const last = peekSerial();
 
+            if (!last)
+                return
+
+            undoStack = [...undoStack, last];
+            transactionIndex--;
+
+            setSerialization(serialization.slice(0, -1));
         }
         else if (transaction.transactionName === transactionTypes.moveImage) {
 
@@ -336,7 +344,22 @@ export default function ComicCreationScreen() {
 
         }
         else if (transaction.transactionName === transactionTypes.createImage) {
+            const last = peekUndoStack();
 
+            if (!last)
+                return;
+
+            if (undoStack.length === 0) {
+                return;
+            }
+
+            const newSerialization = [...serialization, undoStack.pop()];
+
+            //console.log("Setting (from redo) to:", undoStack, newSerialization);
+
+            transactionIndex++;
+
+            setSerialization(newSerialization);
         }
         else if (transaction.transactionName === transactionTypes.moveImage) {
 
@@ -652,6 +675,7 @@ export default function ComicCreationScreen() {
                             else {
                                 // Should not be possible since we filter
                                 console.log("IMPOSSIBLE !!");
+                                return <div />;
                             }
                         })
                     }
