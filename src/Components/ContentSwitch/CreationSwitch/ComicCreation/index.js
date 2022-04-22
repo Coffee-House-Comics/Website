@@ -14,10 +14,8 @@ import SubmitButton from '../../../Buttons/SubmitButton';
 import useImage from 'use-image';
 
 import prefabs from '../../../../prefab.json';
-import { elementAcceptingRef } from '@mui/utils';
-import { LineAxis } from '@mui/icons-material';
 
-const editorSize = 750;
+const editorSize = 800;
 
 const viewType = {
     main: "main",
@@ -335,8 +333,8 @@ export default function ComicCreationScreen() {
             const x = before.x;
             const y = before.y;
 
-            const oldX = after.x;
-            const oldY = after.y;
+            // const oldX = after.x;
+            // const oldY = after.y;
 
             const elem = serialization[id];
 
@@ -423,8 +421,8 @@ export default function ComicCreationScreen() {
 
             console.log("before, after:", before, after);
 
-            const x = before.x;
-            const y = before.y;
+            // const x = before.x;
+            // const y = before.y;
 
             const oldX = after.x;
             const oldY = after.y;
@@ -441,7 +439,7 @@ export default function ComicCreationScreen() {
 
                 setSerialization(serialization.concat());
             }
-            else{
+            else {
                 transactionIndex--;
             }
         }
@@ -523,9 +521,13 @@ export default function ComicCreationScreen() {
 
     }
 
-    //TODO
-    const handleShapesClick = function () {
 
+
+    const [shapeModeOn, setShapeModeOn] = useState(false);
+
+
+    const handleShapesClick = function () {
+        setShapeModeOn(!shapeModeOn);
     }
 
     //TODO
@@ -569,7 +571,7 @@ export default function ComicCreationScreen() {
     }
 
 
-    const borderSpecs = "2px solid " + Colors.olive_drab_7;
+    const borderSpecs = "2px solid " + Colors.coffee
 
     let toolbar =
         <Grid container direction="column">
@@ -590,8 +592,8 @@ export default function ComicCreationScreen() {
                         <FormatColorFillIcon sx={{ width: 35, height: 35, color: rgbaToCss() }} />
                     </IconButton>
                     {/* // TODO: */}
-                    <IconButton onClick={handleShapesClick}>
-                        <InterestsIcon sx={{ width: 35, height: 35, color: "black" }} />
+                    <IconButton onClick={handleShapesClick} sx={{ border: (shapeModeOn) ? borderSpecs : "" }}>
+                        <InterestsIcon sx={{ width: 35, height: 35, color: rgbaToCss() }} />
                     </IconButton>
                     <SubmitButton text={"Create Sticker"} onClick={
                         function () {
@@ -661,7 +663,7 @@ export default function ComicCreationScreen() {
 
             const pos = e.target.getStage().getPointerPosition();
             // console.log("P", pos);
-            const entry = constructEntry(supportedShapes.line, { tool, points: [pos.x, pos.y], color: rgbaToCss(), penSize: penSize });
+            const entry = constructEntry(supportedShapes.line, { tool, points: [pos.x, pos.y], color: rgbaToCss(), penSize: penSize, closed: shapeModeOn });
             // console.log("Adding entry:", entry);
 
             addOp(supportedShapes.line, [...serialization, entry], transactionTypes.createLine, true);
@@ -722,10 +724,11 @@ export default function ComicCreationScreen() {
                                         x={line.x}
                                         y={line.y}
                                         points={line.points}
-                                        // perfectDrawEnabled={false}
+                                        perfectDrawEnabled={false}
+                                        fill={line.closed ? line.color : ""}
                                         stroke={line.color}
                                         strokeWidth={line.penSize}
-                                        //closed={true}
+                                        closed={line.closed}
                                         tension={0.5}
                                         lineCap={'round'}
                                         lineJoin={'round'}
@@ -815,19 +818,18 @@ export default function ComicCreationScreen() {
                             }}
                         />
                     </Grid>
-                    <Grid item sx={{ height: "calc(100% - 700px)" }}>
-                        {stickersSection}
-                    </Grid>
                 </Grid>
             </Box>
             <Divider orientation="vertical" variant="middle" sx={{ marginRight: 2, marginLeft: 3 }} />
             <Box sx={{
                 height: "100%",
-                width: "calc(100% - 400px)"
+                width: "calc(100% - 650px)",
             }}>
                 <Box sx={{
                     height: "calc(100% - 200px)",
-                    width: "100%"
+                    width: "100%",
+                    justifyContent: 'center',
+                    display: "flex"
                 }}>
                     <img
                         alt="lion"
@@ -859,6 +861,14 @@ export default function ComicCreationScreen() {
                         </div>
                     )
                 }
+            </Box>
+            <Divider orientation="vertical" variant="middle" sx={{ marginRight: 2, marginLeft: 3 }} />
+            <Box sx={{
+                height: "100%",
+                width: "250px",
+                float: "right"
+            }}>
+                {stickersSection}
             </Box>
         </Box>
     );
