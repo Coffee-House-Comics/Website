@@ -14,6 +14,8 @@ import SubmitButton from '../../../Buttons/SubmitButton';
 import useImage from 'use-image';
 
 import prefabs from '../../../../prefab.json';
+import { elementAcceptingRef } from '@mui/utils';
+import { LineAxis } from '@mui/icons-material';
 
 const viewType = {
     main: "main",
@@ -32,8 +34,34 @@ const toolType = {
     bucket: "bucket",
 };
 
+
+
+let transactions = [];
+let transactionIndex = 0;
+const transactionTypes = {
+    createLine: "createLine",
+    createImage: "createImage",
+    moveImage: "moveImage",
+};
+
+function createTransEntry(name, before, now) {
+    const entry = {
+        transactionName: name,
+        before: before,
+        now: now,
+    };
+
+    transactions = [...transactions, entry];
+    transactionIndex++;
+}
+
+
 let undoStack = [];
 
+
+
+
+// All supported shapes 
 const supportedShapes = {
     line: "line",
     image: "image",
@@ -49,16 +77,29 @@ function downloadURI(uri, name) {
     document.body.removeChild(link);
 }
 
-const URLImage = ({ image }) => {
+const URLImage = ({ image, onDragMove, onDragEnd, draggable }) => {
     const [img] = useImage(image.src);
+
+    let width = (img) ? img.width : 0;
+    let height = (img) ? img.height : 0;
+
+    // overwrite for now
+    width = (img) ? 128 : 0;
+    height = (img) ? 128 : 0;
+
     return (
         <Image
+            width={width}
+            height={height}
             image={img}
             x={image.x}
             y={image.y}
             // I will use offset to set origin to the center of the image
-            offsetX={img ? img.width / 2 : 0}
-            offsetY={img ? img.height / 2 : 0}
+            offsetX={img ? width / 2 : 0}
+            offsetY={img ? height / 2 : 0}
+            draggable={Boolean(draggable)}
+            onDragEnd={onDragEnd}
+            onDragMove={onDragMove}
         />
     );
 };
@@ -107,6 +148,8 @@ export default function ComicCreationScreen() {
     const dragUrl = React.useRef();
 
     const [tool, setTool] = React.useState(toolType.NONE);
+
+    const canDrag = Boolean(tool === toolType.NONE);
 
     const isDrawing = React.useRef(false);
 
@@ -171,6 +214,10 @@ export default function ComicCreationScreen() {
         return serialization[serialization.length - 1];
     }
 
+    function peekTransStack() {
+        return transactions[transactions.length - 1];
+    }
+
     function peekUndoStack() {
         return undoStack[undoStack.length - 1];
     }
@@ -199,18 +246,26 @@ export default function ComicCreationScreen() {
         handleRedo();
     };
 
-    const addOp = function (typeName, op) {
-        if (typeName === supportedShapes.line) {
-            // serialization = [...serialization, op];
+    const addOp = function (typeName, op, transactionName, modify) {
+        if (transactionName === transactionTypes.createLine) {
+            if (modify) {
+                console.log("Created entry...");
+                createTransEntry(transactionTypes.createLine);
+            }
 
-            // console.log("Adding op:", op);
 
             setSerialization(op);
         }
-        else if (typeName === supportedShapes.image) {
-
+        else if (transactionName === transactionTypes.createImage) {
+            if (modify)
+                createTransEntry(transactionTypes.createImage);
 
             setSerialization(op);
+        }
+        else if (transactionName === transactionTypes.moveImage) {
+
+
+
 
 
         }
@@ -220,12 +275,17 @@ export default function ComicCreationScreen() {
     };
 
     const handleUndo = function () {
-        const last = peekSerial();
+        const transaction = peekTransStack();
 
-        if (!last)
-            return;
+        if (transactions.length === 0 || transactionIndex === 0)
+            return
 
-        if (last.typeName === supportedShapes.line) {
+        if (transaction.transactionName === transactionTypes.createLine) {
+            const last = peekSerial();
+
+            if (!last)
+                return;
+
             //console.log("Setting (from undo) to:", undoStack, serialization);
             if (serialization.length === 0) {
                 return;
@@ -235,9 +295,14 @@ export default function ComicCreationScreen() {
 
             //console.log("Setting (from undo) to:", undoStack, serialization);
 
+            transactionIndex--;
+
             setSerialization(serialization.slice(0, -1));
         }
-        else if (last.typeName === supportedShapes.image) {
+        else if (transaction.transactionName === transactionTypes.createImage) {
+
+        }
+        else if (transaction.transactionName === transactionTypes.moveImage) {
 
         }
         else {
@@ -246,12 +311,17 @@ export default function ComicCreationScreen() {
     };
 
     const handleRedo = function (typeName) {
-        const last = peekUndoStack();
+        const transaction = peekTransStack();
 
-        if (!last)
-            return;
+        if (transactions.length === 0)
+            return
 
-        if (last.typeName === supportedShapes.line) {
+        if (transaction.transactionName === transactionTypes.createLine) {
+            const last = peekUndoStack();
+
+            if (!last)
+                return;
+
             if (undoStack.length === 0) {
                 return;
             }
@@ -260,9 +330,15 @@ export default function ComicCreationScreen() {
 
             //console.log("Setting (from redo) to:", undoStack, newSerialization);
 
+            transactionIndex++;
+
             setSerialization(newSerialization);
+
         }
-        else if (last.typeName === supportedShapes.image) {
+        else if (transaction.transactionName === transactionTypes.createImage) {
+
+        }
+        else if (transaction.transactionName === transactionTypes.moveImage) {
 
         }
         else {
@@ -288,7 +364,40 @@ export default function ComicCreationScreen() {
             stickersTabBackgroundColor = stickersSectionBackgroundColor;
     }
 
-    //TODO
+    // TODO: Do we have to do anything here???
+    const handleDragMove = function (e, id) {
+        // const elem = serialization[id];
+
+        // if (elem) {
+        //     console.log("hdm:", type, id, e);
+        // }
+    }
+
+    const handleDragEnd = function (e, id) {
+        const elem = serialization[id];
+
+        if (elem) {
+            const x = e.target.attrs.x;
+            const y = e.target.attrs.y;
+
+            if (elem.typeName === supportedShapes.image) {
+                console.log("x y", elem.data, x, y);
+
+                elem.data.x = x;
+                elem.data.y = y;
+
+                serialization.splice(id, 1, elem);
+
+                addOp(supportedShapes.image, serialization.concat());
+            }
+            else if (elem.typeName === supportedShapes.line) {
+                console.log("x y", elem.data.points, x, y, e);
+            }
+        }
+    }
+
+
+
     const handlePencilClick = function () {
         if (tool === toolType.pencil)
             setTool(toolType.NONE);
@@ -299,7 +408,6 @@ export default function ComicCreationScreen() {
 
     }
 
-    //TODO
     const handleEraserClick = function () {
         if (tool === toolType.eraser)
             setTool(toolType.NONE);
@@ -444,18 +552,19 @@ export default function ComicCreationScreen() {
 
         // replace last
         serialization.splice(serialization.length - 1, 1, lastLineEntry);
-        addOp(supportedShapes.line, serialization.concat());
+        addOp(supportedShapes.line, serialization.concat(), transactionTypes.createLine, false);
     };
 
     const handleMouseDown = (e) => {
-
         if (tool === toolType.pencil || tool === toolType.eraser) {
             isDrawing.current = true;
+
             const pos = e.target.getStage().getPointerPosition();
+            // console.log("P", pos);
             const entry = constructEntry(supportedShapes.line, { tool, points: [pos.x, pos.y], color: rgbaToCss(), penSize: penSize });
             // console.log("Adding entry:", entry);
 
-            addOp(supportedShapes.line, [...serialization, entry]);
+            addOp(supportedShapes.line, [...serialization, entry], transactionTypes.createLine, true);
         }
     };
 
@@ -484,7 +593,7 @@ export default function ComicCreationScreen() {
                     src: dragUrl.current,
                 });
 
-                addOp(supportedShapes.image, [...serialization, entry]);
+                addOp(supportedShapes.image, [...serialization, entry], transactionTypes.createImage, true);
             }}
             onDragOver={(e) => e.preventDefault()}
             style={{ width: "900px", height: "900px", justifyContent: "center", display: "flex" }}
@@ -499,44 +608,56 @@ export default function ComicCreationScreen() {
                 onMouseup={handleMouseUp}
             >
                 <Layer>
-                    {/* <Rect width={50} height={50} fill="red" draggable />
-                    <Circle x={200} y={200} stroke="black" radius={50} draggable /> */}
-
-                    {/* The Lines for free draw support */}
                     {
-                        serialization.map((shape, i) => {
+                        serialization.filter(function (val) {
+                            if (val.typeName === supportedShapes.drag)
+                                return false;
+                            else
+                                return true;
+                        }).map((shape, i) => {
                             if (shape.typeName === supportedShapes.line) {
                                 const line = shape.data;
                                 return (
                                     <Line
                                         key={i}
+                                        x={line.x}
+                                        y={line.y}
                                         points={line.points}
+                                        // perfectDrawEnabled={false}
                                         stroke={line.color}
                                         strokeWidth={line.penSize}
+                                        //closed={true}
                                         tension={0.5}
-                                        lineCap="round"
+                                        lineCap={'round'}
+                                        lineJoin={'round'}
                                         globalCompositeOperation={
                                             line.tool === 'eraser' ? 'destination-out' : 'source-over'
                                         }
+                                    // draggable={canDrag}
+                                    // onDragEnd={(e) => handleDragEnd(e, i)}
+                                    // onDragMove={(e) => handleDragMove(e, i)}
                                     />
                                 );
                             }
                             else if (shape.typeName === supportedShapes.image) {
                                 return (
-                                    <URLImage image={shape.data} />
+                                    <URLImage
+                                        image={shape.data}
+                                        draggable={canDrag}
+                                        onDragEnd={(e) => handleDragEnd(e, i)}
+                                        onDragMove={(e) => handleDragMove(e, i)}
+                                    />
                                 );
+                            }
+                            else {
+                                // Should not be possible since we filter
+                                console.log("IMPOSSIBLE !!");
                             }
                         })
                     }
                 </Layer>
             </Stage>
         </div>
-
-
-
-
-
-
 
 
     // ------------------------------------------------------------------------------------------------------------------------
@@ -610,8 +731,10 @@ export default function ComicCreationScreen() {
                 }}>
                     <img
                         alt="lion"
-                        src="https://konvajs.org/assets/lion.png"
+                        src={prefabs[0].src}
                         draggable="true"
+                        width={128}
+                        height={128}
                         onDragStart={(e) => {
                             dragUrl.current = e.target.src;
                         }}
