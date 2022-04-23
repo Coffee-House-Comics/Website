@@ -33,7 +33,7 @@ function ResetPasswordScreen() {
         setOldPass(event.target.value);
     }
 
-    const handleNewPassChnage = function (event) {
+    const handleNewPassChange = function (event) {
         setNewPass(event.target.value);
     }
 
@@ -91,7 +91,7 @@ function ResetPasswordScreen() {
                     fieldName={"New Password"}
                     type='password'
                     helperText={"Please Enter your new password."}
-                    onChange={handleNewPassChnage}
+                    onChange={handleNewPassChange}
                     sx={{
                         width: "100%"
                     }}

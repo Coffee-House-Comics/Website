@@ -3,6 +3,7 @@ import { Stage, Layer, Rect, Circle, Line, Image } from 'react-konva';
 import React, { useEffect, useState } from 'react'
 import EditorButtonPanel from '../../../Buttons/EditorButtons/EditorButtonPanel'
 import CreateIcon from '@mui/icons-material/Create';
+import TextFieldsIcon from '@mui/icons-material/TextFields';
 import InterestsIcon from '@mui/icons-material/Interests';
 import FormatColorFillIcon from '@mui/icons-material/FormatColorFill';
 import EraserIcon from '../../../Icons/EraserIcon';
@@ -715,7 +716,6 @@ export default function ComicCreationScreen() {
         else {
             setTool(toolType.pencil);
         }
-
     }
 
     const handleEraserClick = function () {
@@ -725,7 +725,6 @@ export default function ComicCreationScreen() {
             console.log("Setting eraser");
             setTool(toolType.eraser);
         }
-
     }
 
     // Changes background color
@@ -734,9 +733,6 @@ export default function ComicCreationScreen() {
 
         addOp(null, null, transactionTypes.changeBackgroundColor, true, backgroundColor, rgbaToCss());
     }
-
-
-
 
     const handleShapesClick = function () {
         setShapeModeOn(!shapeModeOn);
@@ -857,6 +853,9 @@ export default function ComicCreationScreen() {
                     {/* // TODO: */}
                     <IconButton onClick={handleShapesClick} sx={{ border: (shapeModeOn) ? borderSpecs : "" }}>
                         <InterestsIcon sx={{ width: 35, height: 35, color: rgbaToCss() }} />
+                    </IconButton>
+                    <IconButton onCLick={handleTextClick} sx={{ border: (tool === toolType.text) ? borderSpecs: ""}}>
+                        <TextFieldsIcon sx={{width: 35, height: 35 }}/>
                     </IconButton>
                 </Grid>
             </Grid>
