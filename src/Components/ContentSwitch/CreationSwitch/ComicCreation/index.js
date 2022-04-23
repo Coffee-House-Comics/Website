@@ -51,6 +51,7 @@ const toolType = {
     pencil: "pencil",
     eraser: "eraser",
     bucket: "bucket",
+    text: "text"
 };
 
 const pencilType = {
@@ -66,7 +67,8 @@ const transactionTypes = {
     createLine: "createLine",
     createImage: "createImage",
     moveImage: "moveImage",
-    changeBackgroundColor: "changeBackgroundColor"
+    changeBackgroundColor: "changeBackgroundColor",
+    addText: "text"
 };
 
 function createTransEntry(name, before, after, id) {
@@ -763,6 +765,14 @@ export default function ComicCreationScreen() {
         setShapeModeOn(!shapeModeOn);
     }
 
+    const handleTextClick = function () {
+        if(tool === toolType.text){
+            setTool(toolType.NONE)
+        } else {
+            setTool(toolType.text)
+        }
+    }
+
     // TODO:
     const handlePrefabsTabClick = function () {
         setStickerTab(STICKER_TAB_TYPE.PREFAB_TAB)
@@ -879,8 +889,8 @@ export default function ComicCreationScreen() {
                     <IconButton onClick={handleShapesClick} sx={{ border: (shapeModeOn) ? borderSpecs : "" }}>
                         <InterestsIcon sx={{ width: 35, height: 35, color: rgbaToCss() }} />
                     </IconButton>
-                    <IconButton onCLick={handleTextClick} sx={{ border: (tool === toolType.text) ? borderSpecs: ""}}>
-                        <TextFieldsIcon sx={{width: 35, height: 35 }}/>
+                    <IconButton onClick={handleTextClick} sx={{ border: (tool === toolType.text) ? borderSpecs : "" }}>
+                        <TextFieldsIcon sx={{ width: 35, height: 35 }} />
                     </IconButton>
                 </Grid>
             </Grid>
@@ -917,6 +927,20 @@ export default function ComicCreationScreen() {
                 </div>
             </Grid>
         </Grid>
+
+
+    let optionsPanel = (tool === toolType.text) ? 
+    <SketchPicker
+        color={rgbaToCss()}
+        onChange={handleColorChange}
+        presetColors={Object.values(Colors)}
+    /> : 
+    <SketchPicker
+        color={rgbaToCss()}
+        onChange={handleColorChange}
+        presetColors={Object.values(Colors)}
+    />
+
 
     // ------------------------------------------------------------------------------------------------------------------------
 
@@ -1099,11 +1123,7 @@ export default function ComicCreationScreen() {
                             justifyContent: "center",
                             display: "flex"
                         }}>
-                            <SketchPicker
-                                color={rgbaToCss()}
-                                onChange={handleColorChange}
-                                presetColors={Object.values(Colors)}
-                            />
+                            {optionsPanel}
                         </Box>
                     </Grid>
                     <Grid item>
