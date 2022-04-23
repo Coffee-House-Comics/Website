@@ -167,83 +167,91 @@ export default function ContentPanel({ pages }) {
 
     const maxPages = pages.length;
 
+    console.log("mp:", maxPages);
+
     function previousPage() {
         if (pageNumber > 0)
             setPageNumber(pageNumber - 1);
     }
 
     function nextPage() {
-        if (pageNumber < maxPages)
+        if (pageNumber < maxPages - 1)
             setPageNumber(pageNumber + 1);
     }
 
     return (
         <div style={{ height: "95%", marginTop: "50px", marginLeft: "10px", marginRight: "10px" }}>
-            <div style={{ backgroundColor: "white", height: "calc(100% - 100px)", border: "3px solid " + theme.palette.olive_drab_7.main, borderRadius: "5px", }}>
-                <Stage
-                    width={editorSize}
-                    height={editorSize}
-                    ref={stageRef}
-                    style={{ border: "1px solid black", background: backgroundColor }}
-                >
-                    <Layer>
-                        {
-                            serialization.filter(function (val) {
-                                if (val.typeName === supportedShapes.drag)
-                                    return false;
-                                else
-                                    return true;
-                            }).map((shape, i) => {
-                                if (shape.typeName === supportedShapes.line) {
-                                    const line = shape.data;
+            <div style={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "center"
+            }}>
+                <div style={{ backgroundColor: "white", height: editorSize + "px", width: editorSize + "px", border: "3px solid " + theme.palette.olive_drab_7.main, borderRadius: "5px", }}>
+                    <Stage
+                        width={editorSize}
+                        height={editorSize}
+                        ref={stageRef}
+                        style={{ border: "1px solid black", background: backgroundColor }}
+                    >
+                        <Layer>
+                            {
+                                serialization.filter(function (val) {
+                                    if (val.typeName === supportedShapes.drag)
+                                        return false;
+                                    else
+                                        return true;
+                                }).map((shape, i) => {
+                                    if (shape.typeName === supportedShapes.line) {
+                                        const line = shape.data;
 
-                                    let dashedArr = [];
-                                    if (line.pencilType === pencilType.dashed) {
-                                        dashedArr = [33, 2 * (line.penSize)];
-                                    }
-                                    else if (line.pencilType === pencilType.dotted) {
-                                        dashedArr = [33, 2 * (line.penSize), 0.001 * (line.penSize), 2 * (line.penSize)];
-                                    }
+                                        let dashedArr = [];
+                                        if (line.pencilType === pencilType.dashed) {
+                                            dashedArr = [33, 2 * (line.penSize)];
+                                        }
+                                        else if (line.pencilType === pencilType.dotted) {
+                                            dashedArr = [33, 2 * (line.penSize), 0.001 * (line.penSize), 2 * (line.penSize)];
+                                        }
 
-                                    return (
-                                        <Line
-                                            key={i}
-                                            x={line.x}
-                                            y={line.y}
-                                            points={line.points}
-                                            perfectDrawEnabled={false}
-                                            fill={line.closed ? line.color : ""}
-                                            stroke={line.color}
-                                            strokeWidth={line.penSize}
-                                            closed={line.closed}
-                                            tension={0.5}
-                                            lineCap={'round'}
-                                            lineJoin={'round'}
-                                            dash={dashedArr}
-                                            globalCompositeOperation={
-                                                line.tool === 'eraser' ? 'destination-out' : 'source-over'
-                                            }
-                                        />
-                                    );
-                                }
-                                else if (shape.typeName === supportedShapes.image) {
-                                    return (
-                                        <URLImage
-                                            key={i}
-                                            image={shape.data}
-                                            draggable={false}
-                                        />
-                                    );
-                                }
-                                else {
-                                    // Should not be possible since we filter
-                                    console.log("IMPOSSIBLE !!");
-                                    return <div />;
-                                }
-                            })
-                        }
-                    </Layer>
-                </Stage>
+                                        return (
+                                            <Line
+                                                key={i}
+                                                x={line.x}
+                                                y={line.y}
+                                                points={line.points}
+                                                perfectDrawEnabled={false}
+                                                fill={line.closed ? line.color : ""}
+                                                stroke={line.color}
+                                                strokeWidth={line.penSize}
+                                                closed={line.closed}
+                                                tension={0.5}
+                                                lineCap={'round'}
+                                                lineJoin={'round'}
+                                                dash={dashedArr}
+                                                globalCompositeOperation={
+                                                    line.tool === 'eraser' ? 'destination-out' : 'source-over'
+                                                }
+                                            />
+                                        );
+                                    }
+                                    else if (shape.typeName === supportedShapes.image) {
+                                        return (
+                                            <URLImage
+                                                key={i}
+                                                image={shape.data}
+                                                draggable={false}
+                                            />
+                                        );
+                                    }
+                                    else {
+                                        // Should not be possible since we filter
+                                        console.log("IMPOSSIBLE !!");
+                                        return <div />;
+                                    }
+                                })
+                            }
+                        </Layer>
+                    </Stage>
+                </div>
             </div>
             <Grid container direction="row" justifyContent="center" alignItems="center" spacing={1} sx={{ height: "100px" }}>
                 <Grid item>
@@ -252,7 +260,7 @@ export default function ContentPanel({ pages }) {
                     </IconButton>
                 </Grid>
                 <Grid item>
-                    <Typography variant="h3">{pageNumber}</Typography>
+                    <Typography variant="h3">{pageNumber + 1}</Typography>
                 </Grid>
                 <Grid item>
                     <IconButton onClick={nextPage}>
