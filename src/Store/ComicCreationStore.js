@@ -92,7 +92,7 @@ function ComicStoreContextProvider(props) {
             }
         }
 
-        catch {
+        catch (err) {
 
         }
 
@@ -104,20 +104,59 @@ function ComicStoreContextProvider(props) {
         });
     }
 
-    store.undo = async function() {
-
-    }
-
-    store.redo = async function() {
-
-    }
-
     store.publish = async function(comic) {
+        //TODO get series somehow
+        const series =  "";
 
+        try {
+            mainStore.toggleLoading();
+            const response = await ComicAPI.publish(store.comicId, series);
+            mainStore.toggleLoading();
+
+            if(response.status === 200) {
+                mainStore.reRoute(types.TabType.APP.children.PROFILE.fullRoute.slice(0, -3) + mainStore.user);
+                mainStore.createModal({
+                    title: "Comic published",
+                    body: "Your comic has been succesfully published!",
+                    action: ""
+                });
+                return;
+            }
+        }
+
+        catch (err) {
+
+        }
+
+        console.log("Couldn't publish comic :/");
+        mainStore.createModal({
+            title: "Error publishing comic",
+            body: "Comic could not be published. Please try again.",
+            action: ""
+        });
     }
 
-    store.save = async function(comic) {
+    store.save = async function(comicPages) {
+        try {
+            mainStore.toggleLoading();
+            const response = await ComicAPI.saveContent(store.comicId, comicPages);
+            mainStore.toggleLoading();
 
+            if(response.status === 200) {
+                return;
+            }
+        }
+
+        catch (err) {
+
+        }
+
+        console.log("Couldn't save comic :/");
+        mainStore.createModal({
+            title: "Error saving comic",
+            body: "Comic could not be saved. Please try again.",
+            action: ""
+        });
     }
 
 
