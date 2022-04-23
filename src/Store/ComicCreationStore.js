@@ -255,28 +255,4 @@ function ComicStoreContextProvider(props) {
         });
     }
 
-    store.saveSticker = async function(stickerJson) {
-        try {
-            mainStore.toggleLoading();
-            const response = await ComicAPI.saveSticker(stickerJson);
-            mainStore.toggleLoading();
-
-            if(response.status === 200) {
-                return;
-            }
-        }
-
-        catch (err) {
-
-        }
-
-        console.log("Couldn't save sticker :/");
-        mainStore.createModal({
-            title: "Error saving sticker",
-            body: "Sticker could not be saved. Please try again.",
-            action: ""
-        });
-    }
-
-
 }
