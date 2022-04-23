@@ -44,6 +44,12 @@ const toolType = {
     bucket: "bucket",
 };
 
+const pencilType = {
+    solid: 0,
+    dotted: 50,
+    dashed: 100
+};
+
 let transactions = [];
 let transactionIndex = -1;
 
@@ -147,6 +153,12 @@ export default function ComicCreationScreen() {
         setPenSize(newValue);
     };
 
+    const [currentPencilType, setCurrentPencilType] = useState(pencilType.solid);
+    const handlePencilTypeChange = (event, newValue) => {
+        // console.log("hptc:", newValue);
+        setCurrentPencilType(newValue);
+    };
+
     const marks = [];
     for (let i = 0; i <= 100; i += 10) {
         marks.push({
@@ -154,6 +166,21 @@ export default function ComicCreationScreen() {
             label: "" + i
         });
     }
+
+    const penTypeMarks = [
+        {
+            value: 0,
+            label: "Solid"
+        },
+        {
+            value: 50,
+            label: "Dotted"
+        },
+        {
+            value: 100,
+            label: "Dashed"
+        }
+    ];
 
     function valuetext(value) {
         return `${value}`;
@@ -494,6 +521,9 @@ export default function ComicCreationScreen() {
         case STICKER_TAB_TYPE.STICKER_TAB:
             prefabsTabBackgroundColor = "transparent";
             stickersTabBackgroundColor = stickersSectionBackgroundColor;
+            break;
+        default:
+            break;
     }
 
     // TODO: Do we have to do anything here???
@@ -701,7 +731,15 @@ export default function ComicCreationScreen() {
 
             const pos = e.target.getStage().getPointerPosition();
             // console.log("P", pos);
-            const entry = constructEntry(supportedShapes.line, { tool, points: [pos.x, pos.y], color: rgbaToCss(), penSize: penSize, closed: shapeModeOn });
+            const entry = constructEntry(supportedShapes.line,
+                {
+                    tool,
+                    points: [pos.x, pos.y],
+                    color: rgbaToCss(),
+                    penSize: penSize,
+                    closed: shapeModeOn,
+                    pencilType: currentPencilType
+                });
             // console.log("Adding entry:", entry);
 
             addOp(supportedShapes.line, [...serialization, entry], transactionTypes.createLine, true);
@@ -756,6 +794,15 @@ export default function ComicCreationScreen() {
                         }).map((shape, i) => {
                             if (shape.typeName === supportedShapes.line) {
                                 const line = shape.data;
+
+                                let dashedArr = [];
+                                if (line.pencilType === pencilType.dashed) {
+                                    dashedArr = [33, 10];
+                                }
+                                else if (line.pencilType === pencilType.dotted) {
+                                    dashedArr = [29, 20, 0.001, 20];
+                                }
+
                                 return (
                                     <Line
                                         key={i}
@@ -770,6 +817,7 @@ export default function ComicCreationScreen() {
                                         tension={0.5}
                                         lineCap={'round'}
                                         lineJoin={'round'}
+                                        dash={dashedArr}
                                         globalCompositeOperation={
                                             line.tool === 'eraser' ? 'destination-out' : 'source-over'
                                         }
@@ -857,6 +905,26 @@ export default function ComicCreationScreen() {
                             }}
                         />
                     </Grid>
+                    <Grid item>
+                        <div style={{
+                            width: "100%",
+                            display: "flex",
+                            justifyContent: "center"
+                        }}>
+                            <Slider
+                                aria-label="Restricted values"
+                                value={currentPencilType}
+                                step={null}
+                                marks={penTypeMarks}
+                                track={false}
+                                onChange={handlePencilTypeChange}
+                                sx={{
+                                    width: "50%",
+                                    color: (tool === toolType.eraser) ? "black" : rgbaToCss()
+                                }}
+                            />
+                        </div>
+                    </Grid>
                 </Grid>
             </Box>
             <Divider orientation="vertical" variant="middle" sx={{ marginRight: 2, marginLeft: 3 }} />
@@ -899,6 +967,6 @@ export default function ComicCreationScreen() {
             }}>
                 {stickersSection}
             </Box>
-        </Box>
+        </Box >
     );
 }
