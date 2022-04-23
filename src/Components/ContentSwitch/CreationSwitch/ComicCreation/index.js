@@ -98,6 +98,14 @@ function peekTransStack() {
 
 let undoStack = [];
 
+
+
+function clearTransactions() {
+    undoStack = [];
+    transactions = [];
+    transactionIndex = -1;
+}
+
 // All supported shapes 
 const supportedShapes = {
     line: "line",
@@ -277,6 +285,9 @@ export default function ComicCreationScreen() {
         else {
             which = pages[pageIndex].data;
         }
+
+        // Clear the transaction stack
+        clearTransactions();
 
         setCurrentPage(which)
     }, [pageIndex]);
