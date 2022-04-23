@@ -27,8 +27,7 @@ function ComicStoreContextProvider(props) {
         currentPage: {
             currentTool: "pen",
             currentTab: "prefab",
-            index: 0,
-            konvaJson: {}
+            index: 0
         }
     });
 
@@ -88,8 +87,7 @@ function ComicStoreContextProvider(props) {
             payload: {
                 currentTool: store.currentPage.currentTool,
                 currentTab: newTab,
-                index: store.currentPage.index,
-                konvaJson: store.currentPage.konvaJson
+                index: store.currentPage.index
             }
         });
     }
@@ -100,8 +98,7 @@ function ComicStoreContextProvider(props) {
             payload: {
                 currentTool: newTool,
                 currentTab: store.currentPage.currentTab,
-                index: store.currentPage.index,
-                konvaJson: store.currentPage.konvaJson
+                index: store.currentPage.index
             }
         });
     }
@@ -112,20 +109,7 @@ function ComicStoreContextProvider(props) {
             payload: {
                 currentTool: store.currentPage.currentTool,
                 currentTab: store.currentPage.currentTab,
-                index: index,
-                konvaJson: store.comicPages[index]
-            }
-        });
-    }
-
-    store.updateKonvaJSON = function (json) {
-        storeReducer({
-            type: ComicStoreActionType.SET_CURRENT_PAGE,
-            payload: {
-                currentTool: store.currentPage.currentTool,
-                currentTab: store.currentPage.currentTab,
-                index: store.currentPage.index,
-                konvaJson: json
+                index: index
             }
         });
     }
@@ -153,6 +137,10 @@ function ComicStoreContextProvider(props) {
             body: "Comic could not be retrieved. Please try again.",
             action: ""
         });
+    }
+
+    store.loadPage = function() {
+        return store.comicPages[store.currentPage.index];
     }
 
     store.editMetaData = async function(newData) {
@@ -212,10 +200,14 @@ function ComicStoreContextProvider(props) {
         });
     }
 
-    store.save = async function(comicPages) {
+    store.save = async function(currentPageJSON) {
+        newComicPages = store.comicPages.map((page, i) => {
+            store.currentPage.index == i? currentPageJSON : page
+        })
+
         try {
             mainStore.toggleLoading();
-            const response = await ComicAPI.saveContent(store.comicId, comicPages);
+            const response = await ComicAPI.saveContent(store.comicId, newComicPages);
             mainStore.toggleLoading();
 
             if(response.status === 200) {
