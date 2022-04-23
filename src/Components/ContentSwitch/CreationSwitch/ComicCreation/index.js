@@ -15,6 +15,16 @@ import useImage from 'use-image';
 
 import prefabs from '../../../../prefab.json';
 
+
+/* NOTES:
+
+    When we export/import remember to have all the pages and...
+    Each page has:
+        1. Serialization data
+        2. Background Color
+
+*/
+
 const editorSize = 800;
 
 const viewType = {
@@ -34,14 +44,14 @@ const toolType = {
     bucket: "bucket",
 };
 
-
-
 let transactions = [];
 let transactionIndex = -1;
+
 const transactionTypes = {
     createLine: "createLine",
     createImage: "createImage",
     moveImage: "moveImage",
+    changeBackgroundColor: "changeBackgroundColor"
 };
 
 function createTransEntry(name, before, after, id) {
@@ -69,9 +79,7 @@ function peekTransStack() {
     return transactions[transactionIndex];
 }
 
-
 let undoStack = [];
-
 
 // All supported shapes 
 const supportedShapes = {
@@ -127,6 +135,8 @@ export default function ComicCreationScreen() {
         b: '64',
         a: '1',
     });
+
+    const [backgroundColor, setBackgroundColor] = useState('white');
 
     function rgbaToCss() {
         return `rgba(${currentColor.r},${currentColor.g},${currentColor.b},${currentColor.a})`;
@@ -261,7 +271,6 @@ export default function ComicCreationScreen() {
                 createTransEntry(transactionTypes.createLine);
             }
 
-
             setSerialization(op);
         }
         else if (transactionName === transactionTypes.createImage) {
@@ -276,6 +285,14 @@ export default function ComicCreationScreen() {
 
             setSerialization(op);
         }
+        else if (transactionName === transactionTypes.changeBackgroundColor) {
+            if (modify) {
+                console.log("ctefbc");
+                createTransEntry(transactionTypes.changeBackgroundColor, before, now)
+            }
+
+            setBackgroundColor(now);
+        }
         else {
             console.log("Unsupported transaction");
         }
@@ -284,7 +301,7 @@ export default function ComicCreationScreen() {
     const handleUndo = function () {
         const transaction = peekTransStack();
 
-        console.log("t", transaction, transactions);
+        // console.log("t", transaction, transactions);
 
         if (!transaction)
             return;
@@ -349,23 +366,33 @@ export default function ComicCreationScreen() {
                 setSerialization(serialization.concat());
             }
         }
+        else if (transaction.transactionName === transactionTypes.changeBackgroundColor) {
+            const before = transaction.before;
+            // const after = transaction.after;
+
+            transactionIndex--;
+
+            setBackgroundColor(before);
+        }
         else {
             console.log("Unsupported transaction");
         }
     };
 
     const handleRedo = function () {
+        // console.log("bt", peekTransStack(), transactions, transactionIndex);
+
         transactionIndex++;
         const transaction = peekTransStack();
-        console.log("t", transaction);
-
-        if (!peekTransStack()) {
+        // console.log("t", transaction, transactions);
+        if (transaction === null || transaction === undefined) {
+            console.log("err 1");
             transactionIndex--;
             return;
         }
 
-
         if (transactions.length === 0) {
+            console.log("err 2");
             transactionIndex--;
             return;
         }
@@ -387,8 +414,6 @@ export default function ComicCreationScreen() {
 
             //console.log("Setting (from redo) to:", undoStack, newSerialization);
 
-            //transactionIndex++;
-
             setSerialization(newSerialization);
 
         }
@@ -408,8 +433,6 @@ export default function ComicCreationScreen() {
             const newSerialization = [...serialization, undoStack.pop()];
 
             //console.log("Setting (from redo) to:", undoStack, newSerialization);
-
-            //transactionIndex++;
 
             setSerialization(newSerialization);
         }
@@ -435,13 +458,19 @@ export default function ComicCreationScreen() {
 
                 serialization.splice(id, 1, elem);
 
-                //transactionIndex++;
-
                 setSerialization(serialization.concat());
             }
             else {
                 transactionIndex--;
             }
+        }
+        else if (transaction.transactionName === transactionTypes.changeBackgroundColor) {
+            // const before = transaction.before;
+            const after = transaction.after;
+
+            // console.log("->", after);
+
+            setBackgroundColor(after + " ");
         }
         else {
             console.log("Unsupported transaction");
@@ -516,12 +545,12 @@ export default function ComicCreationScreen() {
 
     }
 
-    //TODO
+    // Changes background color
     const handleFillClick = function () {
+        console.log("changeing backgorund...");
 
+        addOp(null, null, transactionTypes.changeBackgroundColor, true, backgroundColor, rgbaToCss());
     }
-
-
 
     const [shapeModeOn, setShapeModeOn] = useState(false);
 
@@ -530,26 +559,35 @@ export default function ComicCreationScreen() {
         setShapeModeOn(!shapeModeOn);
     }
 
-    //TODO
+    // TODO:
     const handlePrefabsTabClick = function () {
         setStickerTab(STICKER_TAB_TYPE.PREFAB_TAB)
     }
 
-    //TODO
+    // TODO:
     const handleStickersTabClick = function () {
         setStickerTab(STICKER_TAB_TYPE.STICKER_TAB)
     }
 
-    //TODO
-    let stickersContent = []
-    for (let i = 0; i < 200; i++) {
-        stickersContent.push(
-            <Grid item>
-                <div style={{ backgroundColor: "white", height: 60, width: 60, margin: 4 }}>
-                </div>
+    // TODO:
+    //const stickersContent = [];
+
+    const prefabContent = prefabs.map(function (img, i) {
+        return (
+            <Grid item key={i}>
+                <img
+                    alt={img.name}
+                    src={img.src}
+                    draggable="true"
+                    width={128}
+                    height={128}
+                    onDragStart={(e) => {
+                        dragUrl.current = e.target.src;
+                    }}
+                />
             </Grid>
-        )
-    }
+        );
+    });
 
     function pageComponent({ key }) {
         return (
@@ -630,7 +668,7 @@ export default function ComicCreationScreen() {
             <Grid item sx={{ height: "calc(100% - 50px)", marginTop: -3, backgroundColor: stickersSectionBackgroundColor, padding: "10px 0px 10px 0px" }}>
                 <div style={{ overflow: "auto", height: "100%", padding: "0px 5px 0px 5px" }}>
                     <Grid container direction="row" justifyContent="center" sx={{ width: "100%" }}>
-                        {stickersContent}
+                        {prefabContent}
                     </Grid>
                 </div>
             </Grid>
@@ -703,7 +741,7 @@ export default function ComicCreationScreen() {
                 width={editorSize}
                 height={editorSize}
                 ref={stageRef}
-                style={{ border: "1px solid black", background: "white" }}
+                style={{ border: "1px solid black", background: backgroundColor }}
                 onMouseDown={handleMouseDown}
                 onMousemove={handleMouseMove}
                 onMouseup={handleMouseUp}
@@ -744,6 +782,7 @@ export default function ComicCreationScreen() {
                             else if (shape.typeName === supportedShapes.image) {
                                 return (
                                     <URLImage
+                                        key={i}
                                         image={shape.data}
                                         draggable={canDrag}
                                         onDragEnd={(e) => handleDragEnd(e, i)}
@@ -831,16 +870,6 @@ export default function ComicCreationScreen() {
                     justifyContent: 'center',
                     display: "flex"
                 }}>
-                    <img
-                        alt="lion"
-                        src={prefabs[0].src}
-                        draggable="true"
-                        width={128}
-                        height={128}
-                        onDragStart={(e) => {
-                            dragUrl.current = e.target.src;
-                        }}
-                    />
                     {editorWindow}
                 </Box>
                 {
