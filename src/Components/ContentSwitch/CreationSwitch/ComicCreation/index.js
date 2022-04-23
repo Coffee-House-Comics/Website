@@ -797,10 +797,10 @@ export default function ComicCreationScreen() {
 
                                 let dashedArr = [];
                                 if (line.pencilType === pencilType.dashed) {
-                                    dashedArr = [33, 10];
+                                    dashedArr = [33, 2 * ( line.penSize) ];
                                 }
                                 else if (line.pencilType === pencilType.dotted) {
-                                    dashedArr = [29, 20, 0.001, 20];
+                                    dashedArr = [33, 2 * ( line.penSize), 0.001 * (line.penSize) , 2 * ( line.penSize)];
                                 }
 
                                 return (
