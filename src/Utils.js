@@ -3,7 +3,6 @@ import API from "./API";
 const Utils = {}
 
 Utils.uploadFileFromInput = async function(e){
-    console.log("Attempting to upload image")
     if (e.target.files && e.target.files[0]) {
         const file = e.target.files[0]
         return await this.uploadFile(file)
@@ -11,12 +10,20 @@ Utils.uploadFileFromInput = async function(e){
 }
 
 Utils.uploadFile = async function(file){
+    console.log("Attempting to upload image")
     const formData = new FormData();
     formData.append("file", file);
     const res = await API.Common.uploadImage(formData);
-    const url = res.data.imageURL;
 
-    return url;
+    if(res.status === 200){
+        const url = res.data.imageURL;
+        console.log("Image upload successful. URL: " + url);
+        return url;
+    } else {
+        console.log("Image upload failed")
+        return null;
+    }
+    
 }
 
 export default Utils;

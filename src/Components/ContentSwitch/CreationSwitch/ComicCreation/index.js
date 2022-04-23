@@ -17,6 +17,7 @@ import { Buffer } from 'buffer'
 
 import prefabs from '../../../../prefab.json';
 import API from '../../../../API';
+import types from '../../../../Common/Types';
 
 
 /* NOTES:
@@ -422,7 +423,11 @@ export default function ComicCreationScreen() {
         return <div>Loading...</div>
 
     const metadataHook = function () {
-        console.log("Want to access metadata");
+
+        console.log("Trying to access metadata edit page")
+
+        //TODO: Set ID
+        // store.reRoute(types.TabType.CREATION.children.METADATA.fullRoute, id)
     }
 
     const undoHook = function () {

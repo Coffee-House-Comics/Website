@@ -66,10 +66,12 @@ export default function ProfileSettings(props) {
 
 
     const handleUploadImage = async function (e) {
-        const response = await Utils.uploadFileFromInput(e);
-        if (response.status === 200) {
-            await store.changeProfileImage(response.data.imageURL);
+        const imgURL = await Utils.uploadFileFromInput(e);
+        if (imgURL) {
+            await store.changeProfileImage(imgURL);
             triggerChange();
+        } else {
+            alert("Image upload failed. Please try again.");
         }
     }
 

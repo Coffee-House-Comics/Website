@@ -51,9 +51,11 @@ export default function MetadataEditor() {
 
 
     const handleChangePhotoClick = async function (e) {
-        const response = await Utils.uploadFileFromInput(e);
-        if (response.status === 200) {
-            setImg(response.data.imageURL);
+        const imgURL = await Utils.uploadFileFromInput(e);
+        if (imgURL) {
+            setImg(imgURL);
+        } else {
+            alert("Image upload failed. Please try again.")
         }
     }
 
