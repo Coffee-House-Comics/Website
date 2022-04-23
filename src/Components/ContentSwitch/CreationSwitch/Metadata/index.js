@@ -25,7 +25,13 @@ export default function MetadataEditor() {
     //Set the post on first render
     useEffect(() => {
         async function getPost(id) {
-            setPost((await API.Comic.viewUnpublished(id)).data.content)
+            let resp = (await API.Comic.viewUnpublished(id)).data
+
+            if(resp.error){
+                store.reRoute(TabType.APP.children.VIEW.fullRoute, id)
+            }
+            
+            setPost(resp.content)
         }
         getPost(id);
     }, [])
@@ -60,7 +66,10 @@ export default function MetadataEditor() {
         }, function () {
             async function deletePost(id) {
                 console.log("Deleting post with id: ", IDBIndex)
-                if (await API.Comic.delete(id).status === 200) {
+                if (store.app === "Comics" && await API.Comic.delete(id).status === 200) {
+                    alert("Post successfully deleted");
+                    store.reRoute(types.TabType.APP.children.PROFILE.fullRoute, store.user.id)
+                }else if (await API.Story.delete(id).status === 200){
                     alert("Post successfully deleted");
                     store.reRoute(types.TabType.APP.children.PROFILE.fullRoute, store.user.id)
                 }

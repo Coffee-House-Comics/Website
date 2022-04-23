@@ -11,6 +11,21 @@ export default function View() {
     const { id } = useParams();
     const theme = useTheme();
 
+    //Set the post on first render
+    useEffect(() => {
+        async function getPost(id) {
+            let resp = (await API.Comic.viewPublished(id)).data
+
+            if(resp.error){
+                store.reRoute("/")
+            }
+            
+            setPost(resp.content)
+        }
+        getPost(id);
+    }, [])
+
+
     const CONTENT_TABS = {
         VIEW: 0,
         COMMENTS: 1
@@ -22,7 +37,14 @@ export default function View() {
         setContentTab(tab);
     }
 
-    let activePanel = <MetadataPanel />;
+    let activePanel = <MetadataPanel
+                        id={post._id}
+                        title={post.name} 
+                        description={post.description} 
+                        contentBeanCount={post.beans} 
+                        author={post.author}
+                        authorId={post.authorId}
+                      />;
     if (contentTab === CONTENT_TABS.COMMENTS)
         activePanel = <CommentsPanel />;
 
