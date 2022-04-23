@@ -2,19 +2,18 @@ import React from 'react'
 import SaveIcon from '@mui/icons-material/Save';
 import { Button, Grid, styled } from '@mui/material';
 
-export default function SaveButtonPanel() {
+export default function SaveButtonPanel({saveHook, metadataHook}) {
 
-    //TODO
     const handleSaveClick = function () {
-
+        saveHook();
     }
 
     //TODO
-    const handlePublishClick = function () {
-
+    const handleMetadataClick = function () {
+        metadataHook();
     }
 
-    let PublishButton = styled(Button)(({ theme }) => ({
+    let MetadataButton = styled(Button)(({ theme }) => ({
         color: theme.palette.ivory.main,
         backgroundColor: theme.palette.cg_blue.main,
         '&:hover': {
@@ -26,9 +25,9 @@ export default function SaveButtonPanel() {
     return (
         <Grid container direction="row" width="max-content" height="max-content" spacing={1}>
             <Grid item>
-                <PublishButton onClick={handlePublishClick} variant="contained">
-                    Publish
-                </PublishButton>
+                <MetadataButton onClick={handleMetadataClick} variant="contained">
+                    Metadata
+                </MetadataButton>
             </Grid>
             <Grid item>
                 <Button onClick={handleSaveClick} variant="outlined" startIcon={<SaveIcon/>} color="olive_drab_7">

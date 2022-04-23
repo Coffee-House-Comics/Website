@@ -12,6 +12,7 @@ import { Colors } from '../../../../Common/Theme';
 import StickerCreation from './StickerCreation';
 import SubmitButton from '../../../Buttons/SubmitButton';
 import useImage from 'use-image';
+import Utils from '../../../../Utils';
 
 import prefabs from '../../../../prefab.json';
 
@@ -24,6 +25,8 @@ import prefabs from '../../../../prefab.json';
         2. Background Color
 
 */
+
+
 
 const editorSize = 800;
 
@@ -142,6 +145,8 @@ export default function ComicCreationScreen() {
         a: '1',
     });
 
+    const [shapeModeOn, setShapeModeOn] = useState(false);
+
     const [backgroundColor, setBackgroundColor] = useState('white');
 
     function rgbaToCss() {
@@ -205,26 +210,44 @@ export default function ComicCreationScreen() {
     // ------------------------------------------------------------------------------------------------------------------------  
 
     // Array of all the pages (TODO: Fetch them)
-    const pages = [];
+    const _pages = [];
 
-    const pageHeight = 120
-    for (let i = 0; i < 20; i++) {
-        pages.push(
+    const pageHeight = 100
+    for (let i = 0; i < 30; i++) {
+        _pages.push(
             {
                 index: i,
-                data: [],
+                data: {
+                    backgroundColor: 'white',
+                    serialization: []
+                }
             }
         );
     }
 
-    // Thumbnail related stuff
-    const buildThumbnail = function () {
+    const [pages, setPages] = useState(_pages);
 
-    }
+    const [pageIndex, setPageIndex] = useState(0);
+
+    console.log("Page index:", pageIndex);
+
 
     // If in sticker view then we have an empty page
-    const defaultPage = (view === viewType.main) ? pages[0].data : [];
-    const [currentPage, setCurrentPage] = useState(defaultPage);
+    const [currentPage, setCurrentPage] = useState(pages[pageIndex].data);
+
+    useEffect(function () {
+        console.log("Index changed...");
+        let which = pages[pageIndex].data;
+
+        // Special case for creating a sticker
+        if (pageIndex === -1) {
+            console.log("Creating a sticker");
+            which = [];
+        }
+
+        setCurrentPage(which)
+    }, [pageIndex]);
+
 
     useEffect(function () {
         if (view === stickerTab) {
@@ -235,21 +258,34 @@ export default function ComicCreationScreen() {
 
     const onPageClick = function (index) {
         console.log("Trying to change to page with index:", index);
-        setCurrentPage(pages[index].data);
+
+        saveHook();
+        setPageIndex(index);
     }
 
     // The serialization for the comic page we are viewing
-    const [serialization, setSerialization] = useState(currentPage);
+    const [serialization, setSerialization] = useState(currentPage.serialization);
 
-    const onFinishSticker = function () {
+    useEffect(function () {
+        console.log("Current page changed:", currentPage);
+        setSerialization(currentPage.serialization);
+        setBackgroundColor(currentPage.backgroundColor);
+    }, [currentPage]);
+
+    const onFinishSticker = async function () {
         console.log("Finished Making the sticker:", serialization);
 
         // Export the serialization
 
         const uri = stageRef.current.toDataURL();
+
+        const url = await Utils.uploadFile(uri)
+
+        console.log(url);
+
         //console.log(uri);
 
-        downloadURI(uri, 'stage.png');
+        //downloadURI(uri, 'stage.png');
     }
 
     function constructEntry(typeName, data) {
@@ -276,6 +312,63 @@ export default function ComicCreationScreen() {
 
 
     // ------------------------------------------------------------------------------------------------------------------------
+
+    function exportCurrentPage() {
+        const pageObj = {
+            backgroundColor: backgroundColor,
+            serialization: serialization
+        };
+
+        return pageObj;
+    }
+
+    function destructurePage() {
+
+    }
+
+    function exportPages() {
+        // Update the current page
+        pages[pageIndex].data = exportCurrentPage();
+
+        // And return them all
+        return pages;
+    }
+
+    function clearPage() {
+
+
+    }
+
+    // ------------------------------------------------------------------------------------------------------------------------
+
+    const saveHook = function () {
+        console.log("Saving...");
+
+        if (pageIndex === -1) {
+            console.log("Saving sticker...");
+
+            const stickerObj = exportCurrentPage();
+
+            console.log("Sticker:", stickerObj);
+
+            
+
+        }
+
+
+        const pagesData = exportPages();
+
+        console.log("cpgsd:", pagesData);
+
+        setPages(pagesData.concat());
+    }
+
+    if (!serialization)
+        return <div>Loading...</div>
+
+    const metadataHook = function () {
+        console.log("Want to access metadata");
+    }
 
     const undoHook = function () {
         //const recentState = historyState.mostRecent;
@@ -582,7 +675,7 @@ export default function ComicCreationScreen() {
         addOp(null, null, transactionTypes.changeBackgroundColor, true, backgroundColor, rgbaToCss());
     }
 
-    const [shapeModeOn, setShapeModeOn] = useState(false);
+
 
 
     const handleShapesClick = function () {
@@ -622,8 +715,30 @@ export default function ComicCreationScreen() {
     function pageComponent({ key }) {
         return (
             <Box itemId={key} key={key} onClick={(event) => onPageClick(key)}>
-                <div style={{ backgroundColor: "white", height: pageHeight, width: pageHeight, margin: 10, border: "1px solid black" }} />
-            </Box>
+                <div style={{
+                    backgroundColor: "white",
+                    height: pageHeight,
+                    width: pageHeight,
+                    margin: 10,
+                    border: "1px solid black",
+                    display: "flex",
+                    justifyContent: "center",
+                    position: 'relative'
+                }}
+                >
+                    <div style={{
+                        height: "100%",
+                        display: "table"
+                    }}>
+                        <Typography variant="h3" sx={{
+                            display: "table-cell",
+                            verticalAlign: "middle"
+                        }}>
+                            {key}
+                        </Typography>
+                    </div>
+                </div>
+            </Box >
         );
     }
 
@@ -861,12 +976,12 @@ export default function ComicCreationScreen() {
         }}>
             <Box sx={{
                 height: "100%",
-                width: "300px",
+                width: "325px",
                 float: "left"
             }}>
                 <Grid container direction="column" spacing={2} sx={{ height: "100%" }}>
                     <Grid item>
-                        <EditorButtonPanel undoHook={undoHook} redoHook={redoHook} />
+                        <EditorButtonPanel undoHook={undoHook} redoHook={redoHook} saveHook={saveHook} metadataHook={metadataHook} />
                     </Grid>
                     <Grid item>
                         <hr style={{ width: "100%" }} />
@@ -931,7 +1046,7 @@ export default function ComicCreationScreen() {
                                     justifyContent: "center"
                                 }}>
                                     <Typography>
-                                        Pencil Style
+                                        Pencil/Eraser Style
                                     </Typography>
                                 </div>
                             </Grid>
@@ -976,7 +1091,7 @@ export default function ComicCreationScreen() {
             <Divider orientation="vertical" variant="middle" sx={{ marginRight: 2, marginLeft: 3 }} />
             <Box sx={{
                 height: "100%",
-                width: "calc(100% - 650px)",
+                width: "calc(100% - 675px)",
             }}>
                 <Box sx={{
                     height: "calc(100% - 200px)",
