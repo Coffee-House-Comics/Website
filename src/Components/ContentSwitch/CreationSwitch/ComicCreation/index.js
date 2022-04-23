@@ -5,6 +5,7 @@ import EditorButtonPanel from '../../../Buttons/EditorButtons/EditorButtonPanel'
 import CreateIcon from '@mui/icons-material/Create';
 import InterestsIcon from '@mui/icons-material/Interests';
 import FormatColorFillIcon from '@mui/icons-material/FormatColorFill';
+import DisabledByDefaultIcon from '@mui/icons-material/DisabledByDefault';
 import EraserIcon from '../../../Icons/EraserIcon';
 import { ScrollMenu, VisibilityContext, } from 'react-horizontal-scrolling-menu';
 import { SliderPicker, PhotoshopPicker, SketchPicker } from 'react-color';
@@ -13,7 +14,8 @@ import StickerCreation from './StickerCreation';
 import SubmitButton from '../../../Buttons/SubmitButton';
 import useImage from 'use-image';
 import Utils from '../../../../Utils';
-import { Buffer } from 'buffer'
+import { Buffer } from 'buffer';
+import { GlobalStoreContext } from '../../../../Store';
 
 import prefabs from '../../../../prefab.json';
 import API from '../../../../API';
@@ -129,6 +131,11 @@ const URLImage = ({ image, onDragMove, onDragEnd, draggable }) => {
     width = (img) ? 128 : 0;
     height = (img) ? 128 : 0;
 
+    if (image.isSticker) {
+        width = editorSize;
+        height = editorSize;
+    }
+
     return (
         <Image
             width={width}
@@ -147,6 +154,8 @@ const URLImage = ({ image, onDragMove, onDragEnd, draggable }) => {
 };
 
 export default function ComicCreationScreen() {
+    const { store } = React.useContext(GlobalStoreContext)
+
     const [view, setView] = useState(viewType.main);
 
     const [stickerTab, setStickerTab] = useState(STICKER_TAB_TYPE.PREFAB_TAB);
@@ -342,6 +351,22 @@ export default function ComicCreationScreen() {
         }
 
         helper(uri);
+    }
+
+    const onFinishStickerNoSave = function () {
+        console.log("ofsns");
+
+        store.createModal({
+            title: "Are you sure you don't want to save?",
+            body: "You will lose your unsaved sticker",
+            action: "Discard Sticker"
+        },
+            async function () {
+                console.log("Discarding...");
+
+                setView(viewType.main);
+            }
+        );
     }
 
     function constructEntry(typeName, data) {
@@ -851,8 +876,8 @@ export default function ComicCreationScreen() {
                     <IconButton onClick={handleEraserClick} sx={{ border: (tool === toolType.eraser) ? borderSpecs : "" }}>
                         <EraserIcon sx={{ width: 30, height: 30 }} />
                     </IconButton>
-                    <IconButton onClick={handleFillClick} sx={{ border: (tool === toolType.bucket) ? borderSpecs : "" }}>
-                        <FormatColorFillIcon sx={{ width: 35, height: 35, color: rgbaToCss() }} />
+                    <IconButton disabled={Boolean(view === viewType.sticker)} onClick={handleFillClick} sx={{ border: (tool === toolType.bucket) ? borderSpecs : "" }}>
+                        {(view === viewType.sticker) ? <DisabledByDefaultIcon sx={{ width: 35, height: 35, color: 'black' }} /> : <FormatColorFillIcon sx={{ width: 35, height: 35, color: rgbaToCss() }} />}
                     </IconButton>
                     {/* // TODO: */}
                     <IconButton onClick={handleShapesClick} sx={{ border: (shapeModeOn) ? borderSpecs : "" }}>
@@ -958,6 +983,7 @@ export default function ComicCreationScreen() {
                 const entry = constructEntry(supportedShapes.image, {
                     ...stageRef.current.getPointerPosition(),
                     src: dragUrl.current,
+                    isSticker: (stickerTab === STICKER_TAB_TYPE.PREFAB_TAB) ? false : true
                 });
 
                 addOp(supportedShapes.image, [...serialization, entry], transactionTypes.createImage, true);
@@ -1159,12 +1185,12 @@ export default function ComicCreationScreen() {
                             display: "flex",
                             justifyContent: "center"
                         }}>
-                            <SubmitButton text={"Create Sticker"} onClick={
+                            {view === viewType.sticker ? <div /> : <SubmitButton text={"Create Sticker"} onClick={
                                 function () {
                                     saveHook();
                                     setView(viewType.sticker);
                                 }
-                            } />
+                            } />}
                         </div>
                     </Grid>
                 </Grid>
@@ -1196,7 +1222,26 @@ export default function ComicCreationScreen() {
                         </div>
                     ) : (
                         <div style={{ width: "100%" }}>
-                            <SubmitButton text={"Return"} onClick={onFinishSticker} />
+                            <Grid container>
+                                <Grid item xs={6}>
+                                    <div style={{
+                                        width: "100%",
+                                        display: "flex",
+                                        justifyContent: "center"
+                                    }}>
+                                        <SubmitButton text={"Save Sticker and Return"} onClick={onFinishSticker} />
+                                    </div>
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <div style={{
+                                        width: "100%",
+                                        display: "flex",
+                                        justifyContent: "center"
+                                    }}>
+                                        <SubmitButton text={"Exit Without Saving"} onClick={onFinishStickerNoSave} />
+                                    </div>
+                                </Grid>
+                            </Grid>
                         </div>
                     )
                 }
