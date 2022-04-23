@@ -180,7 +180,7 @@ function ComicStoreContextProvider(props) {
         });
     }
 
-    store.publish = async function(comic) {
+    store.publish = async function() {
         //TODO get series somehow
         const series =  "";
 
@@ -231,6 +231,57 @@ function ComicStoreContextProvider(props) {
         mainStore.createModal({
             title: "Error saving comic",
             body: "Comic could not be saved. Please try again.",
+            action: ""
+        });
+    }
+
+    store.create = async function(comicInfo) {
+        const { name, description } = comicInfo;
+
+        try {
+            mainStore.toggleLoading();
+            const response = await ComicAPI.create(name, description);
+            mainStore.toggleLoading();
+
+            if(response.status === 200) {
+                store.changeComicId(response.data.id);
+                store.fetchPages(id);
+                mainStore.reRoute(types.TabType.CREATION.children.COMIC.fullRoute.slice(0, -3) + store.comicId);
+                return;
+            }
+        }
+
+        catch (err) {
+
+        }
+
+        console.log("Couldn't create comic :/");
+        mainStore.createModal({
+            title: "Error creating comic",
+            body: "Comic could not be created. Please try again.",
+            action: ""
+        });
+    }
+
+    store.saveSticker = async function(stickerJson) {
+        try {
+            mainStore.toggleLoading();
+            const response = await ComicAPI.saveSticker(stickerJson);
+            mainStore.toggleLoading();
+
+            if(response.status === 200) {
+                return;
+            }
+        }
+
+        catch (err) {
+
+        }
+
+        console.log("Couldn't save sticker :/");
+        mainStore.createModal({
+            title: "Error saving sticker",
+            body: "Sticker could not be saved. Please try again.",
             action: ""
         });
     }
