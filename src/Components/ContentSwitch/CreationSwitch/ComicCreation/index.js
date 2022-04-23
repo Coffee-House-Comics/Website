@@ -244,17 +244,25 @@ export default function ComicCreationScreen() {
     console.log("Page index:", pageIndex);
 
 
+    const defaultPage = (pageIndex >= 0) ? pages[pageIndex].data : [];
+
     // If in sticker view then we have an empty page
-    const [currentPage, setCurrentPage] = useState(pages[pageIndex].data);
+    const [currentPage, setCurrentPage] = useState(defaultPage);
 
     useEffect(function () {
-        console.log("Index changed...");
-        let which = pages[pageIndex].data;
+        console.log("Index changed...", pageIndex);
 
+        let which;
         // Special case for creating a sticker
         if (pageIndex === -1) {
             console.log("Creating a sticker");
-            which = [];
+            which = {
+                backgroundColor: 'white',
+                serialization: []
+            };
+        }
+        else {
+            which = pages[pageIndex].data;
         }
 
         setCurrentPage(which)
@@ -262,11 +270,12 @@ export default function ComicCreationScreen() {
 
 
     useEffect(function () {
-        if (view === stickerTab) {
+        if (view === viewType.sticker) {
             console.log("Setting the sticker page");
-            setCurrentPage([]);
+            setPageIndex(-1);
         }
         else {
+            console.log("Returning to main...");
             setPageIndex(0);
         }
     }, [view]);
