@@ -1,17 +1,22 @@
 import React from 'react'
-import { useState, useContext } from 'react'
+import { useContext } from 'react'
 import {
   Typography,
   Grid,
   Box,
+  Button
 } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { useTheme } from '@mui/material/styles';
 import BeansButtonPanel from '../../../../Buttons/BeansButtonPanel';
 import BeansIcon from '../../../../Icons/BeansIcon';
 import { GlobalStoreContext } from '../../../../../Store';
+import types from '../../../../../Common/Types'
+import API from '../../../../../API'
+
 
 export default function MetadataPanel(props) {
-  const {id, title, description, contentBeanCount, author, authorId} = props;
+  const {postId, title, description, contentBeanCount, author, authorId} = props;
   const theme = useTheme();
   const { store } = useContext(GlobalStoreContext);
   
@@ -39,7 +44,7 @@ export default function MetadataPanel(props) {
                 store.reRoute(types.TabType.APP.children.PROFILE.fullRoute, store.user.id)
             }
         }
-        deletePost(post._id)
+        deletePost(postId)
     });
 }
 

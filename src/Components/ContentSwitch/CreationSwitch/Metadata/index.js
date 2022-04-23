@@ -28,7 +28,7 @@ export default function MetadataEditor() {
             let resp = (await API.Comic.viewUnpublished(id)).data
 
             if(resp.error){
-                store.reRoute(TabType.APP.children.VIEW.fullRoute, id)
+                store.reRoute(types.TabType.APP.children.VIEW.fullRoute, id)
             }
             
             setPost(resp.content)

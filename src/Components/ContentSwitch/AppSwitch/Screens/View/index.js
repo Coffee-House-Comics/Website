@@ -1,15 +1,19 @@
 import { useParams } from 'react-router-dom';
-import { useState } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import { Grid, Typography, Box } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import MetadataPanel from './MetadataPanel'
 import CommentsPanel from './CommentsPanel'
 import ContentPanel from './ContentPanel'
+import API from '../../../../../API'
+import { GlobalStoreContext } from '../../../../../Store';
 
 export default function View() {
     // Get the id that we want to view
     const { id } = useParams();
     const theme = useTheme();
+    const { store } = useContext(GlobalStoreContext);
+    const [post, setPost] = useState({})
 
     //Set the post on first render
     useEffect(() => {
