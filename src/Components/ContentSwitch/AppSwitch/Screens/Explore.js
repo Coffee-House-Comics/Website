@@ -1,22 +1,44 @@
 import { testStories } from "../../../../App";
 import PostsSection from "../../../Cards/PostsSection";
-
+import { useContext, useEffect, useState } from 'react';
+import { GlobalStoreContext } from "../../../../Store";
+import API from "../../../../API";
 
 function Explore() {
 
-    //TODO
-    /**
-     * Type:
-     *  [{
-     *      posts: [PostMetadata],
-     *      name: String
-     *  }]
-     */
+    const { store } = useContext(GlobalStoreContext);
+    const [recentPosts, setRecentPosts] = useState([]);
+    const [popularPosts, setPopularPosts] = useState([]);
+
+    useEffect(() => {
+        async function getExplorePosts() {
+            if(store.app === "Comics") {
+                const resp = (await API.Comic.explore()).data;
+            }
+
+            else {
+                const resp = (await API.Story.explore()).data;
+            }
+
+            if(resp.error) {
+                store.createModal({
+                    title: "Error fetching explore page",
+                    body: "Explore data could not be retrieved. Please try again.",
+                    action: ""
+                });
+                return;
+            }
+
+            setRecentPosts(resp.mostRecent);
+            setPopularPosts(resp.mostLiked);
+        }
+    })
+
     let postSets = [{
-        posts: testStories,
+        posts: recentPosts,
         name: "Recent Releases"
     }, {
-        posts: testStories,
+        posts: popularPosts,
         name: "Popular Posts"
     },]
 
