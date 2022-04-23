@@ -20,10 +20,10 @@ export default function View() {
         async function getPost(id) {
             let resp = (await API.Comic.viewPublished(id)).data
 
-            if(resp.error){
+            if (resp.error) {
                 store.reRoute("/")
             }
-            
+
             setPost(resp.content)
         }
         getPost(id);
@@ -42,13 +42,13 @@ export default function View() {
     }
 
     let activePanel = <MetadataPanel
-                        id={post._id}
-                        title={post.name} 
-                        description={post.description} 
-                        contentBeanCount={post.beans} 
-                        author={post.author}
-                        authorId={post.authorId}
-                      />;
+        id={post._id}
+        title={post.name}
+        description={post.description}
+        contentBeanCount={post.beans}
+        author={post.author}
+        authorId={post.authorId}
+    />;
     if (contentTab === CONTENT_TABS.COMMENTS)
         activePanel = <CommentsPanel />;
 
@@ -89,14 +89,14 @@ export default function View() {
                     sx={{
                     }}>
 
-                    <Grid item xs="6"
+                    <Grid item xs={6}
                         onClick={() => changeTab(CONTENT_TABS.VIEW)}
                         sx={{
                             ...backgroundCSS(CONTENT_TABS.VIEW),
                         }}>
                         {mutateText(mode)}
                     </Grid>
-                    <Grid item xs="6"
+                    <Grid item xs={6}
                         onClick={() => changeTab(CONTENT_TABS.COMMENTS)}
                         sx={{
                             ...backgroundCSS(CONTENT_TABS.COMMENTS),

@@ -11,7 +11,6 @@ import EraserIcon from '../../../Icons/EraserIcon';
 import { ScrollMenu, VisibilityContext, } from 'react-horizontal-scrolling-menu';
 import { SliderPicker, PhotoshopPicker, SketchPicker } from 'react-color';
 import { Colors } from '../../../../Common/Theme';
-import StickerCreation from './StickerCreation';
 import SubmitButton from '../../../Buttons/SubmitButton';
 import useImage from 'use-image';
 import Utils from '../../../../Utils';
