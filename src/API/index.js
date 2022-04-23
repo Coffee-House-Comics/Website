@@ -210,7 +210,7 @@ API.Comic.saveSticker = function (sticker) {
        method: post
        route: /comic/content/saveSticker
        Request body: {
-           sticker: JSON
+           sticker: String
        }
    */
     return backend.post(`/comic/content/saveSticker`, {

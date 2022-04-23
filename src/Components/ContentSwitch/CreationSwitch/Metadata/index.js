@@ -6,41 +6,120 @@ import { Grid } from '@mui/material';
 import { styled } from '@mui/system';
 import { useParams } from 'react-router-dom';
 import DeleteIcon from '@mui/icons-material/Delete';
+import API from '../../../../API';
+import { useContext, useEffect, useState } from 'react';
+import { GlobalStoreContext } from '../../../../Store';
+import types from '../../../../Common/Types';
+import Utils from '../../../../Utils'
 
 export default function MetadataEditor() {
     const { id } = useParams();
-
-    //TODO
-    let imgURL = "/Images/coffee2.jpg"
-
-    //TODO
-    let postTitle = "Untitled"
-
-    //TODO
-    let postDescription = ""
-
-    //TODO
-    let postSeries = ""
+    const { store } = useContext(GlobalStoreContext);
+    const [post, setPost] = useState({})
+    const [imgURL, setImg] = useState("")
+    const [postTitle, setTitle] = useState("")
+    const [postDescription, setDescription] = useState("")
+    const [postSeries, setSeries] = useState("")
 
 
-    //TODO
-    const handleChangePhotoClick = function(){
-        console.log("Change cover photo")
+    //Set the post on first render
+    useEffect(() => {
+        async function getPost(id) {
+            setPost((await API.Comic.viewUnpublished(id)).data.content)
+        }
+        getPost(id);
+    }, [])
+
+    useEffect(() => {
+        setTitle(post.name);
+        setDescription(post.description)
+        setSeries(post.series)
+        setImg(post.coverPhoto)
+    }, [post])
+
+    if (!post || post === {}) {
+        return <div>Loading...</div>
     }
 
-    //TODO
-    const handleDeleteButtonClick = function(){
-        console.log("Delete")
+    console.log("Editing metadata for post: ", post)
+
+
+    const handleChangePhotoClick = async function (e) {
+        const response = await Utils.uploadFileFromInput(e);
+        if (response.status === 200) {
+            setImg(response.data.imageURL);
+        }
     }
 
-    //TODO
-    const handlePublishButtonClick = function(){
-        console.log("Publish")
+    const handleDeleteButtonClick = function () {
+        console.log("Delete button clicked");
+        store.createModal({
+            title: "Are you sure that you want to delete this post?",
+            body: "This action is irreversible.",
+            action: "Delete"
+        }, function () {
+            async function deletePost(id) {
+                console.log("Deleting post with id: ", IDBIndex)
+                if (await API.Comic.delete(id).status === 200) {
+                    alert("Post successfully deleted");
+                    store.reRoute(types.TabType.APP.children.PROFILE.fullRoute, store.user.id)
+                }
+            }
+            deletePost(post._id)
+        });
     }
 
-    //TODO
-    const handleContinueButtonClick = function(){
-        console.log("Continue")
+    const handlePublishButtonClick = async function () {
+        store.createModal({
+            title: "Are you sure that you want to publish this post?",
+            body: "This post will be visible to the public, and you will no longer be able to edit it.",
+            action: "Publish"
+        }, function () {
+            async function publishPost(id, series) {
+                let res = {}
+                if (store.app === "Comics") {
+                    res = await API.Comic.publish(id, series)
+                } else {
+                    res = await API.Story.publish(id, series)
+                }
+
+                if (res.status && res.status === 200) {
+                    store.reRoute(types.TabType.APP.children.VIEW.fullRoute, id)
+                }
+            }
+            publishPost(post._id, postSeries)
+        });
+    }
+
+    const handleContinueButtonClick = async function () {
+        let res = {}
+        if (store.app === "Comics") {
+            res = await API.Comic.editMetadata(post._id, postTitle, postDescription, imgURL, postSeries)
+        } else {
+            res = await API.Story.editMetadata(post._id, postTitle, postDescription, imgURL, postSeries)
+        }
+
+        if (res.status && res.status === 200) {
+            store.reRoute(types.TabType.CREATION.children.COMIC.fullRoute, post._id);
+        }
+    }
+
+    const handleTitleChange = function (e) {
+        e.preventDefault()
+        setTitle(e.target.value)
+        console.log("Title change")
+    }
+
+    const handleDescriptionChange = function (e) {
+        e.preventDefault();
+        setDescription(e.target.value);
+        console.log("Description change")
+    }
+
+    const handleSeriesChange = function (e) {
+        e.preventDefault();
+        setSeries(e.target.value);
+        console.log("Series change")
     }
 
 
@@ -54,16 +133,16 @@ export default function MetadataEditor() {
 
     const CoffeeButton = styled(Button)(({ theme }) => ({
         color: theme.palette.ivory.main,
-        backgroundColor: theme.palette.coffee.main,
+        backgroundColor: theme.palette.text.main,
         '&:hover': {
-            backgroundColor: theme.palette.text.main
+            backgroundColor: theme.palette.coffee.main
         }
     }));
 
     return (
         <Grid container direction="column" justifyContent="flex-start" alignItems="flex-start" width="100%">
             <Grid item>
-                <Typography variant="h4" sx={{marginBottom: "20px"}}>
+                <Typography variant="h4" sx={{ marginBottom: "20px" }}>
                     Metadata Editor
                 </Typography>
             </Grid>
@@ -80,9 +159,18 @@ export default function MetadataEditor() {
                                 <img src={imgURL} width="100%" style={{ objectFit: "cover", aspectRatio: 200 / 250, maxWidth: "315px" }} />
                             </Grid>
                             <Grid item>
-                                <BlueButton variant="contained" color="cg_blue" onClick={handleChangePhotoClick}>
-                                    Change Cover Photo
-                                </BlueButton>
+                                <label
+                                    htmlFor={"profile-submit-image"}
+                                    className="button"
+                                >
+                                    <Typography variant="subtitle1">Upload an image</Typography>
+                                </label>
+                                <input
+                                    id={"profile-submit-image"}
+                                    type="file"
+                                    onChange={handleChangePhotoClick}
+                                    accept=".jpg, .jpeg, .png"
+                                />
                             </Grid>
                         </Grid>
                     </Grid>
@@ -94,13 +182,13 @@ export default function MetadataEditor() {
                                 </Typography>
                             </Grid>
                             <Grid item width="100%">
-                                <TextField color="text" label="Title" style={{ width: "100%" }} defaultValue={postTitle} />
+                                <TextField color="text" label="Title" style={{ width: "100%" }} value={postTitle} onChange={handleTitleChange} />
                             </Grid>
                             <Grid item width="100%">
-                                <TextField color="text" label="Series" style={{ width: "100%" }} defaultValue={postSeries} />
+                                <TextField color="text" label="Series" style={{ width: "100%" }} value={postSeries} onChange={handleSeriesChange} />
                             </Grid>
                             <Grid item width="100%">
-                                <TextField color="text" label="Description" multiline rows={9} style={{ width: "100%", height: "100%" }} defaultValue={postDescription} />
+                                <TextField color="text" label="Description" multiline rows={9} style={{ width: "100%", height: "100%" }} value={postDescription} onChange={handleDescriptionChange} />
                             </Grid>
                             <Grid item width="100%">
                                 <Grid container direction="row" justifyContent="flex-end" alignItems="flex-end" spacing={1}>
