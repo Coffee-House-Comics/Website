@@ -1156,6 +1156,7 @@ export default function ComicCreationScreen() {
                         }}>
                             <SubmitButton text={"Create Sticker"} onClick={
                                 function () {
+                                    saveHook();
                                     setView(viewType.sticker);
                                 }
                             } />
