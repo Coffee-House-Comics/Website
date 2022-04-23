@@ -294,7 +294,7 @@ export default function ComicCreationScreen() {
     const addOp = function (typeName, op, transactionName, modify, before, now, id) {
         if (transactionName === transactionTypes.createLine) {
             if (modify) {
-                console.log("Created entry...");
+                // console.log("Created entry...");
                 createTransEntry(transactionTypes.createLine);
             }
 
@@ -663,11 +663,6 @@ export default function ComicCreationScreen() {
                     <IconButton onClick={handleShapesClick} sx={{ border: (shapeModeOn) ? borderSpecs : "" }}>
                         <InterestsIcon sx={{ width: 35, height: 35, color: rgbaToCss() }} />
                     </IconButton>
-                    <SubmitButton text={"Create Sticker"} onClick={
-                        function () {
-                            setView(viewType.sticker);
-                        }
-                    } />
                 </Grid>
             </Grid>
         </Grid>
@@ -748,7 +743,7 @@ export default function ComicCreationScreen() {
 
     const handleMouseUp = () => {
         if (isDrawing.current === true) {
-            console.log("Mouse up...");
+            // console.log("Mouse up...");
         }
 
         isDrawing.current = false;
@@ -797,10 +792,10 @@ export default function ComicCreationScreen() {
 
                                 let dashedArr = [];
                                 if (line.pencilType === pencilType.dashed) {
-                                    dashedArr = [33, 2 * ( line.penSize) ];
+                                    dashedArr = [33, 2 * (line.penSize)];
                                 }
                                 else if (line.pencilType === pencilType.dotted) {
-                                    dashedArr = [33, 2 * ( line.penSize), 0.001 * (line.penSize) , 2 * ( line.penSize)];
+                                    dashedArr = [33, 2 * (line.penSize), 0.001 * (line.penSize), 2 * (line.penSize)];
                                 }
 
                                 return (
@@ -892,18 +887,76 @@ export default function ComicCreationScreen() {
                         </Box>
                     </Grid>
                     <Grid item>
-                        <Slider
-                            aria-label="Pen size"
-                            value={penSize}
-                            getAriaValueText={valuetext}
-                            step={1}
-                            valueLabelDisplay="auto"
-                            marks={marks}
-                            onChange={handlePenSizeChange}
-                            sx={{
-                                color: (tool === toolType.eraser) ? "black" : rgbaToCss(),
-                            }}
-                        />
+                        <Grid container>
+                            <Grid item xs={12}>
+                                <div style={{
+                                    width: "100%",
+                                    display: "flex",
+                                    justifyContent: "center"
+                                }}>
+                                    <Typography>
+                                        Pencil/Eraser Size
+                                    </Typography>
+                                </div>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <div style={{
+                                    width: "100%",
+                                    display: "flex",
+                                    justifyContent: "center"
+                                }}>
+                                    <Slider
+                                        aria-label="Pen size"
+                                        value={penSize}
+                                        getAriaValueText={valuetext}
+                                        step={1}
+                                        valueLabelDisplay="auto"
+                                        marks={marks}
+                                        onChange={handlePenSizeChange}
+                                        sx={{
+                                            width: "100%",
+                                            color: (tool === toolType.eraser) ? "black" : rgbaToCss(),
+                                        }}
+                                    />
+                                </div>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                    <Grid item>
+                        <Grid container>
+                            <Grid item xs={12}>
+                                <div style={{
+                                    width: "100%",
+                                    display: "flex",
+                                    justifyContent: "center"
+                                }}>
+                                    <Typography>
+                                        Pencil Style
+                                    </Typography>
+                                </div>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <div style={{
+                                    width: "100%",
+                                    display: "flex",
+                                    justifyContent: "center"
+                                }}>
+
+                                    <Slider
+                                        aria-label="Restricted values"
+                                        value={currentPencilType}
+                                        step={null}
+                                        marks={penTypeMarks}
+                                        track={false}
+                                        onChange={handlePencilTypeChange}
+                                        sx={{
+                                            width: "50%",
+                                            color: (tool === toolType.eraser) ? "black" : rgbaToCss()
+                                        }}
+                                    />
+                                </div>
+                            </Grid>
+                        </Grid>
                     </Grid>
                     <Grid item>
                         <div style={{
@@ -911,18 +964,11 @@ export default function ComicCreationScreen() {
                             display: "flex",
                             justifyContent: "center"
                         }}>
-                            <Slider
-                                aria-label="Restricted values"
-                                value={currentPencilType}
-                                step={null}
-                                marks={penTypeMarks}
-                                track={false}
-                                onChange={handlePencilTypeChange}
-                                sx={{
-                                    width: "50%",
-                                    color: (tool === toolType.eraser) ? "black" : rgbaToCss()
-                                }}
-                            />
+                            <SubmitButton text={"Create Sticker"} onClick={
+                                function () {
+                                    setView(viewType.sticker);
+                                }
+                            } />
                         </div>
                     </Grid>
                 </Grid>
