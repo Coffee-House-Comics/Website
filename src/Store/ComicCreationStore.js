@@ -7,6 +7,8 @@ import API from '../API';
 const ComicStoreContext = createContext({});
 
 const ComicStoreActionType = {
+    SET_COMIC_ID: "SET_COMIC_ID",
+    SET_COMIC_PAGES: "SET_COMIC_PAGES",
     SET_CURRENT_PAGE: "SET_CURRENT_PAGE"
 }
 
@@ -20,9 +22,12 @@ function ComicStoreContextProvider(props) {
     const [store, setStore] = useState({
         comicId: null,
 
+        comicPages: [],
+
         currentPage: {
             currentTool: "pen",
             currentTab: "prefab",
+            index: 0,
             konvaJson: {}
         }
     });
@@ -31,9 +36,26 @@ function ComicStoreContextProvider(props) {
         const { type, payload } = action;
 
         switch (type) {
+            case ComicStoreActionType.SET_COMIC_ID: {
+                return setStore({
+                    comicId: payload,
+                    comicPages: store.comicPages,
+                    currentPage: store.currentPage
+                })
+            }
+
+            case ComicStoreActionType.SET_COMIC_PAGES: {
+                return setStore({
+                    comicId: store.comicId,
+                    comicPages: payload,
+                    currentPage: store.currentPage
+                })
+            }
+
             case ComicStoreActionType.SET_CURRENT_PAGE: {
                 return setStore({
                     comicId: store.comicId,
+                    comicPages: store.comicPages,
                     currentPage: payload
                 });
             }
@@ -42,12 +64,31 @@ function ComicStoreContextProvider(props) {
         }
     }
 
+    store.changeComicId = function(id) {
+        storeReducer({
+            type: ComicStoreActionType.SET_COMIC_ID,
+            payload: {
+                comicId: id
+            }
+        });
+    }
+
+    store.changeComicPages = function(comicPages) {
+        storeReducer({
+            type: ComicStoreActionType.SET_COMIC_PAGES,
+            payload: {
+                comicPages: comicPages
+            }
+        });
+    }
+
     store.changeCurrentTab = function(newTab) {
         storeReducer({
             type: ComicStoreActionType.SET_CURRENT_PAGE,
             payload: {
                 currentTool: store.currentPage.currentTool,
                 currentTab: newTab,
+                index: store.currentPage.index,
                 konvaJson: store.currentPage.konvaJson
             }
         });
@@ -59,7 +100,20 @@ function ComicStoreContextProvider(props) {
             payload: {
                 currentTool: newTool,
                 currentTab: store.currentPage.currentTab,
+                index: store.currentPage.index,
                 konvaJson: store.currentPage.konvaJson
+            }
+        });
+    }
+
+    store.changePageIndex = function(index) {
+        storeReducer({
+            type: ComicStoreActionType.SET_CURRENT_PAGE,
+            payload: {
+                currentTool: store.currentPage.currentTool,
+                currentTab: store.currentPage.currentTab,
+                index: index,
+                konvaJson: store.comicPages[index]
             }
         });
     }
@@ -70,13 +124,35 @@ function ComicStoreContextProvider(props) {
             payload: {
                 currentTool: store.currentPage.currentTool,
                 currentTab: store.currentPage.currentTab,
+                index: store.currentPage.index,
                 konvaJson: json
             }
         });
     }
 
-    store.loadPage = async function() {
+    store.fetchPages = async function() {
+        try {
+            mainStore.toggleLoading();
+            const response = await ComicAPI.viewUnpublished(store.comicId);
+            mainStore.toggleLoading();
 
+            if(response.status === 200) {
+                console.log("Pages successfully fetched");
+                store.changeComicPages(response.data.content);
+                return;
+            }
+        }
+
+        catch (err) {
+
+        }
+
+        console.log("Couldn't fetch comic :/");
+        mainStore.createModal({
+            title: "Error fetching comic pages",
+            body: "Comic could not be retrieved. Please try again.",
+            action: ""
+        });
     }
 
     store.editMetaData = async function(newData) {
