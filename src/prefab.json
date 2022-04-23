@@ -1,0 +1,42 @@
+[
+    {
+        "name": "coffee-mug",
+        "src": "/Images/Stickers/coffee-mug.png"
+    },
+    {
+        "name": "dog_1",
+        "src": "/Images/Stickers/dog_1.png"
+    },
+    {
+        "name": "dog",
+        "src": "/Images/Stickers/dog.png"
+    },
+    {
+        "name": "drink",
+        "src": "/Images/Stickers/drink.png"
+    },
+    {
+        "name": "flower",
+        "src": "/Images/Stickers/flower.png"
+    },
+    {
+        "name": "helicopter",
+        "src": "/Images/Stickers/helicopter.png"
+    },
+    {
+        "name": "penguin",
+        "src": "/Images/Stickers/penguin.png"
+    },
+    {
+        "name": "seahorse",
+        "src": "/Images/Stickers/seahorse.png"
+    },
+    {
+        "name": "space-station",
+        "src": "/Images/Stickers/space-station.png"
+    },
+    {
+        "name": "whale.png",
+        "src": "/Images/Stickers/whale.png"
+    }
+]
