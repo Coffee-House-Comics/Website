@@ -13,7 +13,10 @@ Utils.uploadFileFromInput = async function(e){
 Utils.uploadFile = async function(file){
     const formData = new FormData();
     formData.append("file", file);
-    return await API.Common.uploadImage(formData);
+    const res = await API.Common.uploadImage(formData);
+    const url = res.data.imageURL;
+
+    return url;
 }
 
 export default Utils;
