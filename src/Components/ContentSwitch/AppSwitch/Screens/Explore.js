@@ -12,12 +12,13 @@ function Explore() {
 
     useEffect(() => {
         async function getExplorePosts() {
+            let resp;
             if(store.app === "Comics") {
-                const resp = (await API.Comic.explore()).data;
+                resp = (await API.Comic.explore()).data;
             }
 
             else {
-                const resp = (await API.Story.explore()).data;
+                resp = (await API.Story.explore()).data;
             }
 
             if(resp.error) {
