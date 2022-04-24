@@ -75,30 +75,30 @@ export default function ProfileContent({ user, seriesArray }) {
 
         : "";
 
-    const unPublishedSection = (unPublishedContent) ?
-        <div style={{ alignText: "center" }}>
-            <hr style={{ margin: 30, marginBottom: 50 }} />
-            <Typography variant="h4" sx={{ marginBottom: "5px", marginTop: "20px" }}>
-                {"Unpublished Posts"}
-            </Typography>
+    // const unPublishedSection = (unPublishedContent) ?
+    //     <div style={{ alignText: "center" }}>
+    //         <hr style={{ margin: 30, marginBottom: 50 }} />
+    //         <Typography variant="h4" sx={{ marginBottom: "5px", marginTop: "20px" }}>
+    //             {"Unpublished Posts"}
+    //         </Typography>
 
-            <Grid container direction="row" justifyContent="flex-start" width="100%">
-                {
-                    unPublishedContent.map((post, index) => {
-                        return <div key={index} style={{ padding: PADDING_BTWN_CARDS }}>
-                            <PostCard post={post} />
-                        </div>
-                    })
-                }
-            </Grid>
-        </div>
-        : "";
+    //         <Grid container direction="row" justifyContent="flex-start" width="100%">
+    //             {
+    //                 unPublishedContent.map((post, index) => {
+    //                     return <div key={index} style={{ padding: PADDING_BTWN_CARDS }}>
+    //                         <PostCard post={post} />
+    //                     </div>
+    //                 })
+    //             }
+    //         </Grid>
+    //     </div>
+    //     : "";
 
     return (
         <div style={{ height: "100%", overflowY: "scroll" }} >
             {seriesSections}
             {nonSeriesSection}
-            {unPublishedSection}
+            {/* {unPublishedSection} */}
         </div>
     )
 }
