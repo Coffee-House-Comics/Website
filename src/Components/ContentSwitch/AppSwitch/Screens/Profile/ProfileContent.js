@@ -22,18 +22,18 @@ export default function ProfileContent({ user, seriesArray }) {
 
     console.log(seriesArray);
 
-    const unPublishedContent = seriesArray.filter(elem => {
-        return elem.isPublished === false;
-    });
+    // const unPublishedContent = seriesArray.filter(elem => {
+    //     return elem.isPublished === false;
+    // });
 
     const seriesContent = seriesArray.filter(elem => {
         console.log(elem);
 
-        return elem.isPublished === true && elem.name !== "";
+        return elem.name !== "";
     });
 
     const nonSeriesContentFilter = seriesArray.filter(elem => {
-        return elem.isPublished === true && (elem.name === "" || elem.name === null);
+        return (elem.name === "" || elem.name === null);
     });
 
     const nonSeriesContent = (nonSeriesContentFilter.length === 1) ? nonSeriesContentFilter[0].posts : null;
