@@ -577,6 +577,7 @@ export default function ComicCreationScreen() {
         console.log("Trying to access metadata edit page")
 
         //TODO: Set ID
+        saveHook();
         store.reRoute(types.TabType.CREATION.children.METADATA.fullRoute, id)
     }
 
