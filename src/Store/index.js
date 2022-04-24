@@ -214,6 +214,7 @@ function GlobalStoreContextProvider(props) {
                     console.log("ID of the new Comic:", response.data, response.data.id);
 
                     store.reRoute(types.TabType.CREATION.children.COMIC.fullRoute, response.data.id);
+                    return;
                 }
             }
             catch (err) { }
