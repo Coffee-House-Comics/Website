@@ -16,6 +16,7 @@ import useImage from 'use-image';
 import Utils from '../../../../Utils';
 import { Buffer } from 'buffer';
 import { GlobalStoreContext } from '../../../../Store';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 
 import prefabs from '../../../../prefab.json';
@@ -322,17 +323,28 @@ export default function ComicCreationScreen() {
 
     useEffect(function () {
         console.log("Pages just changed");
-        setCurrentPage(pages[pageIndex].data);
-
+        if (pageIndex >= 0)
+            setCurrentPage(pages[pageIndex].data);
     }, [pages]);
 
-    React.useEffect(function () {
+    const initialLoad = function () {
         async function helper(id) {
             try {
                 const res = await API.Comic.viewUnpublished(id);
 
-                // console.log("~> page:", res);
+                console.log("~> page:", res);
                 console.log("~>:", res.data.content.pages);
+
+                const myStickers = res.data.stickers.map((entry, index) => {
+                    return entry = {
+                        name: "Sticker #" + index,
+                        src: entry
+                    };
+                });
+
+                console.log("my stickers:", myStickers);
+
+                setStickers([...myStickers]);
                 setPages(res.data.content.pages.concat());
                 return;
             }
@@ -344,7 +356,14 @@ export default function ComicCreationScreen() {
         }
 
         helper(id);
-    }, []);
+    }
+
+    const location = useLocation()
+
+    React.useEffect(initialLoad, []);
+    // Rerender on location change as well
+    React.useEffect(initialLoad, [location]);
+
 
     console.log("Pages:", pages);
 
@@ -422,22 +441,23 @@ export default function ComicCreationScreen() {
 
                 // Upload the sticker
                 res = await API.Comic.saveSticker(url);
+
+                console.log(url, res.status);
+
+                const entry = {
+                    name: "Sticker!",
+                    src: url
+                };
+
+                setStickers([...stickers, entry]);
+                setView(viewType.main);
+
             }
             catch (err) {
                 console.log("Error with api calls");
                 setView(viewType.main);
                 return;
             }
-
-            console.log(url, res.status);
-
-            const entry = {
-                name: "Sticker!",
-                src: url
-            };
-
-            setStickers([...stickers, entry]);
-            setView(viewType.main);
         }
 
         helper(uri);
@@ -519,6 +539,9 @@ export default function ComicCreationScreen() {
         async function pushToServer(pagesData) {
             console.log("pagesData:", pagesData);
             const res = await API.Comic.saveContent(id, pagesData);
+
+            store.triggerUserRefresh();
+
             console.log("PUSHED!:", res);
             setPages(pagesData.concat());
         }

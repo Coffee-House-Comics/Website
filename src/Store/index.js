@@ -27,6 +27,7 @@ function GlobalStoreContextProvider(props) {
         user: null,
         isLoggedIn: false,
         modal: null,
+        isEditing: false,
         loading: false,
         trigger: false
     });
@@ -179,6 +180,31 @@ function GlobalStoreContextProvider(props) {
         store.createModal(metadata, function () {
             store.reRoute("/");
         }, true);
+    }
+
+    store.triggerUserRefresh = async function () {
+        console.log("Refreshing the user...");
+        
+        try {
+            const response = await AuthAPI.currentProfile();
+
+            if (response.status === 200) {
+                console.log("Logged in with user:", response.data, response.data.id);
+                storeReducer({
+                    type: GlobalStoreActionType.LOGIN_USER,
+                    payload: response.data
+                });
+
+                // Allow the route to wherever we wanted to go
+                // Do not change any route
+                return;
+            }
+        }
+        catch (err) {
+            /* Do nothing - pass error down */
+        }
+
+        console.log("Trouble refreshing the user...");
     }
 
     store.reRoute = function (fullRoute, id) {
