@@ -199,12 +199,36 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
-    store.newContent = function () {
-        const route = (store.app === "Comics") ?
-            types.TabType.CREATION.children.COMIC.fullRoute :
-            types.TabType.CREATION.children.STORY.fullRoute;
+    store.newContent = async function () {
+        console.log("Trying to create a comic (or story lol)");
 
-        store.reRoute(route);
+        // Create the comic/story on the backend
+        if (store.app === "Comics") {
+            console.log("Creating a Comic");
+
+            try {
+                // Get the id via an api call
+                const response = await API.Comic.create("Untitled", "A mysterious comic this must be...");
+
+                if (response.status === 200) {
+                    console.log("ID of the new Comic:", response.data, response.data.id);
+
+                    store.reRoute(types.TabType.CREATION.children.COMIC.fullRoute, response.data.id);
+                    return;
+                }
+            }
+            catch (err) { }
+
+            // Reach here only on error
+            store.createModal({
+                title: "Error!",
+                body: "There was an error creating the comic."
+            });
+        }
+        else {
+            console.log("Not supporting stories yet");
+            store.reRoute(types.TabType.CREATION.children.STORY.fullRoute, "SHADOW-IS-CUTE");
+        }
     }
 
 

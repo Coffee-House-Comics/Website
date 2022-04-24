@@ -11,7 +11,6 @@ import EraserIcon from '../../../Icons/EraserIcon';
 import { ScrollMenu, VisibilityContext, } from 'react-horizontal-scrolling-menu';
 import { SliderPicker, PhotoshopPicker, SketchPicker } from 'react-color';
 import { Colors } from '../../../../Common/Theme';
-import StickerCreation from './StickerCreation';
 import SubmitButton from '../../../Buttons/SubmitButton';
 import useImage from 'use-image';
 import Utils from '../../../../Utils';
@@ -104,6 +103,14 @@ function peekTransStack() {
 }
 
 let undoStack = [];
+
+
+
+function clearTransactions() {
+    undoStack = [];
+    transactions = [];
+    transactionIndex = -1;
+}
 
 // All supported shapes 
 const supportedShapes = {
@@ -314,6 +321,9 @@ export default function ComicCreationScreen() {
         else {
             which = pages[pageIndex].data;
         }
+
+        // Clear the transaction stack
+        clearTransactions();
 
         setCurrentPage(which)
     }, [pageIndex]);

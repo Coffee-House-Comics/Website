@@ -177,7 +177,7 @@ API.Comic.create = function (name, description) {
            description: String
        }
    */
-    return backend.get('/comic/create', {
+    return backend.post('/comic/create', {
         name: name,
         description: description
     });
@@ -547,7 +547,7 @@ API.Story.create = function (name, description) {
            description: String
        }
    */
-    return backend.get('/story/create', {
+    return backend.post('/story/create', {
         name: name,
         description: description
     });
