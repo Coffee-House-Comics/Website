@@ -181,6 +181,7 @@ export default function ContentPanel({ pages }) {
                                                 draggable={false}
                                                 text={text.text}
                                                 fill={text.color}
+                                                fontSize={text.fontSize}
                                             />
                                         );
                                     }

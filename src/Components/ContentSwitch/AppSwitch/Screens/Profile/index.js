@@ -26,10 +26,15 @@ function ProfileRouter() {
 
     // Fetch this user
 
-    const initialLoad = function () {
+    const initialLoad = function (special) {
         console.log("Fetching the user with id:", id, store.user);
 
         if (store.user && (id === store.user.id)) {
+            // Refresh the local user
+            if (special)
+                store.triggerUserRefresh();
+            // window.location.reload(false);
+
             // console.log("MATCH:", user.id, store.user.id);
             setUser(store.user);
         }
@@ -46,7 +51,7 @@ function ProfileRouter() {
 
     const location = useLocation()
 
-    useEffect(initialLoad, []);
+    useEffect(() => initialLoad(true), []);
     useEffect(initialLoad, [store.user, location]);
 
     console.log("Curent user being viewed:", user);
