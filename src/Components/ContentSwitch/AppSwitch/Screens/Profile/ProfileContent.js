@@ -22,9 +22,12 @@ export default function ProfileContent({ user, seriesArray }) {
 
     console.log(seriesArray);
 
-    // const unPublishedContent = seriesArray.filter(elem => {
-    //     return elem.isPublished === false;
-    // });
+    const unPublishedContent = seriesArray.filter(elem => {
+        console.log("ELEM:", elem);
+        return !elem.isPublished;
+    });
+
+    console.log(unPublishedContent);
 
     const seriesContent = seriesArray.filter(elem => {
         console.log(elem);
