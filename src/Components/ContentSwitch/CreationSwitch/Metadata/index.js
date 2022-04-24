@@ -89,6 +89,7 @@ export default function MetadataEditor() {
             async function publishPost(id, series) {
                 let res = {}
                 if (store.app === "Comics") {
+                    console.log("Save comic changes")
                     res = await API.Comic.editMetadata(post._id, postTitle, postDescription, imgURL, postSeries)
                 } else {
                     res = await API.Story.editMetadata(post._id, postTitle, postDescription, imgURL, postSeries)
@@ -96,6 +97,7 @@ export default function MetadataEditor() {
 
                 if (res.status && res.status === 200) {
                     if (store.app === "Comics") {
+                        console.log("Publish comic")
                         res = await API.Comic.publish(id, series)
                     } else {
                         res = await API.Story.publish(id, series)
@@ -105,7 +107,6 @@ export default function MetadataEditor() {
                         store.reRoute(types.TabType.APP.children.VIEW.fullRoute, id)
                     }
                 }
-
             }
             publishPost(post._id, postSeries)
         });
