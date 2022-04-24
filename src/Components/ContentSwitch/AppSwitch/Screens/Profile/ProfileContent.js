@@ -98,6 +98,7 @@ export default function ProfileContent({ user, seriesArray }) {
         <div style={{ height: "100%", overflowY: "scroll" }} >
             {seriesSections}
             {nonSeriesSection}
+            {unPublishedSection}
         </div>
     )
 }
