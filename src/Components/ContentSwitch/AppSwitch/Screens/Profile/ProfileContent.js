@@ -22,14 +22,18 @@ export default function ProfileContent({ user, seriesArray }) {
 
     console.log(seriesArray);
 
+    const unPublishedContent = seriesArray.filter(elem => {
+        return elem.isPublished === false;
+    });
+
     const seriesContent = seriesArray.filter(elem => {
         console.log(elem);
 
-        return elem.name !== "";
+        return elem.isPublished === true && elem.name !== "";
     });
 
     const nonSeriesContentFilter = seriesArray.filter(elem => {
-        return elem.name === "" || elem.name === null;
+        return elem.isPublished === true && (elem.name === "" || elem.name === null);
     });
 
     const nonSeriesContent = (nonSeriesContentFilter.length === 1) ? nonSeriesContentFilter[0].posts : null;
@@ -69,7 +73,26 @@ export default function ProfileContent({ user, seriesArray }) {
             </Grid>
         </div>
 
-        : ""
+        : "";
+
+    const unPublishedSection = (unPublishedContent) ?
+        <div style={{ alignText: "center" }}>
+            <hr style={{ margin: 30, marginBottom: 50 }} />
+            <Typography variant="h4" sx={{ marginBottom: "5px", marginTop: "20px" }}>
+                {"Unpublished Posts"}
+            </Typography>
+
+            <Grid container direction="row" justifyContent="flex-start" width="100%">
+                {
+                    unPublishedContent.map((post, index) => {
+                        return <div key={index} style={{ padding: PADDING_BTWN_CARDS }}>
+                            <PostCard post={post} />
+                        </div>
+                    })
+                }
+            </Grid>
+        </div>
+        : "";
 
     return (
         <div style={{ height: "100%", overflowY: "scroll" }} >

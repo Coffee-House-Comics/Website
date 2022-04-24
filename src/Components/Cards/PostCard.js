@@ -115,10 +115,10 @@ export default function PostCard(props) {
         <div
             onClick={handleOpenPost}
             style={{
-                border: "3px solid " + (post.isPublished)? "black" : "blue",
+                border: "3px solid black",
                 borderRadius: "5px",
                 overflow: "hidden",
-                boxShadow: "1px 3px 10px " + (post.isPublished)? "grey" : "blue",
+                boxShadow: "1px 3px 10px grey",
                 width: "max-content",
                 height: PostCardHeight,
                 cursor: "pointer"
