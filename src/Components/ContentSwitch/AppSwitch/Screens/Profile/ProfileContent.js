@@ -29,7 +29,7 @@ export default function ProfileContent({ user, seriesArray }) {
     });
 
     const nonSeriesContentFilter = seriesArray.filter(elem => {
-        return elem.name === "";
+        return elem.name === "" || elem.name === null;
     });
 
     const nonSeriesContent = (nonSeriesContentFilter.length === 1) ? nonSeriesContentFilter[0].posts : null;
