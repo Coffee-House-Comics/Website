@@ -9,7 +9,7 @@ import {
 import { useParams } from 'react-router-dom';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import { Stage, Layer, Line, Image } from 'react-konva';
+import { Stage, Layer, Line, Image, Text } from 'react-konva';
 import { useState } from 'react';
 import useImage from 'use-image';
 
@@ -57,87 +57,12 @@ const pencilType = {
 const supportedShapes = {
     line: "line",
     image: "image",
+    text: "text"
 };
 
 export default function ContentPanel({ pages }) {
 
-    // TODO: Remove this!!
-    pages = [
-        {
-            index: 0,
-            data: {
-                backgroundColor: 'white',
-                serialization: [
-                    {
-                        typeName: "line", data: {
-                            "tool": "pencil",
-                            "points": [
-                                434.5,
-                                133,
-                                426.5,
-                                152,
-                                408.5,
-                                177,
-                                366.5,
-                                239,
-                                326.5,
-                                301,
-                                276.5,
-                                459,
-                                294.5,
-                                494,
-                                311.5,
-                                510,
-                                349.5,
-                                525,
-                                386.5,
-                                527,
-                                433.5,
-                                516,
-                                454.5,
-                                495,
-                                458.5,
-                                482,
-                                460.5,
-                                461,
-                                458.5,
-                                441,
-                                453.5,
-                                424,
-                                397.5,
-                                377,
-                                353.5,
-                                368,
-                                331.5,
-                                374,
-                                319.5,
-                                381,
-                                302.5,
-                                396,
-                                279.5,
-                                425,
-                                277.5,
-                                431,
-                                278.5,
-                                433
-                            ],
-                            "color": "rgba(44,44,44,1)",
-                            "penSize": 5,
-                            "closed": false,
-                            "pencilType": 0
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            index: 1,
-            data: {
-                backgroundColor: 'black',
-                serialization: []
-            }
-        }
-    ];
+    console.log("PAGES:", pages);
 
     const theme = useTheme();
     const id = useParams();
@@ -154,6 +79,9 @@ export default function ContentPanel({ pages }) {
         return <Typography>No pages...</Typography>
 
     // Extract the serialization
+
+    if (!pages[pageNumber].data) 
+        return <Typography>Loading...</Typography>
 
     const page = pages[pageNumber].data;
 
@@ -239,6 +167,20 @@ export default function ContentPanel({ pages }) {
                                                 key={i}
                                                 image={shape.data}
                                                 draggable={false}
+                                            />
+                                        );
+                                    }
+
+                                    else if (shape.typeName === supportedShapes.text) {
+                                        const text = shape.data;
+                                        return (
+                                            <Text
+                                                key={i}
+                                                x={text.x}
+                                                y={text.y}
+                                                draggable={false}
+                                                text={text.text}
+                                                fill={text.color}
                                             />
                                         );
                                     }
