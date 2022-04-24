@@ -36,7 +36,6 @@ export default function ProfileContent({ user, seriesArray }) {
 
     console.log("RES:", seriesContent, nonSeriesContentFilter, nonSeriesContent);
 
-    //TODO
     /**
      * Format:
      *    [PostMetadata]
