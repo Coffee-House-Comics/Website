@@ -12,12 +12,12 @@ const ComicStoreActionType = {
     SET_CURRENT_PAGE: "SET_CURRENT_PAGE"
 }
 
-const { mainStore } = useContext(GlobalStoreContext);
-
 const ComicAPI = API.Comic;
 
 //Setting up comic store
 function ComicStoreContextProvider(props) {
+
+    const { mainStore } = useContext(GlobalStoreContext);
 
     const [store, setStore] = useState({
         comicId: null,

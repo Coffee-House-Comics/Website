@@ -1,5 +1,6 @@
-import ReactFlow, { applyEdgeChanges, applyNodeChanges, MiniMap, Controls } from 'react-flow-renderer';
-import { useCallback, useState } from 'react';
+import ReactFlow, { applyEdgeChanges, applyNodeChanges, MiniMap, Controls, updateEdge, addEdge } from 'react-flow-renderer';
+import { useCallback, useContext } from 'react';
+import {StoryStoreContext} from '../../../../../Store/StoryCreationStore';
 
 /*
 const initialNodes = [
@@ -29,64 +30,43 @@ const initialEdges = [
 ];
 */
 
-const initialNodes = [
-    {
-      id: '1',
-      type: 'input',
-      data: { label: 'Start' },
-      position: { x: 0, y: 0 },
-    },
-    {
-        id: '2',
-        data: { label: 'Page 1' },
-        position: { x: -100, y: 90 },
-    },
-    {
-        id: '3',
-        data: { label: 'Page 2' },
-        position: { x: 100, y: 90 },
-    },
-    {
-        id: '4',
-        data: { label: 'Page 3' },
-        position: { x: 0, y: 170 },
-    },
-    {
-      id: '5',
-      type: 'output',
-      data: { label: 'End' },
-      position: { x: 0, y: 250 },
-    },
-  ];
-  
-  const initialEdges = [
-    { id: 'e1-2', label: 'Choice 1', source: '1', target: '2' },
-    { id: 'e1-3', label: 'Choice 2', source: '1', target: '3' },
-    { id: 'e2-4', label: 'Continue', source: '2', target: '4' },
-    { id: 'e3-4', label: 'Continue', source: '3', target: '4' },
-    { id: 'e4-5', label: 'Continue', source: '4', target: '5' },
-  ];
 
+export default function FlowEditor() {  
+    const { store } = useContext(StoryStoreContext);
 
-export default function FlowEditor() {
-    const [nodes, setNodes] = useState(initialNodes);
-    const [edges, setEdges] = useState(initialEdges);
-  
+    console.log("store", store)
+
     const onNodesChange = useCallback(
-        (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
-        [setNodes]
-      );
-    const onEdgesChange = useCallback(
-        (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
-        [setEdges]
+      (changes) => store.changeNodes((nds) => applyNodeChanges(changes, nds)),
+      [store.changeNodes]
     );
+    const onEdgesChange = useCallback(
+      (changes) => store.changeEdges((eds) => applyEdgeChanges(changes, eds)),
+      [store.changeEdges]
+    );
+    const onEdgeUpdate = useCallback(
+      (oldEdge, newConnection) => store.changeEdges((eds) => updateEdge(oldEdge, newConnection, eds)),
+      [store.changeEdges]
+    );
+    const onConnect = useCallback(
+      (connection) => store.changeEdges((eds) => addEdge(connection, eds)),
+      [store.changeEdges]
+    );
+
+    //const onNodesChange = (changes) => store.changeNodes(applyNodeChanges(changes, store.nodes));
+    //const onEdgesChange = (changes) => store.changeEdges(applyNodeChanges(changes, store.edges));
+
+    //const onEdgeUpdate = (oldEdge, newConnection) => store.changeEdges(updateEdge(oldEdge, newConnection, store.edges));
+    //const onConnect = (params) => store.changeEdges(addEdge(params, store.edges));
 
     return (    
     <ReactFlow
-            nodes={nodes}
-            edges={edges}
+            nodes={store.nodes}
+            edges={store.edges}
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
+            onEdgeUpdate={onEdgeUpdate}
+            onConnect={onConnect}
             fitView
         >
             <Controls />
