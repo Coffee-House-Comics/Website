@@ -7,6 +7,8 @@ import PostsSection, { PADDING_BTWN_CARDS } from '../../../../Cards/PostsSection
 export default function Saved(props) {
     
     const { user } = props;
+
+    return <Typography>Community Implementation not done.</Typography>
     
     //TODO
     /**

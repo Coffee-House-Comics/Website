@@ -3,21 +3,26 @@ import { Stage, Layer, Rect, Circle, Line, Image } from 'react-konva';
 import React, { useEffect, useState } from 'react'
 import EditorButtonPanel from '../../../Buttons/EditorButtons/EditorButtonPanel'
 import CreateIcon from '@mui/icons-material/Create';
+import TextFieldsIcon from '@mui/icons-material/TextFields';
 import InterestsIcon from '@mui/icons-material/Interests';
 import FormatColorFillIcon from '@mui/icons-material/FormatColorFill';
+import DisabledByDefaultIcon from '@mui/icons-material/DisabledByDefault';
 import EraserIcon from '../../../Icons/EraserIcon';
-import { ScrollMenu, VisibilityContext, } from 'react-horizontal-scrolling-menu';
-import { SliderPicker, PhotoshopPicker, SketchPicker } from 'react-color';
+import { useParams } from 'react-router-dom';
+import { SliderPicker, PhotoshopPicker, SketchPicker, CustomPicker } from 'react-color';
 import { Colors } from '../../../../Common/Theme';
-import StickerCreation from './StickerCreation';
 import SubmitButton from '../../../Buttons/SubmitButton';
 import useImage from 'use-image';
 import Utils from '../../../../Utils';
-import { Buffer } from 'buffer'
+import { Buffer } from 'buffer';
+import { GlobalStoreContext } from '../../../../Store';
+
 
 import prefabs from '../../../../prefab.json';
 import API from '../../../../API';
 import types from '../../../../Common/Types';
+import { Text } from 'react-konva';
+import { TextField } from '@mui/material';
 
 
 /* NOTES:
@@ -27,11 +32,13 @@ import types from '../../../../Common/Types';
         1. Serialization data
         2. Background Color
 
+    TODO: Add new page button
+    TOOD: Resizeable sticker creation canvas
+
 */
 
-
-
-const editorSize = 800;
+let editorWidth = 800;
+let editorHeight = 800;
 
 const viewType = {
     main: "main",
@@ -48,6 +55,7 @@ const toolType = {
     pencil: "pencil",
     eraser: "eraser",
     bucket: "bucket",
+    text: "text"
 };
 
 const pencilType = {
@@ -63,7 +71,10 @@ const transactionTypes = {
     createLine: "createLine",
     createImage: "createImage",
     moveImage: "moveImage",
-    changeBackgroundColor: "changeBackgroundColor"
+    changeBackgroundColor: "changeBackgroundColor",
+    addText: "addText",
+    moveText: "moveText",
+    modifyText: "modifyText"
 };
 
 function createTransEntry(name, before, after, id) {
@@ -93,10 +104,19 @@ function peekTransStack() {
 
 let undoStack = [];
 
+
+
+function clearTransactions() {
+    undoStack = [];
+    transactions = [];
+    transactionIndex = -1;
+}
+
 // All supported shapes 
 const supportedShapes = {
     line: "line",
     image: "image",
+    text: "text"
 };
 
 // function from https://stackoverflow.com/a/15832662/512042
@@ -129,6 +149,11 @@ const URLImage = ({ image, onDragMove, onDragEnd, draggable }) => {
     width = (img) ? 128 : 0;
     height = (img) ? 128 : 0;
 
+    if (image.isSticker) {
+        width = editorWidth;
+        height = editorHeight;
+    }
+
     return (
         <Image
             width={width}
@@ -147,6 +172,10 @@ const URLImage = ({ image, onDragMove, onDragEnd, draggable }) => {
 };
 
 export default function ComicCreationScreen() {
+    const { id } = useParams();
+
+    const { store } = React.useContext(GlobalStoreContext)
+
     const [view, setView] = useState(viewType.main);
 
     const [stickerTab, setStickerTab] = useState(STICKER_TAB_TYPE.PREFAB_TAB);
@@ -157,13 +186,39 @@ export default function ComicCreationScreen() {
         b: '64',
         a: '1',
     });
+    const [currentTextColor, setCurrentTextColor] = useState(`rgba(0,0,0,1)`);
 
+    const [textEditModeOn, setTextEditModeOn] = useState(false);
     const [shapeModeOn, setShapeModeOn] = useState(false);
+
+    // Stickers!
+    const [stickers, setStickers] = useState([]);
 
     const [backgroundColor, setBackgroundColor] = useState('white');
 
     function rgbaToCss() {
         return `rgba(${currentColor.r},${currentColor.g},${currentColor.b},${currentColor.a})`;
+    }
+
+    function rgbaToCssText({ r, g, b, a }) {
+        console.log("Current text color: ", currentTextColor)
+        return `rgba(${r},${g},${b},${a})`;
+    }
+
+
+    const [fontSize, setFontSize] = useState(12)
+    const handleFontSizeChange = (e, newValue, modify) => {
+        //Set the text
+        let oldData = { ...(serialization[currentTextId].data) }
+        let newData = { ...oldData }
+        newData.fontSize = newValue
+        if (modify) {
+            serialization[currentTextId].data = newData
+        }
+
+        console.log("oldData: ", oldData)
+        addOp(transactionTypes.modifyText, serialization.concat(), transactionTypes.modifyText, modify, oldData, serialization[currentTextId].data, currentTextId);
+        setFontSize(newValue)
     }
 
     const [penSize, setPenSize] = useState(5);
@@ -204,51 +259,95 @@ export default function ComicCreationScreen() {
         return `${value}`;
     }
 
-
     const handleColorChange = function (color) {
         setCurrentColor(color.rgb);
     }
 
+    const handleTextColorChange = function (color, modify) {
+        let oldData = { ...serialization[currentTextId].data }
+        let newData = { ...oldData }
+        newData.color = rgbaToCssText(color.rgb);
+        setCurrentTextColor(newData.color);
+
+        if (modify) {
+            serialization[currentTextId].data = newData
+        }
+
+
+        addOp(transactionTypes.modifyText, serialization.concat(), transactionTypes.modifyText, modify, oldData, serialization[currentTextId].data, currentTextId);
+    }
+
     // Konva Related things ------------------------
     const stageRef = React.useRef();
-
     const dragUrl = React.useRef();
-
     const [tool, setTool] = React.useState(toolType.NONE);
-
     const canDrag = Boolean(tool === toolType.NONE);
-
     const isDrawing = React.useRef(false);
 
     // ------------------------------------------------------------------------------------------------------------------------  
 
     // Array of all the pages (TODO: Fetch them)
-    const _pages = [];
+    // const _pages = [];
 
     const pageHeight = 100
-    for (let i = 0; i < 30; i++) {
-        _pages.push(
-            {
-                index: i,
-                data: {
-                    backgroundColor: 'white',
-                    serialization: []
-                }
-            }
-        );
-    }
+    // for (let i = 0; i < 30; i++) {
+    //     _pages.push(
+    //         {
+    //             index: i,
+    //             data: {
+    //                 backgroundColor: 'white',
+    //                 serialization: []
+    //             }
+    //         }
+    //     );
+    // }
 
-    const [pages, setPages] = useState(_pages);
+    const [pages, setPages] = useState([{
+        index: -12,
+        data: {
+            backgroundColor: 'white',
+            serialization: []
+        }
+    }]);
 
     const [pageIndex, setPageIndex] = useState(0);
-
-    console.log("Page index:", pageIndex);
-
+    const [currentTextId, setCurrentTextId] = useState(-1);
 
     const defaultPage = (pageIndex >= 0) ? pages[pageIndex].data : [];
 
     // If in sticker view then we have an empty page
     const [currentPage, setCurrentPage] = useState(defaultPage);
+
+    const [shadow, setShadow] = useState(false);
+
+    useEffect(function () {
+        console.log("Pages just changed");
+        setCurrentPage(pages[pageIndex].data);
+
+    }, [pages]);
+
+    React.useEffect(function () {
+        async function helper(id) {
+            try {
+                const res = await API.Comic.viewUnpublished(id);
+
+                // console.log("~> page:", res);
+                console.log("~>:", res.data.content.pages);
+                setPages(res.data.content.pages.concat());
+                return;
+            }
+            catch (err) {
+
+            }
+
+            console.log("Error in loading...");
+        }
+
+        helper(id);
+    }, []);
+
+    console.log("Pages:", pages);
+
 
     useEffect(function () {
         console.log("Index changed...", pageIndex);
@@ -265,6 +364,9 @@ export default function ComicCreationScreen() {
         else {
             which = pages[pageIndex].data;
         }
+
+        // Clear the transaction stack
+        clearTransactions();
 
         setCurrentPage(which)
     }, [pageIndex]);
@@ -298,8 +400,7 @@ export default function ComicCreationScreen() {
     }, [currentPage]);
 
 
-    // Stickers!
-    const [stickers, setStickers] = useState([]);
+
 
 
     const onFinishSticker = async function () {
@@ -336,12 +437,26 @@ export default function ComicCreationScreen() {
             };
 
             setStickers([...stickers, entry]);
-
-
             setView(viewType.main);
         }
 
         helper(uri);
+    }
+
+    const onFinishStickerNoSave = function () {
+        console.log("ofsns");
+
+        store.createModal({
+            title: "Are you sure you don't want to save?",
+            body: "You will lose your unsaved sticker",
+            action: "Discard Sticker"
+        },
+            async function () {
+                console.log("Discarding...");
+
+                setView(viewType.main);
+            }
+        );
     }
 
     function constructEntry(typeName, data) {
@@ -378,21 +493,12 @@ export default function ComicCreationScreen() {
         return pageObj;
     }
 
-    function destructurePage() {
-
-    }
-
     function exportPages() {
         // Update the current page
         pages[pageIndex].data = exportCurrentPage();
 
         // And return them all
         return pages;
-    }
-
-    function clearPage() {
-
-
     }
 
     // ------------------------------------------------------------------------------------------------------------------------
@@ -404,19 +510,40 @@ export default function ComicCreationScreen() {
             console.log("Saving sticker...");
 
             const stickerObj = exportCurrentPage();
-
             console.log("Sticker:", stickerObj);
-
-
-
         }
 
-
         const pagesData = exportPages();
-
         console.log("cpgsd:", pagesData);
 
-        setPages(pagesData.concat());
+        async function pushToServer(pagesData) {
+            console.log("pagesData:", pagesData);
+            const res = await API.Comic.saveContent(id, pagesData);
+            console.log("PUSHED!:", res);
+            setPages(pagesData.concat());
+        }
+
+        pushToServer(pagesData);
+    }
+
+    const handleAddPageClick = function () {
+        console.log("Attempting to add a new page")
+
+        const new_page = {
+            index: pages.length,
+            data: {
+                backgroundColor: 'white',
+                serialization: []
+            }
+        };
+
+        async function pushToServer(pagesData) {
+            const res = await API.Comic.saveContent(id, pagesData);
+            console.log("PUSHED!:", res);
+            setPages(pagesData);
+        }
+
+        pushToServer([...exportPages(), new_page]);
     }
 
     if (!serialization)
@@ -427,7 +554,7 @@ export default function ComicCreationScreen() {
         console.log("Trying to access metadata edit page")
 
         //TODO: Set ID
-        // store.reRoute(types.TabType.CREATION.children.METADATA.fullRoute, id)
+        store.reRoute(types.TabType.CREATION.children.METADATA.fullRoute, id)
     }
 
     const undoHook = function () {
@@ -472,6 +599,27 @@ export default function ComicCreationScreen() {
             }
 
             setBackgroundColor(now);
+        } else if (transactionName === transactionTypes.addText) {
+            if (modify) {
+                console.log("asftttc");
+                setTextEditModeOn(true);
+                setShapeModeOn(false);
+                setCurrentTextId(id);
+                setTool(toolType.NONE);
+                createTransEntry(transactionTypes.addText);
+            }
+            setSerialization(op)
+        } else if (transactionName === transactionTypes.moveText) {
+            if (modify) {
+                createTransEntry(transactionTypes.moveText, before, now, id)
+            }
+            setSerialization(op);
+        } else if (transactionName === transactionTypes.modifyText) {
+            if (modify) {
+                console.log("Modify text")
+                createTransEntry(transactionTypes.modifyText, before, now, id)
+            }
+            setSerialization(op);
         }
         else {
             console.log("Unsupported transaction");
@@ -553,6 +701,64 @@ export default function ComicCreationScreen() {
             transactionIndex--;
 
             setBackgroundColor(before);
+        }
+        else if (transaction.transactionName === transactionTypes.modifyText) {
+            // console.log("Undo modify text with transaction id", transaction.id)
+            const id = transaction.id;
+
+            const before = transaction.before;
+            const after = transaction.after;
+
+            console.log("Before: ", before)
+
+            const elem = serialization[id];
+
+            if (elem) {
+                elem.data = { ...before };
+
+                serialization.splice(id, 1, elem);
+                setFontSize(before.fontSize)
+                setCurrentTextColor(before.color)
+
+                transactionIndex--;
+
+                setSerialization(serialization.concat());
+            }
+        } else if (transaction.transactionName === transactionTypes.addText) {
+            const last = peekSerial();
+
+            if (!last)
+                return;
+
+            //console.log("Setting (from undo) to:", undoStack, serialization);
+            if (serialization.length === 0) {
+                return;
+            }
+
+            undoStack = [...undoStack, last];
+
+            //console.log("Setting (from undo) to:", undoStack, serialization);
+
+            transactionIndex--;
+
+            setSerialization(serialization.slice(0, -1));
+            setTextEditModeOn(false);
+        } else if (transaction.transactionName === transactionTypes.moveText) {
+            const id = transaction.id;
+
+            const before = transaction.before;
+            const elem = { ...serialization[id] };
+
+            if (elem) {
+                elem.data.x = before.x
+                elem.data.y = before.y
+
+                serialization.splice(id, 1, elem);
+
+                transactionIndex--;
+
+                setSerialization(serialization.concat());
+            }
         }
         else {
             console.log("Unsupported transaction");
@@ -651,6 +857,58 @@ export default function ComicCreationScreen() {
             // console.log("->", after);
 
             setBackgroundColor(after + " ");
+        } else if (transaction.transactionName === transactionTypes.modifyText) {
+            const id = transaction.id;
+
+            const elem = serialization[id];
+            let after = transaction.after;
+
+            if (elem) {
+                elem.data = after;
+                serialization.splice(id, 1, elem);
+                setFontSize(after.fontSize)
+                setCurrentTextColor(after.color)
+
+                setSerialization(serialization.concat());
+            }
+            else {
+                transactionIndex--;
+            }
+        } else if (transaction.transactionName === transactionTypes.addText) {
+            const last = peekUndoStack();
+
+            if (!last) {
+                transactionIndex--;
+                return;
+            }
+
+            if (undoStack.length === 0) {
+                transactionIndex--;
+                return;
+            }
+
+            const newSerialization = [...serialization, undoStack.pop()];
+
+            //console.log("Setting (from redo) to:", undoStack, newSerialization);
+
+            setSerialization(newSerialization);
+
+        } else if (transaction.transactionName === transactionTypes.moveText) {
+            const id = transaction.id;
+            const after = transaction.after;
+            const elem = serialization[id];
+
+            if (elem) {
+                elem.data.x = after.x;
+                elem.data.y = after.y;
+
+                serialization.splice(id, 1, elem);
+
+                setSerialization(serialization.concat());
+            }
+            else {
+                transactionIndex--;
+            }
         }
         else {
             console.log("Unsupported transaction");
@@ -679,6 +937,26 @@ export default function ComicCreationScreen() {
             break;
     }
 
+    const handleTextChange = function (e) {
+        e.preventDefault();
+
+        //Set the text
+        let oldData = { ...(serialization[currentTextId].data) }
+        let newData = { ...oldData }
+        newData.text = e.target.value
+        serialization[currentTextId].data = newData
+        console.log("oldData: ", oldData)
+        addOp(transactionTypes.modifyText, serialization.concat(), transactionTypes.modifyText, true, oldData, serialization[currentTextId].data, currentTextId);
+    }
+
+    const handleTextClick = function (id) {
+        setTextEditModeOn(true);
+        setFontSize(serialization[id].data.fontSize)
+        setCurrentTextColor(serialization[id].data.color)
+        setShapeModeOn(false);
+        setCurrentTextId(id);
+    }
+
     // TODO: Do we have to do anything here???
     const handleDragMove = function (e, id) { }
 
@@ -701,6 +979,18 @@ export default function ComicCreationScreen() {
                 serialization.splice(id, 1, elem);
 
                 addOp(supportedShapes.image, serialization.concat(), transactionTypes.moveImage, true, { x: oldX, y: oldY }, { x: x, y: y }, id);
+            } else if (elem.typeName === supportedShapes.text) {
+                console.log("x y", elem.data, x, y);
+
+                const oldX = elem.data.x;
+                const oldY = elem.data.y;
+
+                elem.data.x = x;
+                elem.data.y = y;
+
+                serialization.splice(id, 1, elem);
+
+                addOp(supportedShapes.text, serialization.concat(), transactionTypes.moveText, true, { x: oldX, y: oldY }, { x: x, y: y }, id);
             }
             else if (elem.typeName === supportedShapes.line) {
                 console.log("x y", elem.data.points, x, y, e);
@@ -708,38 +998,44 @@ export default function ComicCreationScreen() {
         }
     }
 
-
     const handlePencilClick = function () {
+        setTextEditModeOn(false)
         if (tool === toolType.pencil)
             setTool(toolType.NONE);
         else {
             setTool(toolType.pencil);
         }
-
     }
 
     const handleEraserClick = function () {
+        setTextEditModeOn(false)
         if (tool === toolType.eraser)
             setTool(toolType.NONE);
         else {
             console.log("Setting eraser");
             setTool(toolType.eraser);
         }
-
     }
 
     // Changes background color
     const handleFillClick = function () {
+        setTextEditModeOn(false)
         console.log("changeing backgorund...");
 
         addOp(null, null, transactionTypes.changeBackgroundColor, true, backgroundColor, rgbaToCss());
     }
 
-
-
-
     const handleShapesClick = function () {
+        setTextEditModeOn(false)
         setShapeModeOn(!shapeModeOn);
+    }
+
+    const handleTextButtonClick = function () {
+        if (tool === toolType.text) {
+            setTool(toolType.NONE)
+        } else {
+            setTool(toolType.text)
+        }
     }
 
     // TODO:
@@ -757,7 +1053,7 @@ export default function ComicCreationScreen() {
                 <img
                     alt={img.name}
                     src={img.src}
-                    draggable="true"
+                    draggable={true}
                     width={128}
                     height={128}
                     onDragStart={(e) => {
@@ -779,7 +1075,7 @@ export default function ComicCreationScreen() {
                     <img
                         alt={img.name}
                         src={img.src}
-                        draggable="true"
+                        draggable={true}
                         width={128}
                         height={128}
                         onDragStart={(e) => {
@@ -793,32 +1089,34 @@ export default function ComicCreationScreen() {
 
     function pageComponent({ key }) {
         return (
-            <Box itemId={key} key={key} onClick={(event) => onPageClick(key)}>
-                <div style={{
-                    backgroundColor: (key === pageIndex) ? Colors.cadet_blue : "white",
-                    height: pageHeight,
-                    width: pageHeight,
-                    margin: 10,
-                    border: "1px solid black",
-                    display: "flex",
-                    justifyContent: "center",
-                    position: 'relative',
-                    cursor: 'pointer'
-                }}
-                >
+            <Grid item>
+                <Box itemId={key} key={key} onClick={(event) => onPageClick(key)}>
                     <div style={{
-                        height: "100%",
-                        display: "table"
-                    }}>
-                        <Typography variant="h3" sx={{
-                            display: "table-cell",
-                            verticalAlign: "middle"
+                        backgroundColor: (key === pageIndex) ? Colors.cadet_blue : "white",
+                        height: pageHeight,
+                        width: pageHeight,
+                        margin: 10,
+                        border: "1px solid black",
+                        display: "flex",
+                        justifyContent: "center",
+                        position: 'relative',
+                        cursor: 'pointer'
+                    }}
+                    >
+                        <div style={{
+                            height: "100%",
+                            display: "table"
                         }}>
-                            {key}
-                        </Typography>
+                            <Typography variant="h3" sx={{
+                                display: "table-cell",
+                                verticalAlign: "middle"
+                            }}>
+                                {key}
+                            </Typography>
+                        </div>
                     </div>
-                </div>
-            </Box >
+                </Box >
+            </Grid>
         );
     }
 
@@ -851,12 +1149,15 @@ export default function ComicCreationScreen() {
                     <IconButton onClick={handleEraserClick} sx={{ border: (tool === toolType.eraser) ? borderSpecs : "" }}>
                         <EraserIcon sx={{ width: 30, height: 30 }} />
                     </IconButton>
-                    <IconButton onClick={handleFillClick} sx={{ border: (tool === toolType.bucket) ? borderSpecs : "" }}>
-                        <FormatColorFillIcon sx={{ width: 35, height: 35, color: rgbaToCss() }} />
+                    <IconButton disabled={Boolean(view === viewType.sticker || textEditModeOn)} onClick={handleFillClick} sx={{ border: (tool === toolType.bucket) ? borderSpecs : "" }}>
+                        {(view === viewType.sticker || textEditModeOn) ? <DisabledByDefaultIcon sx={{ width: 35, height: 35, color: 'gray' }} /> : <FormatColorFillIcon sx={{ width: 35, height: 35, color: rgbaToCss() }} />}
                     </IconButton>
                     {/* // TODO: */}
                     <IconButton onClick={handleShapesClick} sx={{ border: (shapeModeOn) ? borderSpecs : "" }}>
                         <InterestsIcon sx={{ width: 35, height: 35, color: rgbaToCss() }} />
+                    </IconButton>
+                    <IconButton onClick={handleTextButtonClick} sx={{ border: (tool === toolType.text) ? borderSpecs : "" }}>
+                        <TextFieldsIcon sx={{ width: 35, height: 35, color: "black" }} />
                     </IconButton>
                 </Grid>
             </Grid>
@@ -885,14 +1186,210 @@ export default function ComicCreationScreen() {
             <Grid item>
                 {stickersTabs}
             </Grid>
-            <Grid item sx={{ height: "calc(100% - 50px)", marginTop: -3, backgroundColor: stickersSectionBackgroundColor, padding: "10px 0px 10px 0px" }}>
+            <Grid item sx={{ height: "calc(100% - 100px)", marginTop: -3, backgroundColor: stickersSectionBackgroundColor, padding: "10px 0px 10px 0px" }}>
                 <div style={{ overflow: "auto", height: "100%", padding: "0px 5px 0px 5px" }}>
                     <Grid container direction="row" justifyContent="center" sx={{ width: "100%" }}>
                         {(stickerTab === STICKER_TAB_TYPE.PREFAB_TAB) ? prefabContent : stickersContent}
                     </Grid>
                 </div>
             </Grid>
+            <Grid item >
+                <div style={{
+                    width: "100%",
+                    display: "flex",
+                    justifyContent: "center",
+                    marginTop: "5px"
+                }}>
+                    {view === viewType.sticker ?
+                        <div style={{ width: "100%" }}>
+                            <Grid container>
+                                <Grid item xs={6}>
+                                    <div style={{
+                                        width: "100%",
+                                        display: "flex",
+                                        justifyContent: "center"
+                                    }}>
+                                        <SubmitButton text={"Save"} onClick={onFinishSticker} />
+                                    </div>
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <div style={{
+                                        width: "100%",
+                                        display: "flex",
+                                        justifyContent: "center"
+                                    }}>
+                                        <SubmitButton text={"Cancel"} onClick={onFinishStickerNoSave} />
+                                    </div>
+                                </Grid>
+                            </Grid>
+                        </div>
+                        : <SubmitButton text={"Create Sticker"} onClick={
+                            function () {
+                                saveHook();
+                                setView(viewType.sticker);
+                            }
+                        } />}
+                </div>
+            </Grid>
         </Grid>
+
+    let optionsPanel = (textEditModeOn) ?
+        <Grid container direction="row" justifyContent="center" alignItems="center" width="100%" spacing={3}>
+            <Grid item xs={12}>
+                <Box sx={{
+                    justifyContent: "center",
+                    display: "flex"
+                }}>
+                    <TextField
+                        sx={{ width: "100%" }}
+                        onChange={handleTextChange}
+                        color="text"
+                        placeholder="Edit Text Here"
+                        variant="filled"
+                        value={serialization[currentTextId].data.text}
+                        multiline
+                        maxRows={4}
+                    />
+                </Box>
+            </Grid>
+            <Grid item xs={12}>
+                <Box sx={{
+                    justifyContent: "center",
+                    display: "flex"
+                }}>
+                    <SketchPicker
+                        color={currentTextColor}
+                        onChange={(e) => { handleTextColorChange(e, false) }}
+                        onChangeComplete={(e) => { handleTextColorChange(e, true) }}
+                        presetColors={Object.values(Colors)}
+                    />
+                </Box>
+            </Grid>
+            <Grid item xs={12}>
+                <Grid container>
+                    <Grid item xs={12}>
+                        <div style={{
+                            width: "100%",
+                            display: "flex",
+                            justifyContent: "center"
+                        }}>
+                            <Typography>
+                                Font Size
+                            </Typography>
+                        </div>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <div style={{
+                            width: "100%",
+                            display: "flex",
+                            justifyContent: "center"
+                        }}>
+                            <Slider
+                                aria-label="Font size"
+                                value={fontSize}
+                                step={1}
+                                valueLabelDisplay="auto"
+                                marks={marks}
+                                onChangeCommitted={(event, newValue) => { handleFontSizeChange(event, newValue, true) }}
+                                onChange={(event, newValue) => { handleFontSizeChange(event, newValue, false) }}
+                                sx={{
+                                    width: "100%",
+                                    color: currentTextColor,
+                                }}
+                            />
+                        </div>
+                    </Grid>
+                </Grid>
+            </Grid>
+        </Grid>
+        :
+        <Grid container direction="row" justifyContent="center" alignItems="center" width="100%" spacing={3}>
+            <Grid item xs={12}>
+                <Box sx={{
+                    justifyContent: "center",
+                    display: "flex"
+                }}>
+                    <SketchPicker
+                        color={rgbaToCss()}
+                        onChange={handleColorChange}
+                        presetColors={Object.values(Colors)}
+                    />
+                </Box>
+            </Grid>
+            <Grid item xs={12}>
+                <Grid container>
+                    <Grid item xs={12}>
+                        <div style={{
+                            width: "100%",
+                            display: "flex",
+                            justifyContent: "center"
+                        }}>
+                            <Typography>
+                                Pencil/Eraser Size
+                            </Typography>
+                        </div>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <div style={{
+                            width: "100%",
+                            display: "flex",
+                            justifyContent: "center"
+                        }}>
+                            <Slider
+                                aria-label="Pen size"
+                                value={penSize}
+                                getAriaValueText={valuetext}
+                                step={1}
+                                valueLabelDisplay="auto"
+                                marks={marks}
+                                onChange={handlePenSizeChange}
+                                sx={{
+                                    width: "100%",
+                                    color: (tool === toolType.eraser) ? "black" : rgbaToCss(),
+                                }}
+                            />
+                        </div>
+                    </Grid>
+                </Grid>
+            </Grid>
+            <Grid item xs={12}>
+                <Grid container>
+                    <Grid item xs={12}>
+                        <div style={{
+                            width: "100%",
+                            display: "flex",
+                            justifyContent: "center"
+                        }}>
+                            <Typography>
+                                Pencil/Eraser Style
+                            </Typography>
+                        </div>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <div style={{
+                            width: "100%",
+                            display: "flex",
+                            justifyContent: "center"
+                        }}>
+
+                            <Slider
+                                aria-label="Restricted values"
+                                value={currentPencilType}
+                                step={null}
+                                marks={penTypeMarks}
+                                track={false}
+                                onChange={handlePencilTypeChange}
+                                sx={{
+                                    width: "50%",
+                                    color: (tool === toolType.eraser) ? "black" : rgbaToCss()
+                                }}
+                            />
+                        </div>
+                    </Grid>
+                </Grid>
+            </Grid>
+        </Grid>
+
 
     // ------------------------------------------------------------------------------------------------------------------------
 
@@ -933,6 +1430,17 @@ export default function ComicCreationScreen() {
             // console.log("Adding entry:", entry);
 
             addOp(supportedShapes.line, [...serialization, entry], transactionTypes.createLine, true);
+        } else if (tool === toolType.text) {
+            const pos = e.target.getStage().getPointerPosition();
+            const entry = constructEntry(supportedShapes.text,
+                {
+                    x: pos.x,
+                    y: pos.y,
+                    text: "Insert text here",
+                    fontSize: fontSize,
+                    color: currentTextColor
+                });
+            addOp(supportedShapes.text, [...serialization, entry], transactionTypes.addText, true, null, null, serialization.length);
         }
     };
 
@@ -947,6 +1455,7 @@ export default function ComicCreationScreen() {
     // console.log("sss:", serialization);
 
     //TODO
+    let stageBorderColor = (view === viewType.sticker) ? "blue" : "black"
     const editorWindow =
         <div
             onDrop={(e) => {
@@ -958,18 +1467,20 @@ export default function ComicCreationScreen() {
                 const entry = constructEntry(supportedShapes.image, {
                     ...stageRef.current.getPointerPosition(),
                     src: dragUrl.current,
+                    isSticker: (stickerTab === STICKER_TAB_TYPE.PREFAB_TAB) ? false : true
                 });
 
                 addOp(supportedShapes.image, [...serialization, entry], transactionTypes.createImage, true);
             }}
             onDragOver={(e) => e.preventDefault()}
-            style={{ width: editorSize + "px", height: editorSize + "px", justifyContent: "center", display: "flex" }}
+            id="stage-div"
+            style={{ width: editorWidth + "px", height: editorHeight + "px", justifyContent: "center", display: "flex", resize: 'both' }}
         >
             <Stage
-                width={editorSize}
-                height={editorSize}
+                width={editorWidth}
+                height={editorHeight}
                 ref={stageRef}
-                style={{ border: "1px solid black", background: backgroundColor }}
+                style={{ border: "1px solid " + stageBorderColor, background: backgroundColor }}
                 onMouseDown={handleMouseDown}
                 onMousemove={handleMouseMove}
                 onMouseup={handleMouseUp}
@@ -977,10 +1488,7 @@ export default function ComicCreationScreen() {
                 <Layer>
                     {
                         serialization.filter(function (val) {
-                            if (val.typeName === supportedShapes.drag)
-                                return false;
-                            else
-                                return true;
+                            return (val.typeName !== supportedShapes.drag)
                         }).map((shape, i) => {
                             if (shape.typeName === supportedShapes.line) {
                                 const line = shape.data;
@@ -996,8 +1504,6 @@ export default function ComicCreationScreen() {
                                 return (
                                     <Line
                                         key={i}
-                                        x={line.x}
-                                        y={line.y}
                                         points={line.points}
                                         perfectDrawEnabled={false}
                                         fill={line.closed ? line.color : ""}
@@ -1027,6 +1533,39 @@ export default function ComicCreationScreen() {
                                         onDragMove={(e) => handleDragMove(e, i)}
                                     />
                                 );
+                            } else if (shape.typeName === supportedShapes.text) {
+                                const text = shape.data;
+
+                                return (
+                                    <Text
+                                        key={i}
+                                        x={text.x}
+                                        y={text.y}
+                                        draggable={canDrag}
+                                        text={text.text}
+                                        fill={text.color}
+                                        fontSize={text.fontSize}
+                                        onDragEnd={(e) => handleDragEnd(e, i)}
+                                        onDragMove={(e) => handleDragMove(e, i)}
+                                        onClick={(e) => handleTextClick(i)}
+                                    // points={line.points}
+                                    // perfectDrawEnabled={false}
+                                    // fill={line.closed ? line.color : ""}
+                                    // stroke={line.color}
+                                    // strokeWidth={line.penSize}
+                                    // closed={line.closed}
+                                    // tension={0.5}
+                                    // lineCap={'round'}
+                                    // lineJoin={'round'}
+                                    // dash={dashedArr}
+                                    // globalCompositeOperation={
+                                    //     line.tool === 'eraser' ? 'destination-out' : 'source-over'
+                                    // }
+                                    // draggable={canDrag}
+                                    // onDragEnd={(e) => handleDragEnd(e, i)}
+                                    // onDragMove={(e) => handleDragMove(e, i)}
+                                    />
+                                );
                             }
                             else {
                                 // Should not be possible since we filter
@@ -1039,13 +1578,28 @@ export default function ComicCreationScreen() {
             </Stage>
         </div>
 
-
     // ------------------------------------------------------------------------------------------------------------------------
 
     const pagesSection = (
-        <ScrollMenu >
-            {buildPages()}
-        </ScrollMenu>
+        <Grid container direction="column" width="100%" height="100%" justifyContent="space-between" alignItems="center" spacing={2}>
+            <Grid item>
+                <Typography variant="h5">
+                    Pages
+                </Typography>
+            </Grid>
+            <Grid item sx={{ height: "calc(100% - 100px)", marginTop: -3, padding: "10px 0px 10px 0px" }}>
+                <div style={{ overflow: "auto", height: "100%", padding: "0px 5px 0px 5px" }}>
+                    <Grid container direction="row" justifyContent="center" sx={{ width: "100%" }}>
+                        {buildPages()}
+                    </Grid>
+                </div>
+            </Grid>
+            <Grid item >
+                {view === viewType.sticker ? <div /> : <SubmitButton text={"Add Page"} onClick={
+                    handleAddPageClick
+                } />}
+            </Grid>
+        </Grid>
     );
 
     return (
@@ -1069,103 +1623,8 @@ export default function ComicCreationScreen() {
                     <Grid item>
                         {toolbar}
                     </Grid>
-                    <Grid item>
-                        <Box sx={{
-                            justifyContent: "center",
-                            display: "flex"
-                        }}>
-                            <SketchPicker
-                                color={rgbaToCss()}
-                                onChange={handleColorChange}
-                                presetColors={Object.values(Colors)}
-                            />
-                        </Box>
-                    </Grid>
-                    <Grid item>
-                        <Grid container>
-                            <Grid item xs={12}>
-                                <div style={{
-                                    width: "100%",
-                                    display: "flex",
-                                    justifyContent: "center"
-                                }}>
-                                    <Typography>
-                                        Pencil/Eraser Size
-                                    </Typography>
-                                </div>
-                            </Grid>
-                            <Grid item xs={12}>
-                                <div style={{
-                                    width: "100%",
-                                    display: "flex",
-                                    justifyContent: "center"
-                                }}>
-                                    <Slider
-                                        aria-label="Pen size"
-                                        value={penSize}
-                                        getAriaValueText={valuetext}
-                                        step={1}
-                                        valueLabelDisplay="auto"
-                                        marks={marks}
-                                        onChange={handlePenSizeChange}
-                                        sx={{
-                                            width: "100%",
-                                            color: (tool === toolType.eraser) ? "black" : rgbaToCss(),
-                                        }}
-                                    />
-                                </div>
-                            </Grid>
-                        </Grid>
-                    </Grid>
-                    <Grid item>
-                        <Grid container>
-                            <Grid item xs={12}>
-                                <div style={{
-                                    width: "100%",
-                                    display: "flex",
-                                    justifyContent: "center"
-                                }}>
-                                    <Typography>
-                                        Pencil/Eraser Style
-                                    </Typography>
-                                </div>
-                            </Grid>
-                            <Grid item xs={12}>
-                                <div style={{
-                                    width: "100%",
-                                    display: "flex",
-                                    justifyContent: "center"
-                                }}>
-
-                                    <Slider
-                                        aria-label="Restricted values"
-                                        value={currentPencilType}
-                                        step={null}
-                                        marks={penTypeMarks}
-                                        track={false}
-                                        onChange={handlePencilTypeChange}
-                                        sx={{
-                                            width: "50%",
-                                            color: (tool === toolType.eraser) ? "black" : rgbaToCss()
-                                        }}
-                                    />
-                                </div>
-                            </Grid>
-                        </Grid>
-                    </Grid>
-                    <Grid item>
-                        <div style={{
-                            width: "100%",
-                            display: "flex",
-                            justifyContent: "center"
-                        }}>
-                            <SubmitButton text={"Create Sticker"} onClick={
-                                function () {
-                                    saveHook();
-                                    setView(viewType.sticker);
-                                }
-                            } />
-                        </div>
+                    <Grid item width="100%">
+                        {optionsPanel}
                     </Grid>
                 </Grid>
             </Box>
@@ -1182,24 +1641,14 @@ export default function ComicCreationScreen() {
                 }}>
                     {editorWindow}
                 </Box>
-                {
-                    (view === viewType.main) ? (
-                        <div>
-                            <Box sx={{
-                                height: pageHeight + 20,
-                                width: "100%",
-                                paddingTop: "20px",
-                                position: "relative"
-                            }}>
-                                {pagesSection}
-                            </Box>
-                        </div>
-                    ) : (
-                        <div style={{ width: "100%" }}>
-                            <SubmitButton text={"Return"} onClick={onFinishSticker} />
-                        </div>
-                    )
-                }
+            </Box>
+
+            <Box sx={{
+                height: "100%",
+                width: "250px",
+                float: "right"
+            }}>
+                {stickersSection}
             </Box>
             <Divider orientation="vertical" variant="middle" sx={{ marginRight: 2, marginLeft: 3 }} />
             <Box sx={{
@@ -1207,7 +1656,7 @@ export default function ComicCreationScreen() {
                 width: "250px",
                 float: "right"
             }}>
-                {stickersSection}
+                {pagesSection}
             </Box>
         </Box >
     );

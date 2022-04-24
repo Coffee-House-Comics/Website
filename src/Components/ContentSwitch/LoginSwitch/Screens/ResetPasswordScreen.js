@@ -33,7 +33,7 @@ function ResetPasswordScreen() {
         setOldPass(event.target.value);
     }
 
-    const handleNewPassChnage = function (event) {
+    const handleNewPassChange = function (event) {
         setNewPass(event.target.value);
     }
 
@@ -78,6 +78,7 @@ function ResetPasswordScreen() {
             <Grid item xs={12}>
                 <SmallTextField
                     fieldName={"Old Password"}
+                    type='password'
                     helperText={"Please Enter your old password."}
                     onChange={handleOldPassChange}
                     sx={{
@@ -88,8 +89,9 @@ function ResetPasswordScreen() {
             <Grid item xs={12}>
                 <SmallTextField
                     fieldName={"New Password"}
+                    type='password'
                     helperText={"Please Enter your new password."}
-                    onChange={handleNewPassChnage}
+                    onChange={handleNewPassChange}
                     sx={{
                         width: "100%"
                     }}
@@ -98,6 +100,7 @@ function ResetPasswordScreen() {
             <Grid item xs={12}>
                 <SmallTextField
                     fieldName={"Confirm New Password"}
+                    type='password'
                     helperText={"Please re-enter your new password."}
                     onChange={handleNewPassConfirmChange}
                     sx={{
