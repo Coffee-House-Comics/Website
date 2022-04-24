@@ -118,7 +118,7 @@ export default function PostCard(props) {
                 border: "3px solid " + (post.isPublished)? "black" : "blue",
                 borderRadius: "5px",
                 overflow: "hidden",
-                boxShadow: "1px 3px 10px grey",
+                boxShadow: "1px 3px 10px " + (post.isPublished)? "grey" : "blue",
                 width: "max-content",
                 height: PostCardHeight,
                 cursor: "pointer"
