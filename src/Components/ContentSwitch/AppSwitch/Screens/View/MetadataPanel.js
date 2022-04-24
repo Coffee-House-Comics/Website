@@ -48,12 +48,16 @@ export default function MetadataPanel(props) {
     });
   }
 
-  const deleteButton = store.isLoggedIn && store.user.id === authorId ?
+  console.log("Logged in: ", store.isLoggedIn)
+  console.log("User ID: ", store.user.id)
+  console.log("Author ID: ", authorId)
+
+  const deleteButton = (store.isLoggedIn && store.user && store.user.id == authorId) ?
     <Grid item>
       <Button variant="text" color="red" startIcon={<DeleteIcon />} onClick={handleDeleteButtonClick}>
         Delete
       </Button>
-    </Grid> : "";
+    </Grid> : <div/>;
 
   function handleUpvote() {
     console.log("upvote");
@@ -79,10 +83,8 @@ export default function MetadataPanel(props) {
         <Grid item>
           <Typography sx={{ marginTop: '10px' }}>{description}</Typography>
         </Grid>
-        <Grid item container direction="row" justifyContent="center" alignItems="flexStart" spacing={1}>
-          <Grid item>
-            <BeansButtonPanel onUpvote={handleUpvote} onDownvote={handleDownvote} numBeans={contentBeanCount} currentVote={currentVote} />
-          </Grid>
+        <Grid item>
+          <BeansButtonPanel onUpvote={handleUpvote} onDownvote={handleDownvote} numBeans={contentBeanCount} currentVote={currentVote} />
         </Grid>
         <Grid item>
           {deleteButton}

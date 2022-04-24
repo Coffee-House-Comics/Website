@@ -48,6 +48,7 @@ export default function View() {
         return <Typography>Loading...</Typography>
     }
 
+    console.log("******POST:", post)
     let activePanel = <MetadataPanel
         id={post._id}
         title={post.name}
