@@ -25,17 +25,27 @@ function ProfileRouter() {
     let isMyProfile = false;
 
     // Fetch this user
-    useEffect(function () {
-        console.log("Fetching the user with id:", id);
 
-        async function loadHelper(id) {
-            const fetchedUser = await store.fetchProfile(id);
-            console.log("Fetched User:", fetchedUser);
-            setUser(fetchedUser);
+    const initialLoad = function () {
+        console.log("Fetching the user with id:", id, store.user);
+
+        if (store.user && id === store.user.id) {
+            // console.log("MATCH:", user.id, store.user.id);
+            setUser(store.user);
         }
+        else {
+            async function loadHelper(id) {
+                const fetchedUser = await store.fetchProfile(id);
+                console.log("Fetched User:", fetchedUser);
+                setUser(fetchedUser);
+            }
 
-        loadHelper(id);
-    }, []);
+            loadHelper(id);
+        }
+    }
+
+    useEffect(initialLoad, []);
+    useEffect(initialLoad, [store.user]);
 
     const location = useLocation()
     useEffect(() => {
@@ -70,6 +80,8 @@ function ProfileRouter() {
     }
 
     console.log("isMyProfile:", isMyProfile);
+
+    console.log("Snapshots:", user.comicSnapshots);
 
     function changeTab(tab) {
         console.log("Changing to..:", tab);
