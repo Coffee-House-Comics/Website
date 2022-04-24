@@ -36,9 +36,8 @@ import { TextField } from '@mui/material';
 
 */
 
-
-
-const editorSize = 800;
+let editorWidth = 800;
+let editorHeight = 800;
 
 const viewType = {
     main: "main",
@@ -150,8 +149,8 @@ const URLImage = ({ image, onDragMove, onDragEnd, draggable }) => {
     height = (img) ? 128 : 0;
 
     if (image.isSticker) {
-        width = editorSize;
-        height = editorSize;
+        width = editorWidth;
+        height = editorHeight;
     }
 
     return (
@@ -1133,12 +1132,35 @@ export default function ComicCreationScreen() {
                     justifyContent: "center",
                     marginTop: "5px"
                 }}>
-                    {view === viewType.sticker ? <div /> : <SubmitButton text={"Create Sticker"} onClick={
-                        function () {
-                            saveHook();
-                            setView(viewType.sticker);
-                        }
-                    } />}
+                    {view === viewType.sticker ?
+                        <div style={{ width: "100%" }}>
+                            <Grid container>
+                                <Grid item xs={6}>
+                                    <div style={{
+                                        width: "100%",
+                                        display: "flex",
+                                        justifyContent: "center"
+                                    }}>
+                                        <SubmitButton text={"Save"} onClick={onFinishSticker} />
+                                    </div>
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <div style={{
+                                        width: "100%",
+                                        display: "flex",
+                                        justifyContent: "center"
+                                    }}>
+                                        <SubmitButton text={"Cancel"} onClick={onFinishStickerNoSave} />
+                                    </div>
+                                </Grid>
+                            </Grid>
+                        </div>
+                        : <SubmitButton text={"Create Sticker"} onClick={
+                            function () {
+                                saveHook();
+                                setView(viewType.sticker);
+                            }
+                        } />}
                 </div>
             </Grid>
         </Grid>
@@ -1365,6 +1387,7 @@ export default function ComicCreationScreen() {
     // console.log("sss:", serialization);
 
     //TODO
+    let stageBorderColor = (view === viewType.sticker) ? "blue" : "black"
     const editorWindow =
         <div
             onDrop={(e) => {
@@ -1382,13 +1405,14 @@ export default function ComicCreationScreen() {
                 addOp(supportedShapes.image, [...serialization, entry], transactionTypes.createImage, true);
             }}
             onDragOver={(e) => e.preventDefault()}
-            style={{ width: editorSize + "px", height: editorSize + "px", justifyContent: "center", display: "flex" }}
+            id="stage-div"
+            style={{ width: editorWidth + "px", height: editorHeight + "px", justifyContent: "center", display: "flex", resize: 'both' }}
         >
             <Stage
-                width={editorSize}
-                height={editorSize}
+                width={editorWidth}
+                height={editorHeight}
                 ref={stageRef}
-                style={{ border: "1px solid black", background: backgroundColor }}
+                style={{ border: "1px solid " + stageBorderColor, background: backgroundColor }}
                 onMouseDown={handleMouseDown}
                 onMousemove={handleMouseMove}
                 onMouseup={handleMouseUp}
@@ -1486,7 +1510,6 @@ export default function ComicCreationScreen() {
             </Stage>
         </div>
 
-
     // ------------------------------------------------------------------------------------------------------------------------
 
     const pagesSection = (
@@ -1550,34 +1573,6 @@ export default function ComicCreationScreen() {
                 }}>
                     {editorWindow}
                 </Box>
-                {
-                    (view === viewType.main) ? (
-                        <div></div>
-                    ) : (
-                        <div style={{ width: "100%" }}>
-                            <Grid container>
-                                <Grid item xs={6}>
-                                    <div style={{
-                                        width: "100%",
-                                        display: "flex",
-                                        justifyContent: "center"
-                                    }}>
-                                        <SubmitButton text={"Save Sticker and Return"} onClick={onFinishSticker} />
-                                    </div>
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <div style={{
-                                        width: "100%",
-                                        display: "flex",
-                                        justifyContent: "center"
-                                    }}>
-                                        <SubmitButton text={"Exit Without Saving"} onClick={onFinishStickerNoSave} />
-                                    </div>
-                                </Grid>
-                            </Grid>
-                        </div>
-                    )
-                }
             </Box>
 
             <Box sx={{
