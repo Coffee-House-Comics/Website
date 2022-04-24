@@ -206,10 +206,10 @@ export default function ComicCreationScreen() {
         let oldData = { ...(serialization[currentTextId].data) }
         let newData = { ...oldData }
         newData.fontSize = newValue
-        if(modify){
+        if (modify) {
             serialization[currentTextId].data = newData
         }
-        
+
         console.log("oldData: ", oldData)
         addOp(transactionTypes.modifyText, serialization.concat(), transactionTypes.modifyText, modify, oldData, serialization[currentTextId].data, currentTextId);
         setFontSize(newValue)
@@ -263,10 +263,10 @@ export default function ComicCreationScreen() {
         newData.color = rgbaToCssText(color.rgb);
         setCurrentTextColor(newData.color);
 
-        if(modify){
+        if (modify) {
             serialization[currentTextId].data = newData
         }
-        
+
 
         addOp(transactionTypes.modifyText, serialization.concat(), transactionTypes.modifyText, modify, oldData, serialization[currentTextId].data, currentTextId);
     }
@@ -300,6 +300,9 @@ export default function ComicCreationScreen() {
     const [pageIndex, setPageIndex] = useState(0);
     const [currentTextId, setCurrentTextId] = useState(-1);
 
+    const handleAddPageClick = function () {
+        console.log("Attempting to add a new page")
+    }
 
     const defaultPage = (pageIndex >= 0) ? pages[pageIndex].data : [];
 
@@ -632,7 +635,7 @@ export default function ComicCreationScreen() {
 
             setBackgroundColor(before);
         }
-        else if(transaction.transactionName === transactionTypes.modifyText){
+        else if (transaction.transactionName === transactionTypes.modifyText) {
             // console.log("Undo modify text with transaction id", transaction.id)
             const id = transaction.id;
 
@@ -644,7 +647,7 @@ export default function ComicCreationScreen() {
             const elem = serialization[id];
 
             if (elem) {
-                elem.data = {...before};
+                elem.data = { ...before };
 
                 serialization.splice(id, 1, elem);
                 setFontSize(before.fontSize)
@@ -654,7 +657,7 @@ export default function ComicCreationScreen() {
 
                 setSerialization(serialization.concat());
             }
-        }else if(transaction.transactionName === transactionTypes.addText){
+        } else if (transaction.transactionName === transactionTypes.addText) {
             const last = peekSerial();
 
             if (!last)
@@ -673,11 +676,11 @@ export default function ComicCreationScreen() {
 
             setSerialization(serialization.slice(0, -1));
             setTextEditModeOn(false);
-        }else if (transaction.transactionName === transactionTypes.moveText) {
+        } else if (transaction.transactionName === transactionTypes.moveText) {
             const id = transaction.id;
 
             const before = transaction.before;
-            const elem = {...serialization[id]};
+            const elem = { ...serialization[id] };
 
             if (elem) {
                 elem.data.x = before.x
@@ -787,7 +790,7 @@ export default function ComicCreationScreen() {
             // console.log("->", after);
 
             setBackgroundColor(after + " ");
-        }else if(transaction.transactionName === transactionTypes.modifyText){
+        } else if (transaction.transactionName === transactionTypes.modifyText) {
             const id = transaction.id;
 
             const elem = serialization[id];
@@ -804,7 +807,7 @@ export default function ComicCreationScreen() {
             else {
                 transactionIndex--;
             }
-        }else if (transaction.transactionName === transactionTypes.addText) {
+        } else if (transaction.transactionName === transactionTypes.addText) {
             const last = peekUndoStack();
 
             if (!last) {
@@ -823,7 +826,7 @@ export default function ComicCreationScreen() {
 
             setSerialization(newSerialization);
 
-        }else if (transaction.transactionName === transactionTypes.moveText) {
+        } else if (transaction.transactionName === transactionTypes.moveText) {
             const id = transaction.id;
             const after = transaction.after;
             const elem = serialization[id];
@@ -1019,32 +1022,34 @@ export default function ComicCreationScreen() {
 
     function pageComponent({ key }) {
         return (
-            <Box itemId={key} key={key} onClick={(event) => onPageClick(key)}>
-                <div style={{
-                    backgroundColor: (key === pageIndex) ? Colors.cadet_blue : "white",
-                    height: pageHeight,
-                    width: pageHeight,
-                    margin: 10,
-                    border: "1px solid black",
-                    display: "flex",
-                    justifyContent: "center",
-                    position: 'relative',
-                    cursor: 'pointer'
-                }}
-                >
+            <Grid item>
+                <Box itemId={key} key={key} onClick={(event) => onPageClick(key)}>
                     <div style={{
-                        height: "100%",
-                        display: "table"
-                    }}>
-                        <Typography variant="h3" sx={{
-                            display: "table-cell",
-                            verticalAlign: "middle"
+                        backgroundColor: (key === pageIndex) ? Colors.cadet_blue : "white",
+                        height: pageHeight,
+                        width: pageHeight,
+                        margin: 10,
+                        border: "1px solid black",
+                        display: "flex",
+                        justifyContent: "center",
+                        position: 'relative',
+                        cursor: 'pointer'
+                    }}
+                    >
+                        <div style={{
+                            height: "100%",
+                            display: "table"
                         }}>
-                            {key}
-                        </Typography>
+                            <Typography variant="h3" sx={{
+                                display: "table-cell",
+                                verticalAlign: "middle"
+                            }}>
+                                {key}
+                            </Typography>
+                        </div>
                     </div>
-                </div>
-            </Box >
+                </Box >
+            </Grid>
         );
     }
 
@@ -1149,10 +1154,11 @@ export default function ComicCreationScreen() {
                         sx={{ width: "100%" }}
                         onChange={handleTextChange}
                         color="text"
+                        placeholder="Edit Text Here"
                         variant="filled"
                         value={serialization[currentTextId].data.text}
                         multiline
-                        maxRows={8}
+                        maxRows={4}
                     />
                 </Box>
             </Grid>
@@ -1163,8 +1169,8 @@ export default function ComicCreationScreen() {
                 }}>
                     <SketchPicker
                         color={currentTextColor}
-                        onChange={(e) => {handleTextColorChange(e, false)}}
-                        onChangeComplete={(e) => {handleTextColorChange(e, true)}}
+                        onChange={(e) => { handleTextColorChange(e, false) }}
+                        onChangeComplete={(e) => { handleTextColorChange(e, true) }}
                         presetColors={Object.values(Colors)}
                     />
                 </Box>
@@ -1194,8 +1200,8 @@ export default function ComicCreationScreen() {
                                 step={1}
                                 valueLabelDisplay="auto"
                                 marks={marks}
-                                onChangeCommitted={(event, newValue) => {handleFontSizeChange(event, newValue, true)}}
-                                onChange={(event, newValue) => {handleFontSizeChange(event, newValue, false)}}
+                                onChangeCommitted={(event, newValue) => { handleFontSizeChange(event, newValue, true) }}
+                                onChange={(event, newValue) => { handleFontSizeChange(event, newValue, false) }}
                                 sx={{
                                     width: "100%",
                                     color: currentTextColor,
@@ -1484,9 +1490,25 @@ export default function ComicCreationScreen() {
     // ------------------------------------------------------------------------------------------------------------------------
 
     const pagesSection = (
-        <ScrollMenu >
-            {buildPages()}
-        </ScrollMenu>
+        <Grid container direction="column" width="100%" height="100%" justifyContent="space-between" alignItems="center" spacing={2}>
+            <Grid item>
+                <Typography variant="h5">
+                    Pages
+                </Typography>
+            </Grid>
+            <Grid item sx={{ height: "calc(100% - 100px)", marginTop: -3, padding: "10px 0px 10px 0px" }}>
+                <div style={{ overflow: "auto", height: "100%", padding: "0px 5px 0px 5px" }}>
+                    <Grid container direction="row" justifyContent="center" sx={{ width: "100%" }}>
+                        {buildPages()}
+                    </Grid>
+                </div>
+            </Grid>
+            <Grid item >
+                {view === viewType.sticker ? <div /> : <SubmitButton text={"Add Page"} onClick={
+                    handleAddPageClick
+                } />}
+            </Grid>
+        </Grid>
     );
 
     return (
@@ -1530,16 +1552,7 @@ export default function ComicCreationScreen() {
                 </Box>
                 {
                     (view === viewType.main) ? (
-                        <div>
-                            <Box sx={{
-                                height: pageHeight + 20,
-                                width: "100%",
-                                paddingTop: "20px",
-                                position: "relative"
-                            }}>
-                                {pagesSection}
-                            </Box>
-                        </div>
+                        <div></div>
                     ) : (
                         <div style={{ width: "100%" }}>
                             <Grid container>
@@ -1566,13 +1579,21 @@ export default function ComicCreationScreen() {
                     )
                 }
             </Box>
-            <Divider orientation="vertical" variant="middle" sx={{ marginRight: 2, marginLeft: 3 }} />
+
             <Box sx={{
                 height: "100%",
                 width: "250px",
                 float: "right"
             }}>
                 {stickersSection}
+            </Box>
+            <Divider orientation="vertical" variant="middle" sx={{ marginRight: 2, marginLeft: 3 }} />
+            <Box sx={{
+                height: "100%",
+                width: "250px",
+                float: "right"
+            }}>
+                {pagesSection}
             </Box>
         </Box >
     );
