@@ -1,17 +1,39 @@
 import { testStories } from "../../../../App";
 import PostsSection from "../../../Cards/PostsSection";
-
+import { useContext, useEffect, useState } from 'react';
+import { GlobalStoreContext } from "../../../../Store";
+import API from "../../../../API";
 
 function Subscriptions() {
 
-    //TODO
-    /**
-     * Type:
-     *  [{
-     *      posts: [PostMetadata],
-     *      name: String
-     *  }]
-     */
+    const { store } = useContext(GlobalStoreContext);
+
+     useEffect(() => {
+        async function getSubscriptionPosts() {
+            let resp;
+            if(store.app === "Comics") {
+                resp = (await API.Comic.subscriptions()).data;
+            }
+
+            else {
+                resp = (await API.Story.subscriptions()).data;
+            }
+
+            if(resp.error) {
+                store.createModal({
+                    title: "Error fetching subscriptions page",
+                    body: "Subscriptions data could not be retrieved. Please try again.",
+                    action: ""
+                });
+                return;
+            }
+
+            //TODO call async function to get posts based on their ids returned in resp
+        }
+        getSubscriptionPosts();
+    }, []);
+
+
     console.log("Subscriptions")
     let postSets = [{
         posts: testStories,

@@ -30,10 +30,10 @@ function Explore() {
                 return;
             }
 
-            setRecentPosts(resp.mostRecent);
-            setPopularPosts(resp.mostLiked);
+            //TODO call async function to get posts based on their ids returned in resp
         }
-    })
+        getExplorePosts();
+    }, []);
 
     let postSets = [{
         posts: recentPosts,
