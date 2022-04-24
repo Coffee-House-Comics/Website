@@ -30,7 +30,14 @@ export default function PostCard(props) {
 
     // TODO:
     const handleOpenPost = function () {
-        store.reRoute(types.TabType.APP.children.VIEW.fullRoute);
+        console.log("Post was clicked on and post status:", post.isPublished);
+
+        if (post.isPublished) {
+            store.reRoute(types.TabType.APP.children.VIEW.fullRoute, post.id);
+        }
+        else {
+            store.reRoute(types.TabType.CREATION.children.COMIC.fullRoute, post.id);
+        }
     }
 
 
@@ -59,6 +66,9 @@ export default function PostCard(props) {
         console.log("Downvote click")
     }
 
+    console.log("Making card with post:", post)
+
+
     const metaPanel =
         <Grid container direction="column" justifyContent="space-between" alignItems="flex-start" height="100%">
             {/* Title, Series, and Author */}
@@ -76,19 +86,19 @@ export default function PostCard(props) {
                 </div>
                 : ""
             }
-            {/* Author */}
-            <AuthorButton onClick={handleAuthorClick} author={post.author} />
+            {/* TODO: Author */}
+            <AuthorButton onClick={handleAuthorClick} author={{ name: post.author, profileImage: post.coverPhoto }} />
         </Grid>
 
     const bookmarkButton = <IconButton onClick={handleBookmarkClick} aria-label="bookmark" size="small">
-            {store.isLoggedIn?(isBookmarked)
-                ? <BookmarkIcon fontSize="small" />
-                : <BookmarkBorderIcon fontSize="small" />
-                : <BookmarkBorderIcon fontSize="small" sx={{opacity:0}}/>
-                }
-            {
-            }
-        </IconButton>
+        {store.isLoggedIn ? (isBookmarked)
+            ? <BookmarkIcon fontSize="small" />
+            : <BookmarkBorderIcon fontSize="small" />
+            : <BookmarkBorderIcon fontSize="small" sx={{ opacity: 0 }} />
+        }
+        {
+        }
+    </IconButton>
 
     const buttonPanel =
         <Grid container direction="column" justifyContent="space-between" alignItems="flex-end" height="100%">
@@ -105,7 +115,7 @@ export default function PostCard(props) {
         <div
             onClick={handleOpenPost}
             style={{
-                border: "3px solid black",
+                border: "3px solid " + (post.isPublished)? "black" : "blue",
                 borderRadius: "5px",
                 overflow: "hidden",
                 boxShadow: "1px 3px 10px grey",
@@ -117,8 +127,8 @@ export default function PostCard(props) {
             <Grid container direction="column" justifyContent="flex-start" alignItems="flex-start" width="200px">
                 {/* Cover image */}
                 <Grid item>
-                    {/* TODO Change this to cover image */}
-                    <img src={imgSrc} height="250px" width="200px" style={{ objectFit: "cover" }} />
+                    {/* TODO: Change this to cover image */}
+                    <img src={post.coverPhoto} height="250px" width="200px" style={{ objectFit: "cover" }} />
                 </Grid>
                 <Grid container direction="row" justifyContent="space-between">
                     {/* Metadata panel */}

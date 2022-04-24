@@ -5,10 +5,8 @@ import { testStories } from '../../../../../App';
 import PostCard from '../../../../Cards/PostCard';
 import PostsSection, { PADDING_BTWN_CARDS } from '../../../../Cards/PostsSection';
 
-export default function ProfileContent(props) {    
-    
-    const { user } = props;
-    
+export default function ProfileContent({ user, seriesArray }) {
+
     //TODO
     /**
      * Format:
@@ -17,33 +15,40 @@ export default function ProfileContent(props) {
      *        posts: [PostMetadata]
      *    }]
      */
-     let seriesContent = [{
-        name: "Series 1",
-        posts: testStories
-    },
-    {
-        name: "Series 2",
-        posts: testStories
-    },
-    {
-        name: "Series 3",
-        posts: testStories
-    },
-    {
-        name: "Series 4",
-        posts: testStories
-    },];
+
+    if (!seriesArray || seriesArray.length === 0 || seriesArray[0].name === undefined || seriesArray[0].posts === undefined)
+        return <Typography>This user has no published content</Typography>
+
+
+    console.log(seriesArray);
+
+    const seriesContent = seriesArray.filter(elem => {
+        console.log(elem);
+
+        return elem.name !== "";
+    });
+
+    const nonSeriesContentFilter = seriesArray.filter(elem => {
+        return elem.name === "";
+    });
+
+    const nonSeriesContent = (nonSeriesContentFilter.length === 1) ? nonSeriesContentFilter[0].posts : null;
+
+    console.log("RES:", seriesContent, nonSeriesContentFilter, nonSeriesContent);
 
     //TODO
     /**
      * Format:
      *    [PostMetadata]
      */
-    let nonSeriesContent = testStories;
+    // let nonSeriesContent = testStories;
 
     //Build post sections for series
-    let seriesSections = seriesContent.map((series, index) =>
-        <PostsSection key={index} name={series.name} posts={series.posts} />
+    let seriesSections = seriesContent.map((series, index) => {
+        console.log("mm:", series)
+
+        return <PostsSection key={index} name={series.name} posts={series.posts} />
+    }
     );
 
     //Build section for non-series content

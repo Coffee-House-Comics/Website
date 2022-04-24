@@ -8,14 +8,15 @@ import InterestsIcon from '@mui/icons-material/Interests';
 import FormatColorFillIcon from '@mui/icons-material/FormatColorFill';
 import DisabledByDefaultIcon from '@mui/icons-material/DisabledByDefault';
 import EraserIcon from '../../../Icons/EraserIcon';
-import { ScrollMenu, VisibilityContext, } from 'react-horizontal-scrolling-menu';
-import { SliderPicker, PhotoshopPicker, SketchPicker } from 'react-color';
+import { useParams } from 'react-router-dom';
+import { SliderPicker, PhotoshopPicker, SketchPicker, CustomPicker } from 'react-color';
 import { Colors } from '../../../../Common/Theme';
 import SubmitButton from '../../../Buttons/SubmitButton';
 import useImage from 'use-image';
 import Utils from '../../../../Utils';
 import { Buffer } from 'buffer';
 import { GlobalStoreContext } from '../../../../Store';
+
 
 import prefabs from '../../../../prefab.json';
 import API from '../../../../API';
@@ -171,6 +172,8 @@ const URLImage = ({ image, onDragMove, onDragEnd, draggable }) => {
 };
 
 export default function ComicCreationScreen() {
+    const { id } = useParams();
+
     const { store } = React.useContext(GlobalStoreContext)
 
     const [view, setView] = useState(viewType.main);
@@ -188,6 +191,9 @@ export default function ComicCreationScreen() {
     const [textEditModeOn, setTextEditModeOn] = useState(false);
     const [shapeModeOn, setShapeModeOn] = useState(false);
 
+    // Stickers!
+    const [stickers, setStickers] = useState([]);
+
     const [backgroundColor, setBackgroundColor] = useState('white');
 
     function rgbaToCss() {
@@ -198,6 +204,7 @@ export default function ComicCreationScreen() {
         console.log("Current text color: ", currentTextColor)
         return `rgba(${r},${g},${b},${a})`;
     }
+
 
     const [fontSize, setFontSize] = useState(12)
     const handleFontSizeChange = (e, newValue, modify) => {
@@ -280,33 +287,67 @@ export default function ComicCreationScreen() {
     // ------------------------------------------------------------------------------------------------------------------------  
 
     // Array of all the pages (TODO: Fetch them)
-    const _pages = [];
+    // const _pages = [];
 
     const pageHeight = 100
-    for (let i = 0; i < 30; i++) {
-        _pages.push(
-            {
-                index: i,
-                data: {
-                    backgroundColor: 'white',
-                    serialization: []
-                }
-            }
-        );
-    }
+    // for (let i = 0; i < 30; i++) {
+    //     _pages.push(
+    //         {
+    //             index: i,
+    //             data: {
+    //                 backgroundColor: 'white',
+    //                 serialization: []
+    //             }
+    //         }
+    //     );
+    // }
 
-    const [pages, setPages] = useState(_pages);
+    const [pages, setPages] = useState([{
+        index: -12,
+        data: {
+            backgroundColor: 'white',
+            serialization: []
+        }
+    }]);
+
     const [pageIndex, setPageIndex] = useState(0);
     const [currentTextId, setCurrentTextId] = useState(-1);
-
-    const handleAddPageClick = function () {
-        console.log("Attempting to add a new page")
-    }
 
     const defaultPage = (pageIndex >= 0) ? pages[pageIndex].data : [];
 
     // If in sticker view then we have an empty page
     const [currentPage, setCurrentPage] = useState(defaultPage);
+
+    const [shadow, setShadow] = useState(false);
+
+    useEffect(function () {
+        console.log("Pages just changed");
+        setCurrentPage(pages[pageIndex].data);
+
+    }, [pages]);
+
+    React.useEffect(function () {
+        async function helper(id) {
+            try {
+                const res = await API.Comic.viewUnpublished(id);
+
+                // console.log("~> page:", res);
+                console.log("~>:", res.data.content.pages);
+                setPages(res.data.content.pages.concat());
+                return;
+            }
+            catch (err) {
+
+            }
+
+            console.log("Error in loading...");
+        }
+
+        helper(id);
+    }, []);
+
+    console.log("Pages:", pages);
+
 
     useEffect(function () {
         console.log("Index changed...", pageIndex);
@@ -359,8 +400,7 @@ export default function ComicCreationScreen() {
     }, [currentPage]);
 
 
-    // Stickers!
-    const [stickers, setStickers] = useState([]);
+
 
 
     const onFinishSticker = async function () {
@@ -475,7 +515,35 @@ export default function ComicCreationScreen() {
 
         const pagesData = exportPages();
         console.log("cpgsd:", pagesData);
-        setPages(pagesData.concat());
+
+        async function pushToServer(pagesData) {
+            console.log("pagesData:", pagesData);
+            const res = await API.Comic.saveContent(id, pagesData);
+            console.log("PUSHED!:", res);
+            setPages(pagesData.concat());
+        }
+
+        pushToServer(pagesData);
+    }
+
+    const handleAddPageClick = function () {
+        console.log("Attempting to add a new page")
+
+        const new_page = {
+            index: pages.length,
+            data: {
+                backgroundColor: 'white',
+                serialization: []
+            }
+        };
+
+        async function pushToServer(pagesData) {
+            const res = await API.Comic.saveContent(id, pagesData);
+            console.log("PUSHED!:", res);
+            setPages(pagesData);
+        }
+
+        pushToServer([...exportPages(), new_page]);
     }
 
     if (!serialization)
@@ -486,7 +554,7 @@ export default function ComicCreationScreen() {
         console.log("Trying to access metadata edit page")
 
         //TODO: Set ID
-        // store.reRoute(types.TabType.CREATION.children.METADATA.fullRoute, id)
+        store.reRoute(types.TabType.CREATION.children.METADATA.fullRoute, id)
     }
 
     const undoHook = function () {
