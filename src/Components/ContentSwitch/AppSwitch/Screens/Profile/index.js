@@ -25,30 +25,34 @@ function ProfileRouter() {
     let isMyProfile = false;
 
     // Fetch this user
-    useEffect(function () {
-        console.log("Fetching the user with id:", id);
 
-        async function loadHelper(id) {
-            const fetchedUser = await store.fetchProfile(id);
-            console.log("Fetched User:", fetchedUser);
-            setUser(fetchedUser);
+    const initialLoad = function (special) {
+        console.log("Fetching the user with id:", id, store.user);
+
+        if (store.user && (id === store.user.id)) {
+            // Refresh the local user
+            if (special)
+                store.triggerUserRefresh();
+            // window.location.reload(false);
+
+            // console.log("MATCH:", user.id, store.user.id);
+            setUser(store.user);
         }
+        else {
+            async function loadHelper(id) {
+                const fetchedUser = await store.fetchProfile(id);
+                console.log("Fetched User:", fetchedUser);
+                setUser(fetchedUser);
+            }
 
-        loadHelper(id);
-    }, []);
+            loadHelper(id);
+        }
+    }
 
     const location = useLocation()
-    useEffect(() => {
-        console.log("Fetching the user with id:", id);
 
-        async function loadHelper(id) {
-            const fetchedUser = await store.fetchProfile(id);
-            console.log("Fetched User:", fetchedUser);
-            setUser(fetchedUser);
-        }
-
-        loadHelper(id);
-    }, [location])
+    useEffect(() => initialLoad(true), []);
+    useEffect(initialLoad, [store.user, location]);
 
     console.log("Curent user being viewed:", user);
 
@@ -71,6 +75,8 @@ function ProfileRouter() {
 
     console.log("isMyProfile:", isMyProfile);
 
+    console.log("Snapshots:", user.comicSnapshots);
+
     function changeTab(tab) {
         console.log("Changing to..:", tab);
 
@@ -89,7 +95,7 @@ function ProfileRouter() {
     // Now we should check if this is our forum so we can see more options (or less if its not ours...)
 
     // Get the active Screen
-    let activeScreen = <ProfileContent user={user} />;
+    let activeScreen = <ProfileContent user={user} seriesArray={user.comicSnapshots} />;
     if (profileTab === PROFILE_TABS.FORUM)
         activeScreen = <Forum user={user} />;
     else if (profileTab === PROFILE_TABS.SAVED)

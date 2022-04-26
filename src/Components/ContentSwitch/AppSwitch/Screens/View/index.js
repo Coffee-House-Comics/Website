@@ -13,22 +13,25 @@ export default function View() {
     const { id } = useParams();
     const theme = useTheme();
     const { store } = useContext(GlobalStoreContext);
-    const [post, setPost] = useState({})
+    const [post, setPost] = useState(null)
 
     //Set the post on first render
     useEffect(() => {
         async function getPost(id) {
-            let resp = (await API.Comic.viewPublished(id)).data
+            let resp = (await API.Comic.viewPublished(id))
+
+            console.log("RESP:", resp)
 
             if (resp.error) {
                 store.reRoute("/")
             }
 
-            setPost(resp.content)
+            setPost(resp.data.content)
         }
         getPost(id);
     }, [])
 
+    console.log("post:", post);
 
     const CONTENT_TABS = {
         VIEW: 0,
@@ -41,6 +44,11 @@ export default function View() {
         setContentTab(tab);
     }
 
+    if (post === null) {
+        return <Typography>Loading...</Typography>
+    }
+
+    console.log("******POST:", post)
     let activePanel = <MetadataPanel
         id={post._id}
         title={post.name}
@@ -73,6 +81,7 @@ export default function View() {
             <Typography variant="h6" >{text}</Typography>
         );
     }
+
 
     return (<Box sx={{
         height: "100%",
@@ -117,7 +126,7 @@ export default function View() {
             float: "right",
             width: "75%"
         }}>
-            <ContentPanel />
+            <ContentPanel pages={post.pages}/>
         </Box>
     </Box>);
 

@@ -27,10 +27,10 @@ export default function MetadataEditor() {
         async function getPost(id) {
             let resp = (await API.Comic.viewUnpublished(id)).data
 
-            if(resp.error){
+            if (resp.error) {
                 store.reRoute(types.TabType.APP.children.VIEW.fullRoute, id)
             }
-            
+
             setPost(resp.content)
         }
         getPost(id);
@@ -71,7 +71,7 @@ export default function MetadataEditor() {
                 if (store.app === "Comics" && await API.Comic.delete(id).status === 200) {
                     alert("Post successfully deleted");
                     store.reRoute(types.TabType.APP.children.PROFILE.fullRoute, store.user.id)
-                }else if (await API.Story.delete(id).status === 200){
+                } else if (await API.Story.delete(id).status === 200) {
                     alert("Post successfully deleted");
                     store.reRoute(types.TabType.APP.children.PROFILE.fullRoute, store.user.id)
                 }
@@ -89,13 +89,23 @@ export default function MetadataEditor() {
             async function publishPost(id, series) {
                 let res = {}
                 if (store.app === "Comics") {
-                    res = await API.Comic.publish(id, series)
+                    console.log("Save comic changes")
+                    res = await API.Comic.editMetadata(post._id, postTitle, postDescription, imgURL, postSeries)
                 } else {
-                    res = await API.Story.publish(id, series)
+                    res = await API.Story.editMetadata(post._id, postTitle, postDescription, imgURL, postSeries)
                 }
 
                 if (res.status && res.status === 200) {
-                    store.reRoute(types.TabType.APP.children.VIEW.fullRoute, id)
+                    if (store.app === "Comics") {
+                        console.log("Publish comic")
+                        res = await API.Comic.publish(id, series)
+                    } else {
+                        res = await API.Story.publish(id, series)
+                    }
+
+                    if (res.status && res.status === 200) {
+                        store.reRoute(types.TabType.APP.children.VIEW.fullRoute, id)
+                    }
                 }
             }
             publishPost(post._id, postSeries)

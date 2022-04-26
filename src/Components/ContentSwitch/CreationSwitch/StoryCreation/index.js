@@ -9,6 +9,7 @@ import {
     Button
 } from '@mui/material';
 import SplitPane from 'react-split-pane';
+import { StoryStoreContextProvider } from '../../../../Store/StoryCreationStore';
 
 
 export default function StoryCreation() {
@@ -31,15 +32,17 @@ export default function StoryCreation() {
 
     return (
         <div>
-            <SplitPane
-                split="vertical"
-                minSize={330}
-                defaultSize={600}
-                resizerStyle={styles}
-            >
-                <TextEditor currPage={pages[0].title}/>
-                <FlowEditor />
-            </SplitPane>
+            <StoryStoreContextProvider>
+                <SplitPane
+                    split="vertical"
+                    minSize={480}
+                    defaultSize={600}
+                    resizerStyle={styles}
+                >
+                    <TextEditor currPage={pages[0].title}/>
+                    <FlowEditor />
+                </SplitPane>
+            </StoryStoreContextProvider>
         </div>
     );
 }

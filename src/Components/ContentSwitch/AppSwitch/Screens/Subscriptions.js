@@ -74,6 +74,8 @@ function Subscriptions() {
         getSubscriptionPosts();
     }, []);
 
+    return <div>Subscriptions page</div>
+
 
     console.log("Subscriptions")
 

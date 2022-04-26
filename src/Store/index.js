@@ -27,6 +27,7 @@ function GlobalStoreContextProvider(props) {
         user: null,
         isLoggedIn: false,
         modal: null,
+        isEditing: false,
         loading: false,
         trigger: false
     });
@@ -181,6 +182,31 @@ function GlobalStoreContextProvider(props) {
         }, true);
     }
 
+    store.triggerUserRefresh = async function () {
+        console.log("Refreshing the user...");
+        
+        try {
+            const response = await AuthAPI.currentProfile();
+
+            if (response.status === 200) {
+                console.log("Logged in with user:", response.data, response.data.id);
+                storeReducer({
+                    type: GlobalStoreActionType.LOGIN_USER,
+                    payload: response.data
+                });
+
+                // Allow the route to wherever we wanted to go
+                // Do not change any route
+                return;
+            }
+        }
+        catch (err) {
+            /* Do nothing - pass error down */
+        }
+
+        console.log("Trouble refreshing the user...");
+    }
+
     store.reRoute = function (fullRoute, id) {
         console.log("Store reroute:", fullRoute);
         fullRoute = "" + fullRoute;
@@ -199,12 +225,36 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
-    store.newContent = function () {
-        const route = (store.app === "Comics") ?
-            types.TabType.CREATION.children.COMIC.fullRoute :
-            types.TabType.CREATION.children.STORY.fullRoute;
+    store.newContent = async function () {
+        console.log("Trying to create a comic (or story lol)");
 
-        store.reRoute(route);
+        // Create the comic/story on the backend
+        if (store.app === "Comics") {
+            console.log("Creating a Comic");
+
+            try {
+                // Get the id via an api call
+                const response = await API.Comic.create("Untitled", "A mysterious comic this must be...");
+
+                if (response.status === 200) {
+                    console.log("ID of the new Comic:", response.data, response.data.id);
+
+                    store.reRoute(types.TabType.CREATION.children.COMIC.fullRoute, response.data.id);
+                    return;
+                }
+            }
+            catch (err) { }
+
+            // Reach here only on error
+            store.createModal({
+                title: "Error!",
+                body: "There was an error creating the comic."
+            });
+        }
+        else {
+            console.log("Not supporting stories yet");
+            store.reRoute(types.TabType.CREATION.children.STORY.fullRoute, "SHADOW-IS-CUTE");
+        }
     }
 
 
