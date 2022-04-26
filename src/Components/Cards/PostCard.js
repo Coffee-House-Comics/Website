@@ -33,10 +33,10 @@ export default function PostCard(props) {
         console.log("Post was clicked on and post status:", post.isPublished);
 
         if (post.isPublished) {
-            store.reRoute(types.TabType.APP.children.VIEW.fullRoute, post.id);
+            store.reRoute(types.TabType.APP.children.VIEW.fullRoute, post._id);
         }
         else {
-            store.reRoute(types.TabType.CREATION.children.COMIC.fullRoute, post.id);
+            store.reRoute(types.TabType.CREATION.children.COMIC.fullRoute, post._id);
         }
     }
 
