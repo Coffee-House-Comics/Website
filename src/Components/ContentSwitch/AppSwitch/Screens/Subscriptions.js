@@ -28,7 +28,7 @@ function Subscriptions() {
                 return;
             }
 
-            //TODO call async function to get posts based on their ids returned in resp
+            //TODO call async function which makes viewPublished call to get posts based on their ids returned in resp
         }
         getSubscriptionPosts();
     }, []);

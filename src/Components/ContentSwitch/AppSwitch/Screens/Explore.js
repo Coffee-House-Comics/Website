@@ -10,6 +10,30 @@ function Explore() {
     const [recentPosts, setRecentPosts] = useState([]);
     const [popularPosts, setPopularPosts] = useState([]);
 
+    async function getPostFromId(id, type) {
+        let resp;
+        if(store.app === "Comics") {
+            resp = (await API.Comic.viewPublished(id)).data;
+        }
+        else {
+            resp = (await API.Story.viewPublished(id)).data;
+        }
+        if(resp.error) {
+            //Post wont be added to post array
+            return;
+        }
+
+        if(type === "recent") {
+            const newRecentPosts = recentPosts.concat(resp.content);
+            setRecentPosts(newRecentPosts);
+        }
+
+        else  {
+            const newPopularPosts = popularPosts.concat(resp.content);
+            setPopularPosts(newPopularPosts);
+        }
+    }
+
     useEffect(() => {
         async function getExplorePosts() {
             let resp;
@@ -30,7 +54,8 @@ function Explore() {
                 return;
             }
 
-            //TODO call async function to get posts based on their ids returned in resp
+            resp.mostRecent.forEach(recentId => getPostFromId(recentId, "recent"));
+            resp.mostLiked.forEach(likedId => getPostFromId(likedId, "liked"));
         }
         getExplorePosts();
     }, []);
