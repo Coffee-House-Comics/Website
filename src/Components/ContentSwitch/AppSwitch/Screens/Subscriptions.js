@@ -7,6 +7,45 @@ import API from "../../../../API";
 function Subscriptions() {
 
     const { store } = useContext(GlobalStoreContext);
+    const [subscriptionSections, setSubscriptionSections ] = useState([]);
+    const [subscribedPosts, setSubscribedPosts] = useState([]);
+
+    function organizePostsByAuthor() {
+        let currAuthors = [];
+        let sections = [];
+        subscribedPosts.forEach(post => {
+            if(currAuthors.includes(post.author)) {
+                const index = subscribedPosts.findIndex((element) => element.author == post.author);
+                subscribedPosts[index].posts.push(post);
+            }
+            else {
+                sections.push({
+                    author: post.author,
+                    posts: [post]
+                });
+                currAuthors.push(post.author);
+            }
+        });
+
+        setSubscriptionSections(sections);
+    }
+
+    async function getPostFromId(id) {
+        let resp;
+        if(store.app === "Comics") {
+            resp = (await API.Comic.viewPublished(id)).data;
+        }
+        else {
+            resp = (await API.Story.viewPublished(id)).data;
+        }
+        if(resp.error) {
+            //Post wont be added to post array
+            return;
+        }
+
+        const newSubscribedPosts = subscribedPosts.concat(resp.content);
+        setSubscribedPosts(newSubscribedPosts);
+    }
 
      useEffect(() => {
         async function getSubscriptionPosts() {
@@ -29,24 +68,19 @@ function Subscriptions() {
             }
 
             //TODO call async function which makes viewPublished call to get posts based on their ids returned in resp
+            await resp.content.forEach(subscribedId => getPostFromId(subscribedId));
+            organizePostsByAuthor();
         }
         getSubscriptionPosts();
     }, []);
 
 
     console.log("Subscriptions")
-    let postSets = [{
-        posts: testStories,
-        name: "Section 1"
-    }, {
-        posts: testStories,
-        name: "Section 2"
-    },]
 
     //Build PostSections
     let postSections = []
-    for(let postSet of postSets){
-        postSections.push(<PostsSection posts={postSet.posts} name={postSet.name}/>)
+    for(let subscriptionSection of subscriptionSections){
+        postSections.push(<PostsSection posts={subscriptionSection.posts} name={subscriptionSection.author}/>)
     }
 
     return (
