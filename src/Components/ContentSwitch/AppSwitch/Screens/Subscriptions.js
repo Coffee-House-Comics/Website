@@ -3,6 +3,7 @@ import PostsSection from "../../../Cards/PostsSection";
 import { useContext, useEffect, useState } from 'react';
 import { GlobalStoreContext } from "../../../../Store";
 import API from "../../../../API";
+import { Typography } from '@mui/material'
 
 function Subscriptions() {
 
@@ -31,45 +32,57 @@ function Subscriptions() {
     }
 
     async function getPostFromId(id) {
-        let resp;
-        if(store.app === "Comics") {
-            resp = (await API.Comic.viewPublished(id)).data;
-        }
-        else {
-            resp = (await API.Story.viewPublished(id)).data;
-        }
-        if(resp.error) {
-            //Post wont be added to post array
-            return;
+        try {
+            let resp;
+            if(store.app === "Comics") {
+                resp = (await API.Comic.viewPublished(id));
+            }
+            else {
+                resp = (await API.Story.viewPublished(id));
+            }
+            if(resp.error) {
+                //Post wont be added to post array
+                return;
+            }
+
+            const newSubscribedPosts = subscribedPosts.concat(resp.data.content);
+            setSubscribedPosts(newSubscribedPosts);
         }
 
-        const newSubscribedPosts = subscribedPosts.concat(resp.content);
-        setSubscribedPosts(newSubscribedPosts);
+        catch(err) {
+            console.log(err);
+        }
     }
 
      useEffect(() => {
         async function getSubscriptionPosts() {
-            let resp;
-            if(store.app === "Comics") {
-                resp = (await API.Comic.subscriptions()).data;
+            try {
+                let resp;
+                if(store.app === "Comics") {
+                    resp = (await API.Comic.subscriptions());
+                }
+
+                else {
+                    resp = (await API.Story.subscriptions());
+                }
+
+                if(resp.error) {
+                    store.createModal({
+                        title: "Error fetching subscriptions page",
+                        body: "Subscriptions data could not be retrieved. Please try again.",
+                        action: ""
+                    });
+                    return;
+                }
+
+                //TODO call async function which makes viewPublished call to get posts based on their ids returned in resp
+                await resp.data.content.forEach(subscribedId => getPostFromId(subscribedId));
+                organizePostsByAuthor();
             }
 
-            else {
-                resp = (await API.Story.subscriptions()).data;
+            catch(err) {
+                console.log(err);
             }
-
-            if(resp.error) {
-                store.createModal({
-                    title: "Error fetching subscriptions page",
-                    body: "Subscriptions data could not be retrieved. Please try again.",
-                    action: ""
-                });
-                return;
-            }
-
-            //TODO call async function which makes viewPublished call to get posts based on their ids returned in resp
-            await resp.content.forEach(subscribedId => getPostFromId(subscribedId));
-            organizePostsByAuthor();
         }
         getSubscriptionPosts();
     }, []);
@@ -84,7 +97,12 @@ function Subscriptions() {
 
     return (
         <div style={{padding: 40, paddingInline: 25}}>
-            {postSections}
+            {postSections.length == 0?
+                <Typography variant="h5" sx={{ marginBottom: "5px", marginTop: "20px" }}>
+                    There are no subscription posts. Try subscribing to a creator!
+                </Typography>: 
+                {postSections}
+            }
         </div>
     );
 }

@@ -12,50 +12,65 @@ function Explore() {
 
     async function getPostFromId(id, type) {
         let resp;
-        if(store.app === "Comics") {
-            resp = (await API.Comic.viewPublished(id)).data;
-        }
-        else {
-            resp = (await API.Story.viewPublished(id)).data;
-        }
-        if(resp.error) {
-            //Post wont be added to post array
-            return;
+        try {
+            if(store.app === "Comics") {
+                resp = (await API.Comic.viewPublished(id));
+            }
+            else {
+                resp = (await API.Story.viewPublished(id));
+            }
+        
+            if(resp.status != 200) {
+                //Post wont be added to post array
+                console.log("Error fetching post from id:", id);
+                console.log(resp.error);
+                return;
+            }
+
+            if(type === "recent") {
+                const newRecentPosts = recentPosts.concat(resp.data.content);
+                setRecentPosts(newRecentPosts);
+            }
+
+            else  {
+                const newPopularPosts = popularPosts.concat(resp.data.content);
+                setPopularPosts(newPopularPosts);
+            }
         }
 
-        if(type === "recent") {
-            const newRecentPosts = recentPosts.concat(resp.content);
-            setRecentPosts(newRecentPosts);
-        }
-
-        else  {
-            const newPopularPosts = popularPosts.concat(resp.content);
-            setPopularPosts(newPopularPosts);
+        catch(err) {
+            console.log(err)
         }
     }
 
     useEffect(() => {
         async function getExplorePosts() {
-            let resp;
-            if(store.app === "Comics") {
-                resp = (await API.Comic.explore()).data;
+            try {
+                let resp;
+                if(store.app === "Comics") {
+                    resp = (await API.Comic.explore());
+                }
+
+                else {
+                    resp = (await API.Story.explore());
+                }
+
+                if(resp.status != 200) {
+                    store.createModal({
+                        title: "Error fetching explore page",
+                        body: "Explore data could not be retrieved. Please try again.",
+                        action: ""
+                    });
+                    return;
+                }
+
+                resp.data.mostRecent.forEach(recentId => getPostFromId(recentId, "recent"));
+                resp.data.mostLiked.forEach(likedId => getPostFromId(likedId, "liked"));
             }
 
-            else {
-                resp = (await API.Story.explore()).data;
+            catch(err) {
+                console.log(err);
             }
-
-            if(resp.error) {
-                store.createModal({
-                    title: "Error fetching explore page",
-                    body: "Explore data could not be retrieved. Please try again.",
-                    action: ""
-                });
-                return;
-            }
-
-            resp.mostRecent.forEach(recentId => getPostFromId(recentId, "recent"));
-            resp.mostLiked.forEach(likedId => getPostFromId(likedId, "liked"));
         }
         getExplorePosts();
     }, []);
