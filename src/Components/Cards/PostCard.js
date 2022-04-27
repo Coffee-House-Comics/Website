@@ -43,7 +43,8 @@ export default function PostCard(props) {
         }
         else {
             console.log("Showing unpublished with id: ", id);
-            store.reRoute(types.TabType.CREATION.children.COMIC.fullRoute, id);
+            store.app === "Comics"? store.reRoute(types.TabType.CREATION.children.COMIC.fullRoute, id) :
+                store.reRoute(types.TabType.CREATION.children.STORY.fullRoute, id);
         }
     }
 
