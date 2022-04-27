@@ -9,6 +9,7 @@ import BeansButtonPanel from '../Buttons/BeansButtonPanel';
 
 import { GlobalStoreContext } from '../../Store';
 import types from '../../Common/Types'
+import Utils from '../../Utils';
 
 export const PostCardHeight = 335;
 export default function PostCard(props) {
@@ -32,11 +33,17 @@ export default function PostCard(props) {
     const handleOpenPost = function () {
         console.log("Post was clicked on and post status:", post.isPublished);
 
+        console.log("Post is", post);
+
+        const id = Utils.getId(post);
+
         if (post.isPublished) {
-            store.reRoute(types.TabType.APP.children.VIEW.fullRoute, post._id);
+            console.log("Showing published with id: ", id);
+            store.reRoute(types.TabType.APP.children.VIEW.fullRoute, id);
         }
         else {
-            store.reRoute(types.TabType.CREATION.children.COMIC.fullRoute, post._id);
+            console.log("Showing unpublished with id: ", id);
+            store.reRoute(types.TabType.CREATION.children.COMIC.fullRoute, id);
         }
     }
 
