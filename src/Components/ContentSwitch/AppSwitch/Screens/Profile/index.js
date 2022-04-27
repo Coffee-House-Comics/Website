@@ -95,7 +95,7 @@ function ProfileRouter() {
     // Now we should check if this is our forum so we can see more options (or less if its not ours...)
 
     // Get the active Screen
-    let activeScreen = <ProfileContent user={user} seriesArray={user.comicSnapshots} />;
+    let activeScreen = store.app === "Comics"? <ProfileContent user={user} seriesArray={user.comicSnapshots} /> : <ProfileContent user={user} seriesArray={user.storySnapshots} />;
     if (profileTab === PROFILE_TABS.FORUM)
         activeScreen = <Forum user={user} />;
     else if (profileTab === PROFILE_TABS.SAVED)
