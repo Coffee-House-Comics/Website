@@ -143,7 +143,6 @@ function StoryStoreContextProvider(props) {
             }
 
             case StoryStoreActionType.SET_MODE: {
-                console.log("payload", payload)
                 return setStore({
                     storyId: storyStore.storyId,
                     mode: payload,
@@ -152,7 +151,7 @@ function StoryStoreContextProvider(props) {
                     elementBody: storyStore.elementBody,
                     nodes: storyStore.nodes,
                     edges: storyStore.edges,
-                });
+                })
             }
 
             default: return storyStore;
@@ -173,6 +172,7 @@ function StoryStoreContextProvider(props) {
             newNodes = nodes(storyStore.nodes)
         }
         console.log("newNodes ", newNodes)
+        
         storeReducer({
             type: StoryStoreActionType.SET_NODES,
             payload: newNodes
@@ -209,11 +209,11 @@ function StoryStoreContextProvider(props) {
     }
 
     storyStore.loadNode = function(id, title, body) {
-        storyStore.changeMode(1, id, title, body);
+        storyStore.changeMode(2, id, title, body);
     }
 
     storyStore.loadEdge = function(id, title) {
-        storyStore.changeMode(2, id, title, null);
+        storyStore.changeMode(1, id, title, null);
     }
 
     storyStore.closeEditing = function() {
