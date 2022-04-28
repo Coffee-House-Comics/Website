@@ -6,14 +6,72 @@ import EditorButtonPanel from '../../../../Buttons/EditorButtons/EditorButtonPan
 import { EditorState } from 'draft-js';
 import SubmitButton from '../../../../Buttons/SubmitButton';
 import {StoryStoreContext} from '../../../../../Store/StoryCreationStore';
+import { GlobalStoreContext } from '../../../../../Store';
+import types from '../../../../../Common/Types';
 
 
 export default function TextEditor() {
     const [editorState, setEditorState] = useState(EditorState.createEmpty());
+    const { store } = useContext(GlobalStoreContext);
     const { storyStore } = useContext(StoryStoreContext);
 
     const onEditorStateChange = function(newEditorState){
         setEditorState(newEditorState)
+    }
+
+    const saveHook = function () {
+        console.log("Saving...");
+
+        /*if (pageIndex === -1) {
+            console.log("Saving sticker...");
+
+            const stickerObj = exportCurrentPage();
+            console.log("Sticker:", stickerObj);
+        }
+
+        const pagesData = exportPages();
+        console.log("cpgsd:", pagesData);
+
+        async function pushToServer(pagesData) {
+            console.log("pagesData:", pagesData);
+            const res = await API.Comic.saveContent(id, pagesData);
+
+            store.triggerUserRefresh();
+
+            console.log("PUSHED!:", res);
+            setPages(pagesData.concat());
+        }
+
+        pushToServer(pagesData);*/
+    }
+
+    const metadataHook = function () {
+
+        console.log("Trying to access metadata edit page")
+
+        //TODO: Set ID
+        saveHook();
+        store.reRoute(types.TabType.CREATION.children.METADATA.fullRoute, storyStore.storyId);
+    }
+
+    const undoHook = function () {
+        console.log("Trying to undo...");
+
+        handleUndo();
+    };
+
+    const redoHook = function () {
+        console.log("Trying to redo...");
+
+        handleRedo();
+    };
+
+    const handleUndo = function() {
+
+    }
+
+    const handleRedo = function() {
+
     }
 
     let titleField = <Grid item>
@@ -42,7 +100,7 @@ export default function TextEditor() {
                 <Grid container direction="column" alignItems="stretch" justifyContent="flex-start" width="100%" spacing = {1}>
                     <Grid item container direction="row" spacing={3}>
                         <Grid item>
-                            <EditorButtonPanel />
+                            <EditorButtonPanel undoHook={undoHook} redoHook={redoHook} saveHook={saveHook} metadataHook={metadataHook}/>
                         </Grid>
                         <Grid item>
                             <SubmitButton text={'+ Add Page'} onClick={storyStore.addNode}/>
