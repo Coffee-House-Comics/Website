@@ -1,6 +1,8 @@
-import ReactFlow, { applyEdgeChanges, applyNodeChanges, MiniMap, Controls, updateEdge, addEdge } from 'react-flow-renderer';
-import { useCallback, useContext } from 'react';
+import ReactFlow, { applyEdgeChanges, applyNodeChanges, MiniMap, Controls, updateEdge, addEdge} from 'react-flow-renderer';
+import React, { useCallback, useContext } from 'react';
 import {StoryStoreContext} from '../../../../../Store/StoryCreationStore';
+import { GlobalStoreContext } from '../../../../../Store';
+import { Colors } from '../../../../../Common/Theme';
 
 /*
 const initialNodes = [
@@ -32,26 +34,72 @@ const initialEdges = [
 
 
 export default function FlowEditor() {  
-    const { store } = useContext(StoryStoreContext);
+    const { storyStore } = React.useContext(StoryStoreContext)
+    const {store} = React.useContext(GlobalStoreContext)
 
+    console.log("storyStore", storyStore)
     console.log("store", store)
 
     const onNodesChange = useCallback(
-      (changes) => store.changeNodes((nds) => applyNodeChanges(changes, nds)),
-      [store.changeNodes]
+      (changes) => {
+        console.log("node changes", changes) 
+        let processedChanges = []
+        changes.forEach(change => {
+          if(change.type === 'remove'){
+            const metadata = {
+              title: "Are you sure that you want to delete the selected page?",
+              body: "This action is irreversable",
+              action: "Delete"
+            };
+            
+            store.createModal(metadata, function () {
+              storyStore.changeNodes((nds) => applyNodeChanges([change], nds))
+            });
+          }else if(change.type === 'select' && change.selected){
+            let node = storyStore.getNode(change.id)
+            console.log("found Node: ",node)
+            console.log(storyStore.mode)
+            storyStore.loadNode(node.id, node.data.label, node.data.payload)
+            console.log(storyStore.mode)
+            processedChanges.push(change)
+          }else{
+            processedChanges.push(change)
+          }
+        })
+        storyStore.changeNodes((nds) => applyNodeChanges(processedChanges, nds))
+      },
+      [storyStore.changeNodes]
     );
     const onEdgesChange = useCallback(
-      (changes) => store.changeEdges((eds) => applyEdgeChanges(changes, eds)),
-      [store.changeEdges]
+      (changes) => {
+        console.log("edge changes",changes)
+
+        changes.forEach(change => {
+          if(change.type === 'select' && change.selected){
+            let edge = storyStore.getEdge(change.id)
+            storyStore.loadEdge(edge.id, edge.label)
+          }
+        })
+
+        storyStore.changeEdges((eds) => applyEdgeChanges(changes, eds))
+      },
+      [storyStore.changeEdges]
     );
     const onEdgeUpdate = useCallback(
-      (oldEdge, newConnection) => store.changeEdges((eds) => updateEdge(oldEdge, newConnection, eds)),
-      [store.changeEdges]
+      (oldEdge, newConnection) => storyStore.changeEdges((eds) => updateEdge(oldEdge, newConnection, eds)),
+      [storyStore.changeEdges]
     );
     const onConnect = useCallback(
-      (connection) => store.changeEdges((eds) => addEdge(connection, eds)),
-      [store.changeEdges]
+      (connection) => {
+        connection.labelBgPadding = [8, 4]
+        connection.labelBgBorderRadius = 4
+        connection.style = {strokeWidth: 3}
+        connection.labelBgStyle = {fill: Colors.forest_green_crayola}
+        storyStore.changeEdges((eds) => addEdge(connection, eds))
+      },
+      [storyStore.changeEdges]
     );
+
 
     //const onNodesChange = (changes) => store.changeNodes(applyNodeChanges(changes, store.nodes));
     //const onEdgesChange = (changes) => store.changeEdges(applyNodeChanges(changes, store.edges));
@@ -61,8 +109,8 @@ export default function FlowEditor() {
 
     return (    
     <ReactFlow
-            nodes={store.nodes}
-            edges={store.edges}
+            nodes={storyStore.nodes}
+            edges={storyStore.edges}
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
             onEdgeUpdate={onEdgeUpdate}

@@ -3,6 +3,9 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import types from '../Common/Types';
 import { GlobalStoreContext } from '.';
 import API from '../API';
+import {MarkerType } from 'react-flow-renderer';
+import { Colors } from '../Common/Theme';
+
 
 const StoryStoreContext = createContext({});
 
@@ -10,17 +13,21 @@ const StoryStoreActionType = {
     SET_STORY_ID: "SET_STORY_ID",
     SET_NODES: "SET_NODES",
     SET_EDGES: "SET_EDGES",
-    SET_CURRENT_PAGE: "SET_CURRENT_PAGE"
+    SET_MODE: "SET_MODE",
 }
 
 const StoryAPI = API.Story;
 
-//Setting up story store
+//Setting up story storyStore
 function StoryStoreContextProvider(props) {
-    const { mainStore } = useContext(GlobalStoreContext);
+    const { store } = useContext(GlobalStoreContext);
 
-    const [store, setStore] = useState({
+    const [storyStore, setStore] = useState({
         storyId: null,
+        mode: 0,
+        elementId: null,
+        elementTitle: null,
+        elementBody: null,
         nodes: [
             {
               id: '1',
@@ -49,22 +56,50 @@ function StoryStoreContextProvider(props) {
               data: { label: 'End', payload: 'Payload5'},
               position: { x: 0, y: 250 },
             },
-          ],
+        ],
         edges: [
     
-            { id: 'e1-3', label: 'Choice 2', source: '1', target: '3' },
-            { id: 'e2-4', label: 'Continue', source: '2', target: '4' },
-            { id: 'e3-4', label: 'Continue', source: '3', target: '4' },
-            { id: 'e4-5', label: 'Continue', source: '4', target: '5' },
-          ],
+            { id: 'e1-3', 
+                label: 'Choice 2', 
+                source: '1', 
+                target: '3',    
+                labelBgPadding: [8, 4],
+                labelBgBorderRadius: 4,
+                style: {strokeWidth: 3},
+                labelBgStyle: {fill: Colors.forest_green_crayola}
+            },
 
-        //mode: 0 - no editing, 1 - editing node, 2 - editing edge
-        currentPage: {
-            mode: 0,
-            id: null,
-            title: null,
-            body: null,
-        }
+            { id: 'e2-4', 
+                label: 'Continue', 
+                source: '2', 
+                target: '4',
+                labelBgPadding: [8, 4],
+                labelBgBorderRadius: 4,
+                style: {strokeWidth: 3},
+                labelBgStyle: {fill: Colors.forest_green_crayola}
+            },
+
+
+            { id: 'e3-4', 
+                label: 'Continue', 
+                source: '3', 
+                target: '4',
+                labelBgPadding: [8, 4],
+                labelBgBorderRadius: 4,
+                style: {strokeWidth: 3},
+                labelBgStyle: {fill: Colors.forest_green_crayola}
+            },
+
+            { id: 'e4-5', 
+                label: 'Continue', 
+                source: '4', 
+                target: '5',
+                labelBgPadding: [8, 4],
+                labelBgBorderRadius: 4,
+                style: {strokeWidth: 3},
+                labelBgStyle: { fill: Colors.forest_green_crayola}
+            },
+        ],
     });
 
     const storeReducer = (action) => {
@@ -74,55 +109,68 @@ function StoryStoreContextProvider(props) {
             case StoryStoreActionType.SET_STORY_ID: {
                 return setStore({
                     storyId: payload,
-                    nodes: store.nodes,
-                    edges: store.edges,
-                    currentPage: store.currentPage
+                    mode: storyStore.mode,
+                    elementId: storyStore.elementId,
+                    elementTitle: storyStore.elementTitle,
+                    elementBody: storyStore.elementBody,
+                    nodes: storyStore.nodes,
+                    edges: storyStore.edges,
                 })
             }
 
             case StoryStoreActionType.SET_NODES: {
                 return setStore({
-                    storyId: store.storyId,
+                    storyId: storyStore.storyId,
+                    mode: storyStore.mode,
+                    elementId: storyStore.elementId,
+                    elementTitle: storyStore.elementTitle,
+                    elementBody: storyStore.elementBody,
                     nodes: payload,
-                    edges: store.edges,
-                    currentPage: store.currentPage
+                    edges: storyStore.edges,
                 })
             }
 
             case StoryStoreActionType.SET_EDGES: {
                 return setStore({
-                    storyId: store.storyId,
-                    nodes: store.nodes,
+                    storyId: storyStore.storyId,
+                    mode: storyStore.mode,
+                    elementId: storyStore.elementId,
+                    elementTitle: storyStore.elementTitle,
+                    elementBody: storyStore.elementBody,
+                    nodes: storyStore.nodes,
                     edges: payload,
-                    currentPage: store.currentPage
                 })
             }
 
-            case StoryStoreActionType.SET_CURRENT_PAGE: {
+            case StoryStoreActionType.SET_MODE: {
+                console.log("payload", payload)
                 return setStore({
-                    storyId: store.storyId,
-                    nodes: store.nodes,
-                    edges: store.edges,
-                    currentPage: payload
+                    storyId: storyStore.storyId,
+                    mode: payload,
+                    elementId: storyStore.elementId,
+                    elementTitle: storyStore.elementTitle,
+                    elementBody: storyStore.elementBody,
+                    nodes: storyStore.nodes,
+                    edges: storyStore.edges,
                 });
             }
 
-            default: return store;
+            default: return storyStore;
         }
     }
 
-    store.changeStoryId = function(id) {
+    storyStore.changeStoryId = function(id) {
         storeReducer({
             type: StoryStoreActionType.SET_STORY_ID,
             payload: id
         });
     }
 
-    store.changeNodes = function(nodes) {
+    storyStore.changeNodes = function(nodes) {
         console.log("nodes ", nodes)
         let newNodes = nodes
         if (typeof nodes === 'function') {
-            newNodes = nodes(store.nodes)
+            newNodes = nodes(storyStore.nodes)
         }
         console.log("newNodes ", newNodes)
         storeReducer({
@@ -131,11 +179,11 @@ function StoryStoreContextProvider(props) {
         });
     }
 
-    store.changeEdges = function(edges) {
+    storyStore.changeEdges = function(edges) {
         console.log("edges ", edges)
         let newEdges = edges
         if (typeof edges === 'function') {
-            newEdges = edges(store.edges)
+            newEdges = edges(storyStore.edges)
         }
         console.log("newEdges ", newEdges)
         storeReducer({
@@ -144,40 +192,60 @@ function StoryStoreContextProvider(props) {
         });
     }
 
-    store.changeMode = function(newMode, newId, newTitle, newBody) {
+    storyStore.changeMode = function(newMode, newId, newTitle, newBody) {
+        let newPage = {
+            mode: newMode,
+            elementId: newId,
+            elementTitle: newTitle,
+            elementBody: newBody
+        }
+        
+        console.log("newPage", newPage)
         storeReducer({
-            type: StoryStoreActionType.SET_CURRENT_PAGE,
-            payload: {
-                mode: newMode,
-                id: newId,
-                title: newTitle,
-                body: newBody
-            }
+            type: StoryStoreActionType.SET_MODE,
+            payload: newMode
         });
+        console.log("afterReducer ", storyStore.mode)
     }
 
-    store.loadNode = function(id, title, body) {
-        return store.changeMode(1, id, title, body);
+    storyStore.loadNode = function(id, title, body) {
+        storyStore.changeMode(1, id, title, body);
     }
 
-    store.loadEdge = function(id, title) {
-        return store.changeMode(2, id, title, null);
+    storyStore.loadEdge = function(id, title) {
+        storyStore.changeMode(2, id, title, null);
     }
 
-    store.closeEditing = function() {
-        return store.changeMode(0, null, null, null);
+    storyStore.closeEditing = function() {
+        storyStore.changeMode(0, null, null, null);
     }
 
-    store.fetchData = async function() {
+    storyStore.getNode = function(id) {
+        let result = storyStore.nodes.filter(item => item.id === id)
+        if(result.length != 0) 
+            return result[0]
+        else
+            return null
+    }
+
+    storyStore.getEdge = function(id) {
+        let result = storyStore.edges.filter(item => item.id === id)
+        if(result.length != 0)
+            return result[0]
+        else
+            return null
+    }
+
+    storyStore.fetchData = async function() {
         try {
-            mainStore.toggleLoading();
-            const response = await StoryAPI.viewUnpublished(store.storyId);
-            mainStore.toggleLoading();
+            store.toggleLoading();
+            const response = await StoryAPI.viewUnpublished(storyStore.storyId);
+            store.toggleLoading();
 
             if(response.status === 200) {
                 console.log("Data successfully fetched");
-                store.changeNodes(response.data.content.ReactFlowJSON.nodes);
-                store.changeEdges(response.data.content.ReactFlowJSON.edges);
+                storyStore.changeNodes(response.data.content.ReactFlowJSON.nodes);
+                storyStore.changeEdges(response.data.content.ReactFlowJSON.edges);
                 return;
             }
         }
@@ -187,23 +255,23 @@ function StoryStoreContextProvider(props) {
         }
 
         console.log("Couldn't fetch story :/");
-        mainStore.createModal({
+        store.createModal({
             title: "Error fetching story data",
             body: "Story could not be retrieved. Please try again.",
             action: ""
         });
     }
 
-    store.editMetaData = async function(newData) {
+    storyStore.editMetaData = async function(newData) {
         const { name, description, coverPhoto, series } = newData;
 
         try {
-            mainStore.toggleLoading();
-            const response = await StoryAPI.editMetaData(store.storyId, name, description, coverPhoto, series);
-            mainStore.toggleLoading();
+            store.toggleLoading();
+            const response = await StoryAPI.editMetaData(storyStore.storyId, name, description, coverPhoto, series);
+            store.toggleLoading();
 
             if(response.status === 200) {
-                mainStore.reRoute(types.TabType.CREATION.children.STORY.fullRoute.slice(0, -3) + store.storyId);
+                store.reRoute(types.TabType.CREATION.children.STORY.fullRoute.slice(0, -3) + storyStore.storyId);
             }
         }
 
@@ -212,25 +280,25 @@ function StoryStoreContextProvider(props) {
         }
 
         console.log("Couldn't edit metadata :/");
-        mainStore.createModal({
+        store.createModal({
             title: "Error editing metadata",
             body: "Comic metadata could not be edited. Please try again.",
             action: ""
         });
     }
 
-    store.publish = async function() {
+    storyStore.publish = async function() {
         //TODO get series somehow
         const series =  "";
 
         try {
-            mainStore.toggleLoading();
-            const response = await StoryAPI.publish(store.storyId, series);
-            mainStore.toggleLoading();
+            store.toggleLoading();
+            const response = await StoryAPI.publish(storyStore.storyId, series);
+            store.toggleLoading();
 
             if(response.status === 200) {
-                mainStore.reRoute(types.TabType.APP.children.PROFILE.fullRoute.slice(0, -3) + mainStore.user);
-                mainStore.createModal({
+                store.reRoute(types.TabType.APP.children.PROFILE.fullRoute.slice(0, -3) + store.user);
+                store.createModal({
                     title: "Story published",
                     body: "Your story has been succesfully published!",
                     action: ""
@@ -244,21 +312,21 @@ function StoryStoreContextProvider(props) {
         }
 
         console.log("Couldn't publish story :/");
-        mainStore.createModal({
+        store.createModal({
             title: "Error publishing story",
             body: "Story could not be published. Please try again.",
             action: ""
         });
     }
 
-    store.save = async function() {
+    storyStore.save = async function() {
         try {
-            mainStore.toggleLoading();
-            const response = await StoryAPI.saveContent(store.storyId, [], {nodes : store.nodes, edges : store.edges});
-            mainStore.toggleLoading();
+            store.toggleLoading();
+            const response = await StoryAPI.saveContent(storyStore.storyId, [], {nodes : storyStore.nodes, edges : storyStore.edges});
+            store.toggleLoading();
 
             if(response.status === 200) {
-                await store.fetchData();
+                await storyStore.fetchData();
                 return;
             }
         }
@@ -268,25 +336,25 @@ function StoryStoreContextProvider(props) {
         }
 
         console.log("Couldn't save story :/");
-        mainStore.createModal({
+        store.createModal({
             title: "Error saving story",
             body: "Story could not be saved. Please try again.",
             action: ""
         });
     }
 
-    store.create = async function(storyInfo) {
+    storyStore.create = async function(storyInfo) {
         const { name, description } = storyInfo;
 
         try {
-            mainStore.toggleLoading();
+            store.toggleLoading();
             const response = await StoryAPI.create(name, description);
-            mainStore.toggleLoading();
+            store.toggleLoading();
 
             if(response.status === 200) {
-                store.changeStoryId(response.data.id);
-                store.fetchData();
-                mainStore.reRoute(types.TabType.CREATION.children.STORY.fullRoute.slice(0, -3) + store.storyId);
+                storyStore.changeStoryId(response.data.id);
+                storyStore.fetchData();
+                store.reRoute(types.TabType.CREATION.children.STORY.fullRoute.slice(0, -3) + storyStore.storyId);
                 return;
             }
         }
@@ -296,7 +364,7 @@ function StoryStoreContextProvider(props) {
         }
 
         console.log("Couldn't create story :/");
-        mainStore.createModal({
+        store.createModal({
             title: "Error creating story",
             body: "Story could not be created. Please try again.",
             action: ""
@@ -305,22 +373,22 @@ function StoryStoreContextProvider(props) {
 
     //const getNodeId = () => `randomnode_${+new Date()}`;
 
-    store.addNode = function() {
+    storyStore.addNode = function() {
         const newNode = {
-            id: (store.nodes.length + 1).toString(),
+            id: (storyStore.nodes.length + 1).toString(),
             data: { label: 'Untitled', payload: '' },
             position: {
-              x: 0,
-              y: 0,
+                x: 0 + Math.random() * 100,
+                y: 0 + Math.random() * 100,
             },
           };
-          store.changeNodes((nodes) => nodes.concat(newNode));
+          storyStore.changeNodes((nodes) => nodes.concat(newNode));
     }
 
 
     return (
         <StoryStoreContext.Provider
-            value={{ store }}
+            value={{ storyStore }}
         >
             {props.children}
         </StoryStoreContext.Provider>
