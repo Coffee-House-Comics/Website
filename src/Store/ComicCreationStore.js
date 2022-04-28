@@ -152,7 +152,7 @@ function ComicStoreContextProvider(props) {
             mainStore.toggleLoading();
 
             if(response.status === 200) {
-                mainStore.reRoute(types.TabType.CREATION.children.COMIC.fullRoute.slice(0, -3) + store.comicId);
+                mainStore.reRoute(types.TabType.CREATION.children.COMIC.fullRoute, store.comicId);
             }
         }
 
@@ -178,7 +178,7 @@ function ComicStoreContextProvider(props) {
             mainStore.toggleLoading();
 
             if(response.status === 200) {
-                mainStore.reRoute(types.TabType.APP.children.PROFILE.fullRoute.slice(0, -3) + mainStore.user);
+                mainStore.reRoute(types.TabType.APP.children.PROFILE.fullRoute, mainStore.user);
                 mainStore.createModal({
                     title: "Comic published",
                     body: "Your comic has been succesfully published!",
@@ -238,7 +238,7 @@ function ComicStoreContextProvider(props) {
             if(response.status === 200) {
                 store.changeComicId(response.data.id);
                 store.fetchPages(id);
-                mainStore.reRoute(types.TabType.CREATION.children.COMIC.fullRoute.slice(0, -3) + store.comicId);
+                mainStore.reRoute(types.TabType.CREATION.children.COMIC.fullRoute, store.comicId);
                 return;
             }
         }
