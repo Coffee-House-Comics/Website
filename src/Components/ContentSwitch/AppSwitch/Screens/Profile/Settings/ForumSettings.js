@@ -30,9 +30,12 @@ const EnabledColorButton = styled(Button)(({ theme }) => ({
 }));
 
 
-export default function ForumSettings({ initialState, hook }) {
+export default function ForumSettings({ hook }) {
     const { store } = useContext(GlobalStoreContext);
     const theme = useTheme();
+
+    const initialState = Boolean((store.app === 'Comics')?  store.user.comicForum : store.user.storyForum);
+    console.log("Forum settings:", initialState);
 
     const [forumText, setForumText] = useState((initialState) ? 'Enabled' : 'Disabled');
 

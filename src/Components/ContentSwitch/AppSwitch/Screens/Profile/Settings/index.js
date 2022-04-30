@@ -43,13 +43,11 @@ export default function Settings(props) {
         store.toggleForum();
     }
 
-    const initialForumState = Boolean((store.app === 'Comics')? store.user.storyForum : store.user.comicForum); 
-
     let activeSettingsPage = <ProfileSettings />;
     if (settingsTab === SETTINGS_TAB.ACCOUNT)
         activeSettingsPage = <AccountSettings />;
     else if (settingsTab === SETTINGS_TAB.FORUM)
-        activeSettingsPage = <ForumSettings initialState={initialForumState} hook={toggleForumHook} />;
+        activeSettingsPage = <ForumSettings hook={toggleForumHook} />;
 
 
     // Settings tab component

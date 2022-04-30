@@ -595,18 +595,24 @@ function GlobalStoreContextProvider(props) {
             let response;
 
             if (store.app === 'Comics')
-                response = await AuthAPI.Comic.toggleForum();
+                response = await API.Comic.toggleForum();
             else
-                response = await AuthAPI.Story.toggleForum();
+                response = await API.Story.toggleForum();
 
             console.log("Toggle forum response: ", response.status, response.data);
 
             if (response.status === 200) {
-                storeReducer(GlobalStoreActionType.TOGGLE_FORUM, response.data);
-                return;
+                const response2 = await API.Comic.getProfile(store.user.id)
+
+                if (response2.status === 200) {
+                    store.updateUser(response2.data);
+                    return;
+                }
             }
         }
-        catch (err) { }
+        catch (err) {
+            console.log("Error trying to toggle forum: ", err);
+        }
 
         store.createModal({
             title: "Error toggling forum"
@@ -619,7 +625,7 @@ function GlobalStoreContextProvider(props) {
 
             if (response.status === 200) {
                 try {
-                    const response2 = await AuthAPI.getProfile(store.user.id)
+                    const response2 = await API.Comic.getProfile(store.user.id)
 
                     if (response2.status === 200) {
                         store.updateUser(response2.data);
@@ -642,7 +648,7 @@ function GlobalStoreContextProvider(props) {
 
             if (response.status === 200) {
                 try {
-                    const response2 = await AuthAPI.getProfile(store.user.id)
+                    const response2 = await API.Comic.getProfile(store.user.id)
 
                     if (response2.status === 200)
                         store.updateUser(response2.data);
