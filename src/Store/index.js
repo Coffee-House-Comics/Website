@@ -23,7 +23,7 @@ function GlobalStoreContextProvider(props) {
 
     // The global store/state
     const [store, setStore] = useState({
-        app: "Comics",
+        app: JSON.parse(window.localStorage.getItem('app')) || "Comics",
         user: null,
         isLoggedIn: false,
         modal: null,
@@ -252,8 +252,27 @@ function GlobalStoreContextProvider(props) {
             });
         }
         else {
-            console.log("Not supporting stories yet");
-            store.reRoute(types.TabType.CREATION.children.STORY.fullRoute, "SHADOW-IS-CUTE");
+            console.log("Creating a Story");
+
+            try {
+                // Get the id via an api call
+                const response = await API.Story.create("Untitled", "No description...");
+                console.log("response: ", response)
+
+                if (response.status === 200) {
+                    console.log("ID of the new Story:", response.data, response.data.id);
+
+                    store.reRoute(types.TabType.CREATION.children.STORY.fullRoute, response.data.id);
+                    return;
+                }
+            }
+            catch (err) { }
+
+            // Reach here only on error
+            store.createModal({
+                title: "Error!",
+                body: "There was an error creating the story."
+            });
         }
     }
 
@@ -282,10 +301,12 @@ function GlobalStoreContextProvider(props) {
         if (!store.modal)
             return;
 
-        if (store.modal.specialMode && special)
+        if (store.modal.specialMode && special){
+            window.localStorage.setItem('app', JSON.stringify((store.app === "Comics") ? "Stories" : "Comics"));
             storeReducer({
                 type: GlobalStoreActionType.CHANGE_APP,
             });
+        }
         else
             storeReducer({
                 type: GlobalStoreActionType.CHANGE_MODAL,

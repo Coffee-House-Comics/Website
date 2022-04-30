@@ -32,12 +32,12 @@ function StoryStoreContextProvider(props) {
             {
               id: '1',
               type: 'input',
-              data: { label: 'Start', payload: 'Payload1'},
+              data: { label: 'Start'},
               position: { x: 0, y: 0 },
             },
             {
                 id: '2',
-                data: { label: 'Page 1', payload: 'Payload2'},
+                data: { label: 'Page 1', payload: 'This is some <h1> rich text <h1>'},
                 position: { x: -100, y: 90 },
             },
             {
@@ -119,6 +119,7 @@ function StoryStoreContextProvider(props) {
             }
 
             case StoryStoreActionType.SET_NODES: {
+                console.log("nodes payload: ", payload)
                 return setStore({
                     storyId: storyStore.storyId,
                     mode: storyStore.mode,
@@ -175,7 +176,7 @@ function StoryStoreContextProvider(props) {
         
         storeReducer({
             type: StoryStoreActionType.SET_NODES,
-            payload: newNodes
+            payload: [...newNodes]
         });
     }
 
@@ -237,9 +238,10 @@ function StoryStoreContextProvider(props) {
     }
 
     storyStore.fetchData = async function() {
+        let response
         try {
             store.toggleLoading();
-            const response = await StoryAPI.viewUnpublished(storyStore.storyId);
+            response = await StoryAPI.viewUnpublished(storyStore.storyId);
             store.toggleLoading();
 
             if(response.status === 200) {
@@ -255,6 +257,7 @@ function StoryStoreContextProvider(props) {
         }
 
         console.log("Couldn't fetch story :/");
+        console.log(response);
         store.createModal({
             title: "Error fetching story data",
             body: "Story could not be retrieved. Please try again.",

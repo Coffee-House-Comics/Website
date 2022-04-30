@@ -148,7 +148,7 @@ function ComicStoreContextProvider(props) {
 
         try {
             mainStore.toggleLoading();
-            const response = await ComicAPI.editMetaData(store.comicId, name, description, coverPhoto, series);
+            const response = store.app === "Comic"? await ComicAPI.editMetaData(store.comicId, name, description, coverPhoto, series):await StoryAPI.editMetaData(store.comicId, name, description, coverPhoto, series);
             mainStore.toggleLoading();
 
             if(response.status === 200) {
@@ -157,7 +157,7 @@ function ComicStoreContextProvider(props) {
         }
 
         catch (err) {
-
+            console.log("errrrrrr:",err)
         }
 
         console.log("Couldn't edit metadata :/");

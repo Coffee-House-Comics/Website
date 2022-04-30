@@ -25,7 +25,7 @@ export default function MetadataEditor() {
     //Set the post on first render
     useEffect(() => {
         async function getPost(id) {
-            let resp = (await API.Comic.viewUnpublished(id)).data
+            let resp = store.app === "Comic"?(await API.Comic.viewUnpublished(id)).data:(await API.Story.viewUnpublished(id)).data
 
             if (resp.error) {
                 store.reRoute(types.TabType.APP.children.VIEW.fullRoute, id)
@@ -116,12 +116,21 @@ export default function MetadataEditor() {
         let res = {}
         if (store.app === "Comics") {
             res = await API.Comic.editMetadata(post._id, postTitle, postDescription, imgURL, postSeries)
+            if (res.status && res.status === 200) {
+                store.reRoute(types.TabType.CREATION.children.COMIC.fullRoute, post._id);
+            }
         } else {
-            res = await API.Story.editMetadata(post._id, postTitle, postDescription, imgURL, postSeries)
-        }
-
-        if (res.status && res.status === 200) {
-            store.reRoute(types.TabType.CREATION.children.COMIC.fullRoute, post._id);
+            try{
+                console.log("postid: ", post._id)
+                res = await API.Story.editMetadata(post._id, postTitle, postDescription, imgURL, postSeries)
+                console.log("metadata response: ", res)
+                if (res.status && res.status === 200) {
+                    store.reRoute(types.TabType.CREATION.children.STORY.fullRoute, post._id);
+                }
+            }
+            catch(err){
+                console.log("this errrrrr:", err)
+            }
         }
     }
 

@@ -1,5 +1,5 @@
 import { Grid, Typography, Box, TextField } from '@mui/material'
-import React, {useState, useContext} from 'react'
+import React, {useState, useContext, useEffect} from 'react'
 import EditorButtonPanel from '../../../../Buttons/EditorButtons/EditorButtonPanel'
 //import { Editor } from "react-draft-wysiwyg";
 //import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
@@ -8,12 +8,28 @@ import SubmitButton from '../../../../Buttons/SubmitButton';
 import {StoryStoreContext} from '../../../../../Store/StoryCreationStore';
 import { GlobalStoreContext } from '../../../../../Store';
 import types from '../../../../../Common/Types';
+import { useParams } from 'react-router-dom';
+import API from '../../../../../API';
+
 
 
 export default function TextEditor() {
     const [editorState, setEditorState] = useState(EditorState.createEmpty());
     const { store } = useContext(GlobalStoreContext);
     const { storyStore } = useContext(StoryStoreContext);
+    const { id } = useParams();
+
+      useEffect(() => {
+        async function setup() {
+            storyStore.changeStoryId(id);
+            console.log("id: ", id)
+            let resp = (await API.Story.viewUnpublished(id)).data.content.ReactFlowJSON
+            console.log("debug the response: ", resp)
+            storyStore.changeNodes(resp.nodes);
+            storyStore.changeEdges(resp.edges);
+        }
+        setup();
+    }, [])
 
     const onEditorStateChange = function(newEditorState){
         setEditorState(newEditorState)
@@ -22,6 +38,7 @@ export default function TextEditor() {
     const saveHook = function () {
         console.log("Saving...");
 
+        storyStore.save();
         /*if (pageIndex === -1) {
             console.log("Saving sticker...");
 
@@ -51,7 +68,7 @@ export default function TextEditor() {
 
         //TODO: Set ID
         saveHook();
-        store.reRoute(types.TabType.CREATION.children.METADATA.fullRoute, storyStore.storyId);
+        store.reRoute(types.TabType.CREATION.children.METADATA.fullRoute, id);
     }
 
     const undoHook = function () {
