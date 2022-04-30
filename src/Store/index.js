@@ -14,7 +14,8 @@ const GlobalStoreActionType = {
     CHANGE_MODAL: "CHANGE_MODAL",
     CHANGE_APP: "CHANGE_APP",
     TOGGLE_LOADING: "TOGGLE_LOADING",
-    UPDATE_USER: "UPDATE_USER"
+    UPDATE_USER: "UPDATE_USER",
+    TOGGLE_FORUM: "TOGGLE_FORUM"
 }
 
 // Setting up the Global Store
@@ -103,6 +104,24 @@ function GlobalStoreContextProvider(props) {
                 });
             }
 
+            case GlobalStoreActionType.TOGGLE_FORUM: {
+                const new_user = store.user;
+
+                if (store.app === 'Comics')
+                    new_user.storyForum = payload;
+                else
+                    new_user.comicForum = payload;
+
+                return setStore({
+                    app: store.app,
+                    user: new_user,
+                    isLoggedIn: store.isLoggedIn,
+                    modal: store.modal,
+                    loading: store.loading,
+                    trigger: true,
+                });
+            }
+
             default:
                 return store;
         }
@@ -184,7 +203,7 @@ function GlobalStoreContextProvider(props) {
 
     store.triggerUserRefresh = async function () {
         console.log("Refreshing the user...");
-        
+
         try {
             const response = await AuthAPI.currentProfile();
 
@@ -301,7 +320,7 @@ function GlobalStoreContextProvider(props) {
         if (!store.modal)
             return;
 
-        if (store.modal.specialMode && special){
+        if (store.modal.specialMode && special) {
             window.localStorage.setItem('app', JSON.stringify((store.app === "Comics") ? "Stories" : "Comics"));
             storeReducer({
                 type: GlobalStoreActionType.CHANGE_APP,
@@ -549,8 +568,6 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.changeEmail = async function (newEmail) {
-
-
         try {
             const response = await AuthAPI.changeEmail(newEmail);
 
@@ -573,6 +590,29 @@ function GlobalStoreContextProvider(props) {
         });
     }
 
+    store.toggleForum = async function () {
+        try {
+            let response;
+
+            if (store.app === 'Comics')
+                response = await AuthAPI.Comic.toggleForum();
+            else
+                response = await AuthAPI.Story.toggleForum();
+
+            console.log("Toggle forum response: ", response.status, response.data);
+
+            if (response.status === 200) {
+                storeReducer(GlobalStoreActionType.TOGGLE_FORUM, response.data);
+                return;
+            }
+        }
+        catch (err) { }
+
+        store.createModal({
+            title: "Error toggling forum"
+        });
+    }
+
     store.changeDisplayName = async function (newDisplayName) {
         try {
             const response = await AuthAPI.updateProfile(store.user.profileImage, newDisplayName, store.user.bio)
@@ -581,9 +621,10 @@ function GlobalStoreContextProvider(props) {
                 try {
                     const response2 = await AuthAPI.getProfile(store.user.id)
 
-                    if (response2.status === 200)
+                    if (response2.status === 200) {
                         store.updateUser(response2.data);
-                    return;
+                        return;
+                    }
                 }
                 catch (err) {
                     /* Do nothing - pass error down */
