@@ -81,6 +81,8 @@ export default function BeansButtonPanel(props) {
                 setVote(-1);
                 setBeans(newCurrent);
             }
+
+            props.onVoteChange(newCurrent);
         }
 
         // props.onDownvote();
