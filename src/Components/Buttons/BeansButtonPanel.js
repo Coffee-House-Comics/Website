@@ -37,21 +37,26 @@ export default function BeansButtonPanel(props) {
         }
 
         if(store.isLoggedIn){
+            let newCurrent = beans - 1;
+
             if(vote == 1){
                 setVote(0);
-                setBeans(beans - 1);
+                setBeans(newCurrent);
             }
             else{
                 let inc = 1;
                 if(vote < 0)
                     inc = 2;
     
+                newCurrent = beans + inc;
+
                 setVote(1);
-                setBeans(beans + inc);
+                setBeans(newCurrent);
             }
+
+            props.onVoteChange(newCurrent);
         }
-        
-        props.onUpvote();
+        // props.onUpvote();
     }
 
     const handleDownvoteClick = function(event){
@@ -60,21 +65,25 @@ export default function BeansButtonPanel(props) {
         }
 
         if(store.isLoggedIn){
+            let newCurrent = beans + 1;
+
             if(vote == -1){
                 setVote(0);
-                setBeans(beans + 1);
+                setBeans(newCurrent);
             }
             else{
                 let dec = 1;
                 if(vote > 0)
                     dec = 2;
 
+                newCurrent = beans - dec;
+
                 setVote(-1);
-                setBeans(beans - dec);
+                setBeans(newCurrent);
             }
         }
 
-        props.onDownvote();
+        // props.onDownvote();
     }
     return (
         <Grid container direction="row" justifyContent="center" alignItems="center" wrap="nowrap" width="max-content">

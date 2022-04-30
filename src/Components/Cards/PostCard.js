@@ -64,14 +64,8 @@ export default function PostCard(props) {
         console.log("Series click")
     }
 
-    //TOOD
-    const handleUpvoteClick = function () {
-        console.log("Upvote click")
-    }
-
-    //TODO
-    const handleDownvoteClick = function () {
-        console.log("Downvote click")
+    const onVoteChange = function (newCurrent) {
+        console.log("On vote change (post card):", newCurrent);
     }
 
     console.log("Making card with post:", post)
@@ -115,7 +109,7 @@ export default function PostCard(props) {
             </Grid>
 
             <Grid>
-                <BeansButtonPanel onUpvote={handleUpvoteClick} onDownvote={handleDownvoteClick} currentVote={currentVote} numBeans={numBeans} />
+                <BeansButtonPanel onVoteChange={onVoteChange} currentVote={currentVote} numBeans={numBeans} />
             </Grid>
         </Grid>
 
