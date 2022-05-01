@@ -49,8 +49,11 @@ export default function MetadataPanel(props) {
     }
 
     console.log("Logged in: ", store.isLoggedIn)
-    console.log("User ID: ", store.user.id)
+    if (store.user)
+        console.log("User ID: ", store.user.id)
     console.log("Author ID: ", authorId)
+
+    console.log("Delete button?", store.isLoggedIn, store.user, authorId);
 
     const deleteButton = (store.isLoggedIn && store.user && store.user.id == authorId) ?
         <Grid item>

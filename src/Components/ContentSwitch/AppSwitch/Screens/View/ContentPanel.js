@@ -75,12 +75,13 @@ export default function ContentPanel({ pages }) {
     let backgroundColor = 'white';
     let serialization = [];
 
-    if (!pages || !pages[pageNumber])
+    if (!pages || !pages[pageNumber]) {
         return <Typography>No pages...</Typography>
+    }
 
     // Extract the serialization
 
-    if (!pages[pageNumber].data) 
+    if (!pages[pageNumber].data)
         return <Typography>Loading...</Typography>
 
     const page = pages[pageNumber].data;

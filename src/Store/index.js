@@ -688,6 +688,27 @@ function GlobalStoreContextProvider(props) {
         });
     }
 
+    store.fetchForumPosts = async function (id) {
+        console.log("Trying to fetch the forum posts for user with id:", id);
+
+        try {
+            const response = (store.app === 'Comics') ?
+                await API.Comic.getAllForumPosts(id) :
+                await API.Story.getAllForumPosts(id);
+
+            if (response.status === 200) {
+                return response.data;
+            }
+        }
+        catch (err) { }
+
+        store.createModal({
+            title: "Error fetching the forum posts"
+        });
+
+        return null;
+    }
+
 
     //Return the context provider
 
