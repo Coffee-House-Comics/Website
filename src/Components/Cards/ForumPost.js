@@ -68,7 +68,6 @@ export default function ForumPost(props) {
   );
 
   return (
-
     <div style={{ marginTop: 20 }}>
       <Accordion expanded={enabled} disableGutters={true} onChange={toggleEnable} sx={{
         width: "100%",

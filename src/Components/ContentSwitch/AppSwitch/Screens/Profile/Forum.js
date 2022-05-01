@@ -2,12 +2,14 @@ import { Grid, IconButton, Typography } from "@mui/material";
 import ForumPost from "../../../../Cards/ForumPost";
 import { GlobalStoreContext } from '../../../../../Store';
 import { useState, useContext, useEffect } from 'react';
-import AddCommentCard from "../../../../Cards/AddCommentCard";
+import CreateForumPost from '../../../../Cards/CreateForumPost';
+import { Colors } from "../../../../../Common/Theme";
+import Utils from "../../../../../Utils";
 
 export default function Forum(props) {
     const { user } = props;
 
-    console.log("User in forum:", user);
+    // console.log("User in forum:", user);
 
     const { store } = useContext(GlobalStoreContext);
 
@@ -62,35 +64,46 @@ export default function Forum(props) {
     //     myVote: 0 || 1 || -1 
     // };
 
-    const addForumPostHook = function (text) {
-        console.log("Forum post text recieved:", text);
+    const addForumPostHook = async function (title, body) {
+        const res = await store.createForumPost(Utils.getId(user), title, body);
+
+        if (res) {
+            console.log("SUCCESS");
+
+            loadHelper();
+        }
+        else {
+            console.log("FAILURE");
+        }
     }
 
+    const ret = allPosts.map((post, index) => {
+        return (
+            <Grid item key={index} xs={12}>
+                <ForumPost
+                    key={index}
+                    heading={post.title}
+                    currentVote={post.myVote}
+                    beanCount={post.beans}
+                    body={post.body}
+                    author={post.user}
+                    comments={post.comments}>
+                </ForumPost>
 
-    const ret = allPosts.map((post, index) =>
-        <Grid item key={index} xs={12}>
-            <ForumPost
-                key={index}
-                heading={post.title}
-                currentVote={post.myVote}
-                beanCount={post.beans}
-                body={post.body}
-                author={post.user}
-                comments={post.comments}>
-            </ForumPost>
-
-        </Grid>
-    );
+            </Grid>
+        );
+    });
 
 
     return (
         <Grid container paddingBottom={5} sx={{
             overflowY: "auto",
-            height: "100%"
+            height: "100%",
+            width: "100%"
         }}>
             {ret}
-            <Grid item xs={12}>
-                <AddCommentCard text={"Add Forum Post"} hook={addForumPostHook} />
+            <Grid item xs={12} sx={{ width: "100%" }}>
+                <CreateForumPost hook={addForumPostHook} />
             </Grid>
         </Grid>
     )

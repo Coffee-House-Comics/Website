@@ -709,6 +709,26 @@ function GlobalStoreContextProvider(props) {
         return null;
     }
 
+    store.createForumPost = async function (idOfForumOwner, title, body) {
+        console.log("Trying to create forum post:", idOfForumOwner, title, body);
+        
+        try {
+            const res = (store.app === 'Comics') ?
+                await API.Comic.createForumPost(idOfForumOwner, title, body) :
+                await API.Story.createForumPost(idOfForumOwner, title, body);
+
+            if (res.status === 200) {
+                console.log("Success creating forum post");
+                return true;
+            }
+        }
+        catch (err) { }
+
+        console.error("Error creating a forum post");
+
+        return null;
+    }
+
 
     //Return the context provider
 
