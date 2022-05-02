@@ -275,7 +275,7 @@ function GlobalStoreContextProvider(props) {
 
             try {
                 // Get the id via an api call
-                const response = await API.Story.create("Untitled", "No description...");
+                const response = await API.Story.create("Untitled", "A mysterious story this must be...");
                 console.log("response: ", response)
 
                 if (response.status === 200) {

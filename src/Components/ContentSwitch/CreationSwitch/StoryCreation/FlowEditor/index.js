@@ -143,6 +143,9 @@ export default function FlowEditor() {
 
         console.log("On node click", targetNode);
 
+        if (node.id === '1') 
+            return storyStore.closeEditing();
+
         storyStore.loadNode(node.id, targetNode.data.label, targetNode.data.payload);
     }
 
@@ -155,10 +158,23 @@ export default function FlowEditor() {
 
     }
 
+    const handleSelectionChange = function ({ nds, edgs }) {
+        console.log("Selection change?", nds, edgs);
+
+        if (!nds && !edgs)
+            storyStore.closeEditing();
+
+        if (nds && nds.length === 0)
+            storyStore.closeEditing();
+
+        if (edgs && edgs.length === 0)
+            storyStore.closeEditing();
+    }
+
     const onNodesChange = useCallback(
         (changes) => {
             // console.log("node changes", changes)
-            let processedChanges = []
+            // const processedChanges = []
             // changes.forEach(change => {
             //     if (change.type === 'remove') {
             //         const metadata = {
@@ -188,17 +204,6 @@ export default function FlowEditor() {
 
     const onEdgesChange = useCallback(
         (changes) => {
-            // console.log("edge changes", changes)
-
-            // changes.forEach(change => {
-            //     if (change.type === 'select' && change.selected) {
-            //         let edge = storyStore.getEdge(change.id, edges)
-            //         console.log("Found edge:", edge);
-            //         // storyStore.loadEdge(edge.id, edge.label)
-            //     }
-            // })
-
-            // storyStore.changeEdges((eds) => applyEdgeChanges(changes, eds))
             setEdges((eds) => applyEdgeChanges(changes, eds))
         },
         [setEdges]
@@ -232,6 +237,7 @@ export default function FlowEditor() {
             onConnect={onConnect}
             onNodeClick={onNodeClick}
             onEdgeClick={onEdgeClick}
+            onSelectionChange={handleSelectionChange}
             fitView
         >
             <Controls />
