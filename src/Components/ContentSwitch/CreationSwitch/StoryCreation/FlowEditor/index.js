@@ -1,8 +1,11 @@
-import ReactFlow, { applyEdgeChanges, applyNodeChanges, MiniMap, Controls, updateEdge, addEdge} from 'react-flow-renderer';
-import React, { useCallback, useContext } from 'react';
-import {StoryStoreContext} from '../../../../../Store/StoryCreationStore';
+import ReactFlow, { applyEdgeChanges, applyNodeChanges, MiniMap, Controls, updateEdge, addEdge } from 'react-flow-renderer';
+import React, { useCallback, useContext, useEffect } from 'react';
+import { StoryStoreContext } from '../../../../../Store/StoryCreationStore';
 import { GlobalStoreContext } from '../../../../../Store';
 import { Colors } from '../../../../../Common/Theme';
+import { useParams } from 'react-router-dom';
+import API from '../../../../../API';
+import { Typography } from '@mui/material';
 
 /*
 const initialNodes = [
@@ -33,93 +36,207 @@ const initialEdges = [
 */
 
 
-export default function FlowEditor() {  
-    const { storyStore } = React.useContext(StoryStoreContext)
-    const {store} = React.useContext(GlobalStoreContext)
+export default function FlowEditor() {
+    const { storyStore } = React.useContext(StoryStoreContext);
 
-    console.log("storyStore", storyStore)
-    console.log("store", store)
+    const { id } = useParams();
+
+    const { store } = React.useContext(GlobalStoreContext)
+
+    // console.log("storyStore", storyStore)
+    // console.log("store", store)
+
+
+    // Host the nodes and edges locally ------------
+    const [nodes, setNodes] = React.useState(null);
+
+    const [edges, setEdges] = React.useState(null);
+
+
+    // Push changes up to the store ------------
+    useEffect(function () {
+        storyStore.changeNodes(nodes);
+    }, [nodes]);
+
+    useEffect(function () {
+        storyStore.changeEdges(edges)
+    }, [edges]);
+
+    useEffect(function () {
+        console.log("When title/body change:", storyStore.mode, storyStore.elementId, storyStore.elementTitle, storyStore.elementBody);
+
+        if (storyStore.mode === 0 || !storyStore.elementId || storyStore.elementTitle === undefined || storyStore.elementTitle === null)
+            return;
+
+        if (storyStore.mode === 2) {
+            if (storyStore.elementBody === null || storyStore.elementBody === undefined)
+                return;
+
+
+            setNodes(nodes.map(function (node, index) {
+                if (storyStore.elementId === node.id) {
+                    return {
+                        ...node,
+                        data: {
+                            label: storyStore.elementTitle,
+                            payload: storyStore.elementBody
+                        }
+                    }
+                }
+
+                return node;
+            }));
+        }
+        else if (storyStore.mode === 1) {
+            setEdges(edges.map(function (edge, index) {
+                if (storyStore.elementId === edge.id) {
+                    return {
+                        ...edge,
+                        label: storyStore.elementTitle
+                    }
+                }
+
+                return edge;
+            }));
+        }
+    }, [storyStore.elementTitle, storyStore.elementBody]);
+
+
+    useEffect(function () {
+        if (storyStore.triggerNewNode) {
+            console.log("MAKING NEW NODE");
+
+            const newNode = {
+                id: (storyStore.nodes.length + 1).toString(),
+                data: { label: 'Untitled', payload: '' },
+                position: {
+                    x: 0 + Math.random() * 100,
+                    y: 0 + Math.random() * 100,
+                },
+            };
+
+            storyStore.toggleTrigger();
+
+            setNodes((nodes) => nodes.concat(newNode));
+        }
+    }, [storyStore.triggerNewNode]);
+
+
+    // Initial Load
+    useEffect(() => {
+        async function setup() {
+            storyStore.changeStoryId(id);
+            console.log("id: ", id)
+            let resp = (await API.Story.viewUnpublished(id)).data.content.ReactFlowJSON
+            console.log("debug the response: ", resp)
+
+            setNodes(resp.nodes);
+            setEdges(resp.edges);
+        }
+        setup();
+    }, []);
+
+    const onNodeClick = function (event, node) {
+        // console.log("On node click", node);
+
+        const targetNode = storyStore.getNode(node.id, nodes)
+
+        console.log("On node click", targetNode);
+
+        storyStore.loadNode(node.id, targetNode.data.label, targetNode.data.payload);
+    }
+
+    const onEdgeClick = function (event, edge) {
+        const targetEdge = storyStore.getEdge(edge.id, edges);
+
+        console.log("On edge click:", targetEdge);
+
+        storyStore.loadEdge(edge.id, targetEdge.label);
+
+    }
 
     const onNodesChange = useCallback(
-      (changes) => {
-        console.log("node changes", changes) 
-        let processedChanges = []
-        changes.forEach(change => {
-          if(change.type === 'remove'){
-            const metadata = {
-              title: "Are you sure that you want to delete the selected page?",
-              body: "This action is irreversable",
-              action: "Delete"
-            };
-            
-            store.createModal(metadata, function () {
-              storyStore.changeNodes((nds) => applyNodeChanges([change], nds))
-            });
-          }else if(change.type === 'select' && change.selected){
-            let node = storyStore.getNode(change.id)
-            console.log("found Node: ",node)
-            console.log(storyStore.mode)
-            storyStore.loadNode(node.id, node.data.label, node.data.payload)
-            console.log(storyStore.mode)
-            processedChanges.push(change)
-          }else{
-            processedChanges.push(change)
-          }
-        })
-        storyStore.changeNodes((nds) => applyNodeChanges(processedChanges, nds))
-      },
-      [storyStore.changeNodes]
+        (changes) => {
+            // console.log("node changes", changes)
+            let processedChanges = []
+            // changes.forEach(change => {
+            //     if (change.type === 'remove') {
+            //         const metadata = {
+            //             title: "Are you sure that you want to delete the selected page?",
+            //             body: "This action is irreversable",
+            //             action: "Delete"
+            //         };
+
+            //         store.createModal(metadata, function () {
+            //             setNodes((nds) => applyNodeChanges([change], nds))
+            //         });
+            //     } else if (change.type === 'select' && change.selected) {
+            //         let node = storyStore.getNode(change.id, nodes)
+            //         console.log("found Node: ", node)
+            //         // console.log(storyStore.mode)
+            //         // storyStore.loadNode(node.id, node.data.label, node.data.payload)
+            //         processedChanges.push(change)
+            //     } else {
+            //         processedChanges.push(change)
+            //     }
+            // })
+
+            setNodes((nds) => applyNodeChanges(changes, nds));
+        },
+        [setNodes]
     );
+
     const onEdgesChange = useCallback(
-      (changes) => {
-        console.log("edge changes",changes)
+        (changes) => {
+            // console.log("edge changes", changes)
 
-        changes.forEach(change => {
-          if(change.type === 'select' && change.selected){
-            let edge = storyStore.getEdge(change.id)
-            storyStore.loadEdge(edge.id, edge.label)
-          }
-        })
+            // changes.forEach(change => {
+            //     if (change.type === 'select' && change.selected) {
+            //         let edge = storyStore.getEdge(change.id, edges)
+            //         console.log("Found edge:", edge);
+            //         // storyStore.loadEdge(edge.id, edge.label)
+            //     }
+            // })
 
-        storyStore.changeEdges((eds) => applyEdgeChanges(changes, eds))
-      },
-      [storyStore.changeEdges]
+            // storyStore.changeEdges((eds) => applyEdgeChanges(changes, eds))
+            setEdges((eds) => applyEdgeChanges(changes, eds))
+        },
+        [setEdges]
     );
     const onEdgeUpdate = useCallback(
-      (oldEdge, newConnection) => storyStore.changeEdges((eds) => updateEdge(oldEdge, newConnection, eds)),
-      [storyStore.changeEdges]
+        (oldEdge, newConnection) => setEdges((eds) => updateEdge(oldEdge, newConnection, eds)),
+        [setEdges]
     );
     const onConnect = useCallback(
-      (connection) => {
-        connection.labelBgPadding = [8, 4]
-        connection.labelBgBorderRadius = 4
-        connection.style = {strokeWidth: 3}
-        connection.labelBgStyle = {fill: Colors.forest_green_crayola}
-        storyStore.changeEdges((eds) => addEdge(connection, eds))
-      },
-      [storyStore.changeEdges]
+        (connection) => {
+            connection.labelBgPadding = [8, 4]
+            connection.labelBgBorderRadius = 4
+            connection.style = { strokeWidth: 3 }
+            connection.labelBgStyle = { fill: Colors.forest_green_crayola }
+            connection.label = "Continue"
+            setEdges((eds) => addEdge(connection, eds))
+        },
+        [setEdges]
     );
 
+    if (!nodes || !edges)
+        return <Typography>Loading...</Typography>
 
-    //const onNodesChange = (changes) => store.changeNodes(applyNodeChanges(changes, store.nodes));
-    //const onEdgesChange = (changes) => store.changeEdges(applyNodeChanges(changes, store.edges));
-
-    //const onEdgeUpdate = (oldEdge, newConnection) => store.changeEdges(updateEdge(oldEdge, newConnection, store.edges));
-    //const onConnect = (params) => store.changeEdges(addEdge(params, store.edges));
-
-    return (    
-    <ReactFlow
-            nodes={storyStore.nodes}
-            edges={storyStore.edges}
+    return (
+        <ReactFlow
+            nodes={nodes}
+            edges={edges}
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
             onEdgeUpdate={onEdgeUpdate}
             onConnect={onConnect}
+            onNodeClick={onNodeClick}
+            onEdgeClick={onEdgeClick}
             fitView
         >
             <Controls />
             <MiniMap />
-        </ReactFlow>   
-  )
- 
+        </ReactFlow>
+    )
+
 }

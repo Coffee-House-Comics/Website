@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import types from '../Common/Types';
 import { GlobalStoreContext } from '.';
 import API from '../API';
-import {MarkerType } from 'react-flow-renderer';
+import { MarkerType } from 'react-flow-renderer';
 import { Colors } from '../Common/Theme';
 
 
@@ -14,6 +14,8 @@ const StoryStoreActionType = {
     SET_NODES: "SET_NODES",
     SET_EDGES: "SET_EDGES",
     SET_MODE: "SET_MODE",
+    SET_PAGE: "SET_PAGE",
+    SET_TRIGGER: "SET_TRIGGER"
 }
 
 const StoryAPI = API.Story;
@@ -28,78 +30,9 @@ function StoryStoreContextProvider(props) {
         elementId: null,
         elementTitle: null,
         elementBody: null,
-        nodes: [
-            {
-              id: '1',
-              type: 'input',
-              data: { label: 'Start'},
-              position: { x: 0, y: 0 },
-            },
-            {
-                id: '2',
-                data: { label: 'Page 1', payload: 'This is some <h1> rich text <h1>'},
-                position: { x: -100, y: 90 },
-            },
-            {
-                id: '3',
-                data: { label: 'Page 2', payload: 'Payload3'},
-                position: { x: 100, y: 90 },
-            },
-            {
-                id: '4',
-                data: { label: 'Page 3', payload: 'Payload4'},
-                position: { x: 0, y: 170 },
-            },
-            {
-              id: '5',
-              type: 'output',
-              data: { label: 'End', payload: 'Payload5'},
-              position: { x: 0, y: 250 },
-            },
-        ],
-        edges: [
-    
-            { id: 'e1-3', 
-                label: 'Choice 2', 
-                source: '1', 
-                target: '3',    
-                labelBgPadding: [8, 4],
-                labelBgBorderRadius: 4,
-                style: {strokeWidth: 3},
-                labelBgStyle: {fill: Colors.forest_green_crayola}
-            },
-
-            { id: 'e2-4', 
-                label: 'Continue', 
-                source: '2', 
-                target: '4',
-                labelBgPadding: [8, 4],
-                labelBgBorderRadius: 4,
-                style: {strokeWidth: 3},
-                labelBgStyle: {fill: Colors.forest_green_crayola}
-            },
-
-
-            { id: 'e3-4', 
-                label: 'Continue', 
-                source: '3', 
-                target: '4',
-                labelBgPadding: [8, 4],
-                labelBgBorderRadius: 4,
-                style: {strokeWidth: 3},
-                labelBgStyle: {fill: Colors.forest_green_crayola}
-            },
-
-            { id: 'e4-5', 
-                label: 'Continue', 
-                source: '4', 
-                target: '5',
-                labelBgPadding: [8, 4],
-                labelBgBorderRadius: 4,
-                style: {strokeWidth: 3},
-                labelBgStyle: { fill: Colors.forest_green_crayola}
-            },
-        ],
+        nodes: null,
+        edges: null,
+        triggerNewNode: false,
     });
 
     const storeReducer = (action) => {
@@ -115,11 +48,12 @@ function StoryStoreContextProvider(props) {
                     elementBody: storyStore.elementBody,
                     nodes: storyStore.nodes,
                     edges: storyStore.edges,
+                    triggerNewNode: false,
                 })
             }
 
             case StoryStoreActionType.SET_NODES: {
-                console.log("nodes payload: ", payload)
+                // console.log("nodes payload: ", payload)
                 return setStore({
                     storyId: storyStore.storyId,
                     mode: storyStore.mode,
@@ -128,6 +62,7 @@ function StoryStoreContextProvider(props) {
                     elementBody: storyStore.elementBody,
                     nodes: payload,
                     edges: storyStore.edges,
+                    triggerNewNode: false,
                 })
             }
 
@@ -140,18 +75,33 @@ function StoryStoreContextProvider(props) {
                     elementBody: storyStore.elementBody,
                     nodes: storyStore.nodes,
                     edges: payload,
+                    triggerNewNode: false,
                 })
             }
 
-            case StoryStoreActionType.SET_MODE: {
+            case StoryStoreActionType.SET_PAGE: {
                 return setStore({
                     storyId: storyStore.storyId,
-                    mode: payload,
+                    mode: payload.mode,
+                    elementId: payload.elementId,
+                    elementTitle: payload.elementTitle,
+                    elementBody: payload.elementBody,
+                    nodes: storyStore.nodes,
+                    edges: storyStore.edges,
+                    triggerNewNode: false,
+                })
+            }
+
+            case StoryStoreActionType.SET_TRIGGER: {
+                return setStore({
+                    storyId: storyStore.storyId,
+                    mode: storyStore.mode,
                     elementId: storyStore.elementId,
                     elementTitle: storyStore.elementTitle,
                     elementBody: storyStore.elementBody,
                     nodes: storyStore.nodes,
                     edges: storyStore.edges,
+                    triggerNewNode: payload,
                 })
             }
 
@@ -159,92 +109,163 @@ function StoryStoreContextProvider(props) {
         }
     }
 
-    storyStore.changeStoryId = function(id) {
+    storyStore.toggleTrigger = function () {
+        storeReducer({
+            type: StoryStoreActionType.SET_TRIGGER,
+            payload: !storyStore.triggerNewNode
+        });
+    }
+
+    storyStore.updateTitle = function (title) {
+        const newPage = {
+            mode: storyStore.mode,
+            elementId: storyStore.elementId,
+            elementTitle: title,
+            elementBody: storyStore.elementBody
+        }
+
+        console.log("newPage", newPage)
+        storeReducer({
+            type: StoryStoreActionType.SET_PAGE,
+            payload: newPage
+        });
+    };
+
+    storyStore.updateBody = function (body) {
+        const newPage = {
+            mode: storyStore.mode,
+            elementId: storyStore.elementId,
+            elementTitle: storyStore.elementTitle,
+            elementBody: body
+        }
+
+        console.log("newPage", newPage)
+        storeReducer({
+            type: StoryStoreActionType.SET_PAGE,
+            payload: newPage
+        });
+    };
+
+    storyStore.changeStoryId = function (id) {
         storeReducer({
             type: StoryStoreActionType.SET_STORY_ID,
             payload: id
         });
     }
 
-    storyStore.changeNodes = function(nodes) {
-        console.log("nodes ", nodes)
+    storyStore.changeNodes = function (nodes) {
+        if (!nodes)
+            return;
+
+        // console.log("nodes ", nodes)
         let newNodes = nodes
         if (typeof nodes === 'function') {
             newNodes = nodes(storyStore.nodes)
         }
-        console.log("newNodes ", newNodes)
-        
+        // console.log("newNodes ", newNodes)
+
         storeReducer({
             type: StoryStoreActionType.SET_NODES,
             payload: [...newNodes]
         });
     }
 
-    storyStore.changeEdges = function(edges) {
-        console.log("edges ", edges)
+    storyStore.changeEdges = function (edges) {
+        if (!edges)
+            return;
+
+        // console.log("edges ", edges)
         let newEdges = edges
         if (typeof edges === 'function') {
             newEdges = edges(storyStore.edges)
         }
-        console.log("newEdges ", newEdges)
+        // console.log("newEdges ", newEdges)
         storeReducer({
             type: StoryStoreActionType.SET_EDGES,
             payload: newEdges
         });
     }
 
-    storyStore.changeMode = function(newMode, newId, newTitle, newBody) {
+    storyStore.changeMode = function (newMode, newId, newTitle, newBody) {
         let newPage = {
             mode: newMode,
             elementId: newId,
             elementTitle: newTitle,
             elementBody: newBody
         }
-        
+
         console.log("newPage", newPage)
         storeReducer({
-            type: StoryStoreActionType.SET_MODE,
-            payload: newMode
+            type: StoryStoreActionType.SET_PAGE,
+            payload: newPage
         });
         console.log("afterReducer ", storyStore.mode)
     }
 
-    storyStore.loadNode = function(id, title, body) {
+    storyStore.loadNode = function (id, title, body) {
         storyStore.changeMode(2, id, title, body);
     }
 
-    storyStore.loadEdge = function(id, title) {
+    storyStore.loadEdge = function (id, title) {
         storyStore.changeMode(1, id, title, null);
     }
 
-    storyStore.closeEditing = function() {
+    storyStore.closeEditing = function () {
         storyStore.changeMode(0, null, null, null);
     }
 
-    storyStore.getNode = function(id) {
-        let result = storyStore.nodes.filter(item => item.id === id)
-        if(result.length != 0) 
+    storyStore.getNode = function (id, nodes) {
+        if (!nodes)
+            return null;
+
+        let result = nodes.filter(item => item.id === id)
+        if (result.length != 0)
             return result[0]
         else
             return null
     }
 
-    storyStore.getEdge = function(id) {
-        let result = storyStore.edges.filter(item => item.id === id)
-        if(result.length != 0)
+    storyStore.getNodeIndex = function (id, nodes) {
+        if (!nodes)
+            return -1;
+
+        nodes.forEach((element, index) => {
+            if (element.id === id) return index;
+        });
+
+        return -1;
+    };
+
+    storyStore.getEdge = function (id, edges) {
+        if (!edges)
+            return null;
+
+        let result = edges.filter(item => item.id === id)
+        if (result.length != 0)
             return result[0]
         else
             return null
     }
 
-    storyStore.fetchData = async function() {
+    storyStore.getEdgeIndex = function (id, edges) {
+        if (!edges)
+            return -1;
+
+        edges.forEach((element, index) => {
+            if (element.id === id) return index;
+        });
+
+        return -1;
+    };
+
+    storyStore.fetchData = async function () {
         let response
         try {
             store.toggleLoading();
             response = await StoryAPI.viewUnpublished(storyStore.storyId);
             store.toggleLoading();
 
-            if(response.status === 200) {
+            if (response.status === 200) {
                 console.log("Data successfully fetched");
                 storyStore.changeNodes(response.data.content.ReactFlowJSON.nodes);
                 storyStore.changeEdges(response.data.content.ReactFlowJSON.edges);
@@ -265,7 +286,7 @@ function StoryStoreContextProvider(props) {
         });
     }
 
-    storyStore.editMetaData = async function(newData) {
+    storyStore.editMetaData = async function (newData) {
         const { name, description, coverPhoto, series } = newData;
 
         try {
@@ -273,7 +294,7 @@ function StoryStoreContextProvider(props) {
             const response = await StoryAPI.editMetaData(storyStore.storyId, name, description, coverPhoto, series);
             store.toggleLoading();
 
-            if(response.status === 200) {
+            if (response.status === 200) {
                 store.reRoute(types.TabType.CREATION.children.STORY.fullRoute.slice(0, -3) + storyStore.storyId);
             }
         }
@@ -290,16 +311,16 @@ function StoryStoreContextProvider(props) {
         });
     }
 
-    storyStore.publish = async function() {
+    storyStore.publish = async function () {
         //TODO get series somehow
-        const series =  "";
+        const series = "";
 
         try {
             store.toggleLoading();
             const response = await StoryAPI.publish(storyStore.storyId, series);
             store.toggleLoading();
 
-            if(response.status === 200) {
+            if (response.status === 200) {
                 store.reRoute(types.TabType.APP.children.PROFILE.fullRoute.slice(0, -3) + store.user);
                 store.createModal({
                     title: "Story published",
@@ -322,13 +343,13 @@ function StoryStoreContextProvider(props) {
         });
     }
 
-    storyStore.save = async function() {
+    storyStore.save = async function () {
         try {
             store.toggleLoading();
-            const response = await StoryAPI.saveContent(storyStore.storyId, [], {nodes : storyStore.nodes, edges : storyStore.edges});
+            const response = await StoryAPI.saveContent(storyStore.storyId, [], { nodes: storyStore.nodes, edges: storyStore.edges });
             store.toggleLoading();
 
-            if(response.status === 200) {
+            if (response.status === 200) {
                 await storyStore.fetchData();
                 return;
             }
@@ -346,7 +367,7 @@ function StoryStoreContextProvider(props) {
         });
     }
 
-    storyStore.create = async function(storyInfo) {
+    storyStore.create = async function (storyInfo) {
         const { name, description } = storyInfo;
 
         try {
@@ -354,7 +375,7 @@ function StoryStoreContextProvider(props) {
             const response = await StoryAPI.create(name, description);
             store.toggleLoading();
 
-            if(response.status === 200) {
+            if (response.status === 200) {
                 storyStore.changeStoryId(response.data.id);
                 storyStore.fetchData();
                 store.reRoute(types.TabType.CREATION.children.STORY.fullRoute.slice(0, -3) + storyStore.storyId);
@@ -376,7 +397,7 @@ function StoryStoreContextProvider(props) {
 
     //const getNodeId = () => `randomnode_${+new Date()}`;
 
-    storyStore.addNode = function() {
+    storyStore.addNode = function () {
         const newNode = {
             id: (storyStore.nodes.length + 1).toString(),
             data: { label: 'Untitled', payload: '' },
@@ -384,8 +405,8 @@ function StoryStoreContextProvider(props) {
                 x: 0 + Math.random() * 100,
                 y: 0 + Math.random() * 100,
             },
-          };
-          storyStore.changeNodes((nodes) => nodes.concat(newNode));
+        };
+        storyStore.changeNodes();
     }
 
 
@@ -398,7 +419,7 @@ function StoryStoreContextProvider(props) {
     );
 }
 
-export{
+export {
     StoryStoreContext,
     StoryStoreContextProvider
 }

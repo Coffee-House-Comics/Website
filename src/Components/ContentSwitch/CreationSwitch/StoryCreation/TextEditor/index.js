@@ -1,11 +1,9 @@
 import { Grid, Typography, Box, TextField } from '@mui/material'
-import React, {useState, useContext, useEffect} from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import EditorButtonPanel from '../../../../Buttons/EditorButtons/EditorButtonPanel'
-//import { Editor } from "react-draft-wysiwyg";
-//import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { EditorState } from 'draft-js';
 import SubmitButton from '../../../../Buttons/SubmitButton';
-import {StoryStoreContext} from '../../../../../Store/StoryCreationStore';
+import { StoryStoreContext } from '../../../../../Store/StoryCreationStore';
 import { GlobalStoreContext } from '../../../../../Store';
 import types from '../../../../../Common/Types';
 import { useParams } from 'react-router-dom';
@@ -19,21 +17,21 @@ export default function TextEditor() {
     const { storyStore } = useContext(StoryStoreContext);
     const { id } = useParams();
 
-      useEffect(() => {
-        async function setup() {
-            storyStore.changeStoryId(id);
-            console.log("id: ", id)
-            let resp = (await API.Story.viewUnpublished(id)).data.content.ReactFlowJSON
-            console.log("debug the response: ", resp)
-            storyStore.changeNodes(resp.nodes);
-            storyStore.changeEdges(resp.edges);
-        }
-        setup();
-    }, [])
+    useEffect(function () {
+        console.log("Mode has changed! :", storyStore.mode);
 
-    const onEditorStateChange = function(newEditorState){
+    }, [storyStore.mode])
+
+    const onEditorStateChange = function (newEditorState) {
         setEditorState(newEditorState)
     }
+
+    const { elementId, elementTitle, elementBody } = storyStore;
+
+    console.log("DATA:", elementId, elementTitle, elementBody);
+
+
+    // console.log("Current mode here:", storyStore.mode);
 
     const saveHook = function () {
         console.log("Saving...");
@@ -83,44 +81,52 @@ export default function TextEditor() {
         handleRedo();
     };
 
-    const handleUndo = function() {
+    const handleUndo = function () {
 
     }
 
-    const handleRedo = function() {
+    const handleRedo = function () {
 
     }
 
     let titleField = <Grid item>
-        <TextField value={storyStore.elementTitle} size="small" sx={{
-            backgroundColor:"white",
-            border: 1,
-            borderRadius:1.5,
-            mr:1,
-            width:"100%",
-        }}/>
+        <TextField value={storyStore.elementTitle}
+            onChange={(e) => { storyStore.updateTitle(e.target.value) }}
+            size="small"
+            sx={{
+                backgroundColor: "white",
+                border: 1,
+                borderRadius: 1.5,
+                mr: 1,
+                width: "100%",
+            }}
+        />
     </Grid>
 
     let bodyField = <Grid item>
-        <TextField value={storyStore.elementBody} size="small" sx={{
-            backgroundColor:"white",
-            border: 1,
-            borderRadius:1.5,
-            mr:1,
-            width:"100%",
-        }}/>
+        <TextField
+            onChange={(e) => { storyStore.updateBody(e.target.value) }}
+            value={storyStore.elementBody}
+            size="small"
+            sx={{
+                backgroundColor: "white",
+                border: 1,
+                borderRadius: 1.5,
+                mr: 1,
+                width: "100%",
+            }} />
     </Grid>
 
     return (
         <Grid container direction="column" width="100%" height="100%" spacing={3}>
-           <Grid item>
-                <Grid container direction="column" alignItems="stretch" justifyContent="flex-start" width="100%" spacing = {1}>
+            <Grid item>
+                <Grid container direction="column" alignItems="stretch" justifyContent="flex-start" width="100%" spacing={1}>
                     <Grid item container direction="row" spacing={3}>
                         <Grid item>
-                            <EditorButtonPanel undoHook={undoHook} redoHook={redoHook} saveHook={saveHook} metadataHook={metadataHook}/>
+                            <EditorButtonPanel undoHook={undoHook} redoHook={redoHook} saveHook={saveHook} metadataHook={metadataHook} />
                         </Grid>
                         <Grid item>
-                            <SubmitButton text={'+ Add Page'} onClick={storyStore.addNode}/>
+                            <SubmitButton text={'+ Add Page'} onClick={storyStore.toggleTrigger} />
                         </Grid>
                     </Grid>
                     <Grid item>
@@ -138,8 +144,8 @@ export default function TextEditor() {
                         </Typography>
                     </Grid>
 
-                    {storyStore.mode > 0? titleField: ""}
-                    {storyStore.mode > 1? bodyField: ""}
+                    {storyStore.mode > 0 ? titleField : ""}
+                    {storyStore.mode > 1 ? bodyField : ""}
                 </Grid>
             </Grid>
         </Grid>
