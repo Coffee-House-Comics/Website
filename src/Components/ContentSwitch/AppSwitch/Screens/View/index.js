@@ -126,7 +126,7 @@ export default function View() {
             float: "right",
             width: "75%"
         }}>
-            <ContentPanel pages={post.pages}/>
+            <ContentPanel pages={post.pages} flowJSON={store.app === "Comics"? "": post.ReactFlowJSON }/>
         </Box>
     </Box>);
 

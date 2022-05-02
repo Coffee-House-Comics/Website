@@ -10,7 +10,8 @@ import { useParams } from 'react-router-dom';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { Stage, Layer, Line, Image, Text } from 'react-konva';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
+import { GlobalStoreContext } from '../../../../../Store';
 import useImage from 'use-image';
 
 const editorSize = 800;
@@ -60,7 +61,7 @@ const supportedShapes = {
     text: "text"
 };
 
-export default function ContentPanel({ pages }) {
+export default function ContentPanel({ pages, flowJSON }) {
 
     console.log("PAGES:", pages);
 
@@ -69,28 +70,39 @@ export default function ContentPanel({ pages }) {
 
     const stageRef = React.useRef();
 
+    const { store } = useContext(GlobalStoreContext);
+
     // AKA the current index
     const [pageNumber, setPageNumber] = useState(0);
 
+    let page;
     let backgroundColor = 'white';
     let serialization = [];
+    let title = "";
+    let body = {};
+    let decisions = [];
 
     if (!pages || !pages[pageNumber]) {
         return <Typography>No pages...</Typography>
     }
 
-    // Extract the serialization
-
-    if (!pages[pageNumber].data)
-        return <Typography>Loading...</Typography>
-
-    const page = pages[pageNumber].data;
-
-    if (!page)
+    if (!pages[pageNumber].data && !pages[pageNumber].decisions)
         return <Typography>THIS PAGE DOES NOT EXIST</Typography>
 
-    backgroundColor = page.backgroundColor;
-    serialization = page.serialization;
+    // Extract the serialization
+
+    if(store.app === "Comics") {
+        page = pages[pageNumber].data;
+        backgroundColor = page.backgroundColor;
+        serialization = page.serialization;
+    }
+    
+    else {
+        page = pages[pageNumber];
+        title = page.title;
+        body = page.body;
+        decisions = page.decisions;
+    }
 
     console.log("Current page being viewed:", pageNumber, page);
 
@@ -108,6 +120,87 @@ export default function ContentPanel({ pages }) {
             setPageNumber(pageNumber + 1);
     }
 
+    let pageContent = store.app === "Comics"? 
+        <Stage
+            width={editorSize}
+            height={editorSize}
+            ref={stageRef}
+            style={{ border: "1px solid black", background: backgroundColor }}>
+            <Layer>
+                {
+                    serialization.filter(function (val) {
+                        if (val.typeName === supportedShapes.drag)
+                            return false;
+                        else
+                            return true;
+                    }).map((shape, i) => {
+                        if (shape.typeName === supportedShapes.line) {
+                            const line = shape.data;
+
+                            let dashedArr = [];
+                            if (line.pencilType === pencilType.dashed) {
+                                dashedArr = [33, 2 * (line.penSize)];
+                            }
+                            else if (line.pencilType === pencilType.dotted) {
+                                dashedArr = [33, 2 * (line.penSize), 0.001 * (line.penSize), 2 * (line.penSize)];
+                            }
+
+                            return (
+                                <Line
+                                    key={i}
+                                    x={line.x}
+                                    y={line.y}
+                                    points={line.points}
+                                    perfectDrawEnabled={false}
+                                    fill={line.closed ? line.color : ""}
+                                    stroke={line.color}
+                                    strokeWidth={line.penSize}
+                                    closed={line.closed}
+                                    tension={0.5}
+                                    lineCap={'round'}
+                                    lineJoin={'round'}
+                                    dash={dashedArr}
+                                    globalCompositeOperation={
+                                        line.tool === 'eraser' ? 'destination-out' : 'source-over'
+                                    }
+                                />
+                            );
+                        }
+                        else if (shape.typeName === supportedShapes.image) {
+                            return (
+                                <URLImage
+                                    key={i}
+                                    image={shape.data}
+                                    draggable={false}
+                                />
+                            );
+                        }
+
+                        else if (shape.typeName === supportedShapes.text) {
+                            const text = shape.data;
+                            return (
+                                <Text
+                                    key={i}
+                                    x={text.x}
+                                    y={text.y}
+                                    draggable={false}
+                                    text={text.text}
+                                    fill={text.color}
+                                    fontSize={text.fontSize}
+                                />
+                            );
+                        }
+                        else {
+                            // Should not be possible since we filter
+                            console.log("IMPOSSIBLE !!");
+                            return <div />;
+                        }
+                    })
+                }
+            </Layer>
+        </Stage> : 
+        <div></div>
+
     return (
         <div style={{ height: "95%", marginTop: "50px", marginLeft: "10px", marginRight: "10px" }}>
             <div style={{
@@ -116,85 +209,7 @@ export default function ContentPanel({ pages }) {
                 justifyContent: "center"
             }}>
                 <div style={{ backgroundColor: "white", height: editorSize + "px", width: editorSize + "px", border: "3px solid " + theme.palette.olive_drab_7.main, borderRadius: "5px", }}>
-                    <Stage
-                        width={editorSize}
-                        height={editorSize}
-                        ref={stageRef}
-                        style={{ border: "1px solid black", background: backgroundColor }}
-                    >
-                        <Layer>
-                            {
-                                serialization.filter(function (val) {
-                                    if (val.typeName === supportedShapes.drag)
-                                        return false;
-                                    else
-                                        return true;
-                                }).map((shape, i) => {
-                                    if (shape.typeName === supportedShapes.line) {
-                                        const line = shape.data;
-
-                                        let dashedArr = [];
-                                        if (line.pencilType === pencilType.dashed) {
-                                            dashedArr = [33, 2 * (line.penSize)];
-                                        }
-                                        else if (line.pencilType === pencilType.dotted) {
-                                            dashedArr = [33, 2 * (line.penSize), 0.001 * (line.penSize), 2 * (line.penSize)];
-                                        }
-
-                                        return (
-                                            <Line
-                                                key={i}
-                                                x={line.x}
-                                                y={line.y}
-                                                points={line.points}
-                                                perfectDrawEnabled={false}
-                                                fill={line.closed ? line.color : ""}
-                                                stroke={line.color}
-                                                strokeWidth={line.penSize}
-                                                closed={line.closed}
-                                                tension={0.5}
-                                                lineCap={'round'}
-                                                lineJoin={'round'}
-                                                dash={dashedArr}
-                                                globalCompositeOperation={
-                                                    line.tool === 'eraser' ? 'destination-out' : 'source-over'
-                                                }
-                                            />
-                                        );
-                                    }
-                                    else if (shape.typeName === supportedShapes.image) {
-                                        return (
-                                            <URLImage
-                                                key={i}
-                                                image={shape.data}
-                                                draggable={false}
-                                            />
-                                        );
-                                    }
-
-                                    else if (shape.typeName === supportedShapes.text) {
-                                        const text = shape.data;
-                                        return (
-                                            <Text
-                                                key={i}
-                                                x={text.x}
-                                                y={text.y}
-                                                draggable={false}
-                                                text={text.text}
-                                                fill={text.color}
-                                                fontSize={text.fontSize}
-                                            />
-                                        );
-                                    }
-                                    else {
-                                        // Should not be possible since we filter
-                                        console.log("IMPOSSIBLE !!");
-                                        return <div />;
-                                    }
-                                })
-                            }
-                        </Layer>
-                    </Stage>
+                    {pageContent}
                 </div>
             </div>
             <Grid container direction="row" justifyContent="center" alignItems="center" spacing={1} sx={{ height: "100px" }}>
