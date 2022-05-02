@@ -218,11 +218,11 @@ export default function ContentPanel({ pages, flowJSON }) {
                 }
             </Layer>
         </Stage> : 
-        <Grid container direction="column" justifyContent="space-evenly" alignItems="center" sx={{height: '100%', paddingLeft: '1', paddingRight: '1', paddingTop: '1', paddingBottom: '1'}}>
-            <Grid item xs={9}>
+        <Grid container direction="column" justifyContent="space-around" alignItems="center" sx={{height: '100%', paddingLeft: 2, paddingRight: 2, paddingTop: 2, paddingBottom: 2}}>
+            <Grid item xs='auto'>
                 {page.payload}
             </Grid>
-            <Grid item container direction="row" spacing={2} justifyContent="space-evenly" alignItems="center">
+            <Grid item container direction="row" xs={2} spacing={2} justifyContent="space-evenly" alignItems="center">
                 {decisionButtons}
             </Grid>
         </Grid>
