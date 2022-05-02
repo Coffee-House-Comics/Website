@@ -7,34 +7,6 @@ import { useParams } from 'react-router-dom';
 import API from '../../../../../API';
 import { Typography } from '@mui/material';
 
-/*
-const initialNodes = [
-  {
-    id: '1',
-    type: 'input',
-    data: { label: 'Input Node' },
-    position: { x: 250, y: 25 },
-  },
-
-  {
-    id: '2',
-    data: { label: <div>Default Node</div> },
-    position: { x: 100, y: 125 },
-  },
-  {
-    id: '3',
-    type: 'output',
-    data: { label: 'Output Node' },
-    position: { x: 250, y: 250 },
-  },
-];
-
-const initialEdges = [
-  { id: 'e1-2', source: '1', target: '2' },
-  { id: 'e2-3', source: '2', target: '3', animated: true },
-];
-*/
-
 
 export default function FlowEditor() {
     const { storyStore } = React.useContext(StoryStoreContext);
@@ -42,10 +14,6 @@ export default function FlowEditor() {
     const { id } = useParams();
 
     const { store } = React.useContext(GlobalStoreContext)
-
-    // console.log("storyStore", storyStore)
-    // console.log("store", store)
-
 
     // Host the nodes and edges locally ------------
     const [nodes, setNodes] = React.useState(null);
