@@ -1,10 +1,11 @@
 import React from 'react'
-import { useTheme } from '@mui/material/styles';
+import { useTheme, styled } from '@mui/material/styles';
 import {
     Typography,
     Grid,
     Box,
-    IconButton
+    IconButton,
+    Button
 } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
@@ -13,6 +14,7 @@ import { Stage, Layer, Line, Image, Text } from 'react-konva';
 import { useState, useContext } from 'react';
 import { GlobalStoreContext } from '../../../../../Store';
 import useImage from 'use-image';
+import { Colors } from '../../../../../Common/Theme';
 
 const editorSize = 800;
 
@@ -75,12 +77,19 @@ export default function ContentPanel({ pages, flowJSON }) {
     // AKA the current index
     const [pageNumber, setPageNumber] = useState(0);
 
+    const ColorButton = styled(Button)(({ theme }) => ({
+        color: Colors.ivory,
+        backgroundColor: Colors.olive_drab_7,
+        '&:hover': {
+            backgroundColor: Colors.coffee,
+        },
+    }));
+
     let page;
     let backgroundColor = 'white';
     let serialization = [];
-    let title = "";
-    let body = {};
-    let decisions = [];
+    let outgoingEdges = [];
+    let decisionButtons = <div></div>;
 
     if (!pages || !pages[pageNumber]) {
         return <Typography>No pages...</Typography>
@@ -98,10 +107,17 @@ export default function ContentPanel({ pages, flowJSON }) {
     }
     
     else {
-        page = pages[pageNumber];
-        title = page.title;
-        body = page.body;
-        decisions = page.decisions;
+        page = flowJSON.nodes[pageNumber + 1].data;
+        outgoingEdges = flowJSON.edges.filter((edge) => {
+            return parseInt(edge.source) === pageNumber + 1;
+        });
+        decisionButtons = outgoingEdges.map((edge, index) => {
+            return(
+                <Grid item key={index}>
+                    <ColorButton variant="contained" onClick={() => clickDecision(edge.target)}>{edge.label}</ColorButton>
+                </Grid>
+            );
+        });
     }
 
     console.log("Current page being viewed:", pageNumber, page);
@@ -118,6 +134,10 @@ export default function ContentPanel({ pages, flowJSON }) {
     function nextPage() {
         if (pageNumber < maxPages - 1)
             setPageNumber(pageNumber + 1);
+    }
+
+    function clickDecision(targetNode) {
+        setPageNumber(targetNode - 1);
     }
 
     let pageContent = store.app === "Comics"? 
@@ -199,7 +219,14 @@ export default function ContentPanel({ pages, flowJSON }) {
                 }
             </Layer>
         </Stage> : 
-        <div></div>
+        <Grid container direction="column" justifyContent="space-evenly" alignItems="center" sx={{height: '100%', paddingLeft: '1', paddingRight: '1', paddingTop: '1', paddingBottom: '1'}}>
+            <Grid item>
+                {page.payload}
+            </Grid>
+            <Grid item container direction="row" spacing={2} justifyContent="space-evenly" alignItems="center">
+                {decisionButtons}
+            </Grid>
+        </Grid>
 
     return (
         <div style={{ height: "95%", marginTop: "50px", marginLeft: "10px", marginRight: "10px" }}>
@@ -212,21 +239,24 @@ export default function ContentPanel({ pages, flowJSON }) {
                     {pageContent}
                 </div>
             </div>
-            <Grid container direction="row" justifyContent="center" alignItems="center" spacing={1} sx={{ height: "100px" }}>
-                <Grid item>
-                    <IconButton onClick={previousPage}>
-                        <ArrowBackIosIcon fontSize='large' />
-                    </IconButton>
-                </Grid>
-                <Grid item>
-                    <Typography variant="h3">{pageNumber + 1}</Typography>
-                </Grid>
-                <Grid item>
-                    <IconButton onClick={nextPage}>
-                        <ArrowForwardIosIcon fontSize='large' />
-                    </IconButton>
-                </Grid>
-            </Grid>
+            {store.app === "Comics"? 
+                <Grid container direction="row" justifyContent="center" alignItems="center" spacing={1} sx={{ height: "100px" }}>
+                    <Grid item>
+                        <IconButton onClick={previousPage}>
+                            <ArrowBackIosIcon fontSize='large' />
+                        </IconButton>
+                    </Grid>
+                    <Grid item>
+                        <Typography variant="h3">{pageNumber + 1}</Typography>
+                    </Grid>
+                    <Grid item>
+                        <IconButton onClick={nextPage}>
+                            <ArrowForwardIosIcon fontSize='large' />
+                        </IconButton>
+                    </Grid>
+                </Grid>: 
+                <div/>
+            }
         </div>
     )
 }
