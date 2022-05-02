@@ -66,6 +66,7 @@ const supportedShapes = {
 export default function ContentPanel({ pages, flowJSON }) {
 
     console.log("PAGES:", pages);
+    console.log("Flow Json:", flowJSON);
 
     const theme = useTheme();
     const id = useParams();
@@ -75,7 +76,7 @@ export default function ContentPanel({ pages, flowJSON }) {
     const { store } = useContext(GlobalStoreContext);
 
     // AKA the current index
-    const [pageNumber, setPageNumber] = useState(0);
+    const [pageNumber, setPageNumber] = useState(store.app=="Comics"? 0:1);
 
     const ColorButton = styled(Button)(({ theme }) => ({
         color: Colors.ivory,
@@ -91,12 +92,9 @@ export default function ContentPanel({ pages, flowJSON }) {
     let outgoingEdges = [];
     let decisionButtons = <div></div>;
 
-    if (!pages || !pages[pageNumber]) {
+    if (!pages && !flowJSON) {
         return <Typography>No pages...</Typography>
     }
-
-    if (!pages[pageNumber].data && !pages[pageNumber].decisions)
-        return <Typography>THIS PAGE DOES NOT EXIST</Typography>
 
     // Extract the serialization
 
@@ -107,7 +105,7 @@ export default function ContentPanel({ pages, flowJSON }) {
     }
     
     else {
-        page = flowJSON.nodes[pageNumber + 1].data;
+        page = flowJSON.nodes[pageNumber].data;
         outgoingEdges = flowJSON.edges.filter((edge) => {
             return parseInt(edge.source) === pageNumber + 1;
         });
@@ -137,6 +135,7 @@ export default function ContentPanel({ pages, flowJSON }) {
     }
 
     function clickDecision(targetNode) {
+        console.log("Setting page number to", targetNode-1);
         setPageNumber(targetNode - 1);
     }
 
@@ -220,7 +219,7 @@ export default function ContentPanel({ pages, flowJSON }) {
             </Layer>
         </Stage> : 
         <Grid container direction="column" justifyContent="space-evenly" alignItems="center" sx={{height: '100%', paddingLeft: '1', paddingRight: '1', paddingTop: '1', paddingBottom: '1'}}>
-            <Grid item>
+            <Grid item xs={9}>
                 {page.payload}
             </Grid>
             <Grid item container direction="row" spacing={2} justifyContent="space-evenly" alignItems="center">
