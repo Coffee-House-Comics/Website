@@ -20,6 +20,48 @@ export default function FlowEditor() {
 
     const [edges, setEdges] = React.useState(null);
 
+    const transactionTypes = {
+        createNode: "createNode",
+        createEdge: "createEdge",
+        deleteNode: "deleteNode",
+        deleteEdge: "deleteEdge",
+        renameNode: "renameNode",
+        renameEdge: "renameEdge",
+        moveNode: "moveNode",
+    };
+
+    let transactions = [];
+    let transactionIndex = -1;
+
+    function createTransEntry(name, id, before, after) {
+    const entry = {
+        transactionName: name,
+        before: before,
+        after: after,
+        id: id
+    };
+
+    if ((transactionIndex < 0) || (transactionIndex < (transactions.length - 1))) {
+        for (let i = transactions.length - 1; i > transactionIndex; i--) {
+            transactions.splice(i, 1);
+        }
+    }
+
+    transactions[++transactionIndex] = entry;
+    } 
+
+    function peekTransStack() {
+        return transactions[transactionIndex];
+    }
+
+    let undoStack = [];
+
+    function clearTransactions() {
+        undoStack = [];
+        transactions = [];
+        transactionIndex = -1;
+    }
+
 
     // Push changes up to the store ------------
     useEffect(function () {
@@ -74,8 +116,10 @@ export default function FlowEditor() {
         if (storyStore.triggerNewNode) {
             console.log("MAKING NEW NODE");
 
+            const id =(storyStore.nodes.length + 1).toString()
+
             const newNode = {
-                id: (storyStore.nodes.length + 1).toString(),
+                id: id,
                 data: { label: 'Untitled', payload: '' },
                 position: {
                     x: 0 + Math.random() * 100,
@@ -85,9 +129,151 @@ export default function FlowEditor() {
 
             storyStore.toggleTrigger();
 
+            createTransEntry(transactionTypes.createNode, id)
             setNodes((nodes) => nodes.concat(newNode));
         }
     }, [storyStore.triggerNewNode]);
+
+    useEffect(function () {
+        if(storyStore.triggerUndo){
+            const transaction = peekTransStack();
+        
+            if (!transaction)
+                return;
+    
+            if (transactions.length === 0 || transactionIndex < 0)
+                return
+    
+            if (transaction.transactionName === transactionTypes.createLine) {
+                const last = peekSerial();
+    
+                if (!last)
+                    return;
+    
+                //console.log("Setting (from undo) to:", undoStack, serialization);
+                if (serialization.length === 0) {
+                    return;
+                }
+    
+                undoStack = [...undoStack, last];
+    
+                //console.log("Setting (from undo) to:", undoStack, serialization);
+    
+                transactionIndex--;
+    
+                setSerialization(serialization.slice(0, -1));
+            }
+            else if (transaction.transactionName === transactionTypes.createImage) {
+                const last = peekSerial();
+    
+                if (!last)
+                    return
+    
+                undoStack = [...undoStack, last];
+                transactionIndex--;
+    
+                setSerialization(serialization.slice(0, -1));
+            }
+            else if (transaction.transactionName === transactionTypes.moveImage) {
+                const id = transaction.id;
+    
+                const before = transaction.before;
+                const after = transaction.after;
+    
+                console.log("before, after:", before, after);
+    
+                const x = before.x;
+                const y = before.y;
+    
+                // const oldX = after.x;
+                // const oldY = after.y;
+    
+                const elem = serialization[id];
+    
+                if (elem) {
+                    elem.data.x = x;
+                    elem.data.y = y;
+    
+                    serialization.splice(id, 1, elem);
+    
+                    transactionIndex--;
+    
+                    setSerialization(serialization.concat());
+                }
+            }
+            else if (transaction.transactionName === transactionTypes.changeBackgroundColor) {
+                const before = transaction.before;
+                // const after = transaction.after;
+    
+                transactionIndex--;
+    
+                setBackgroundColor(before);
+            }
+            else if (transaction.transactionName === transactionTypes.modifyText) {
+                // console.log("Undo modify text with transaction id", transaction.id)
+                const id = transaction.id;
+    
+                const before = transaction.before;
+                const after = transaction.after;
+    
+                console.log("Before: ", before)
+    
+                const elem = serialization[id];
+    
+                if (elem) {
+                    elem.data = { ...before };
+    
+                    serialization.splice(id, 1, elem);
+                    setFontSize(before.fontSize)
+                    setCurrentTextColor(before.color)
+    
+                    transactionIndex--;
+    
+                    setSerialization(serialization.concat());
+                }
+            } else if (transaction.transactionName === transactionTypes.addText) {
+                const last = peekSerial();
+    
+                if (!last)
+                    return;
+    
+                //console.log("Setting (from undo) to:", undoStack, serialization);
+                if (serialization.length === 0) {
+                    return;
+                }
+    
+                undoStack = [...undoStack, last];
+    
+                //console.log("Setting (from undo) to:", undoStack, serialization);
+    
+                transactionIndex--;
+    
+                setSerialization(serialization.slice(0, -1));
+                setTextEditModeOn(false);
+            } else if (transaction.transactionName === transactionTypes.moveText) {
+                const id = transaction.id;
+    
+                const before = transaction.before;
+                const elem = { ...serialization[id] };
+    
+                if (elem) {
+                    elem.data.x = before.x
+                    elem.data.y = before.y
+    
+                    serialization.splice(id, 1, elem);
+    
+                    transactionIndex--;
+    
+                    setSerialization(serialization.concat());
+                }
+            }
+            else {
+                console.log("Unsupported transaction");
+            }
+
+            storyStore.toggleUndo();
+        }
+    }, [storyStore.triggerUndo]);
 
 
     // Initial Load
@@ -141,29 +327,19 @@ export default function FlowEditor() {
 
     const onNodesChange = useCallback(
         (changes) => {
-            // console.log("node changes", changes)
-            // const processedChanges = []
-            // changes.forEach(change => {
-            //     if (change.type === 'remove') {
-            //         const metadata = {
-            //             title: "Are you sure that you want to delete the selected page?",
-            //             body: "This action is irreversable",
-            //             action: "Delete"
-            //         };
-
-            //         store.createModal(metadata, function () {
-            //             setNodes((nds) => applyNodeChanges([change], nds))
-            //         });
-            //     } else if (change.type === 'select' && change.selected) {
-            //         let node = storyStore.getNode(change.id, nodes)
-            //         console.log("found Node: ", node)
-            //         // console.log(storyStore.mode)
-            //         // storyStore.loadNode(node.id, node.data.label, node.data.payload)
-            //         processedChanges.push(change)
-            //     } else {
-            //         processedChanges.push(change)
-            //     }
-            // })
+        console.log("node Changes", changes)
+         changes.forEach(change => {
+             if (change.type === 'remove') {
+                createTransEntry(transactionTypes.deleteNode, change.id, storyStore.getNode(change.id, nodes))
+             } else if(change.type === 'position' && change.dragging){
+                const currNode = storyStore.getNode(change.id, nodes);
+                const reverseChange = {
+                    ...change,
+                    position:currNode.position
+                }
+                createTransEntry(transactionTypes.moveNode, change.id, reverseChange, change)
+             }
+          })
 
             setNodes((nds) => applyNodeChanges(changes, nds));
         },
@@ -172,6 +348,13 @@ export default function FlowEditor() {
 
     const onEdgesChange = useCallback(
         (changes) => {
+        console.log("edge Changes", changes)
+        changes.forEach(change => {
+                if (change.type === 'remove') {
+                   createTransEntry(transactionTypes.deleteEdge, change.id, storyStore.getEdge(change.id, edges))
+                }
+           })
+
             setEdges((eds) => applyEdgeChanges(changes, eds))
         },
         [setEdges]
@@ -187,6 +370,7 @@ export default function FlowEditor() {
             connection.style = { strokeWidth: 3 }
             connection.labelBgStyle = { fill: Colors.forest_green_crayola }
             connection.label = "Continue"
+            createTransEntry(transactionTypes.createEdge, connection.id)
             setEdges((eds) => addEdge(connection, eds))
         },
         [setEdges]

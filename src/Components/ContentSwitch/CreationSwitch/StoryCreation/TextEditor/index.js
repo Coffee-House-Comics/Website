@@ -74,22 +74,14 @@ export default function TextEditor() {
     const undoHook = function () {
         console.log("Trying to undo...");
 
-        handleUndo();
+        storyStore.toggleUndo()
     };
 
     const redoHook = function () {
         console.log("Trying to redo...");
 
-        handleRedo();
+        storyStore.toggleRedo()
     };
-
-    const handleUndo = function () {
-
-    }
-
-    const handleRedo = function () {
-
-    }
 
     let titleField = <Grid item>
         <TextField value={storyStore.elementTitle}

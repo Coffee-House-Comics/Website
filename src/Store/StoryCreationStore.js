@@ -15,7 +15,9 @@ const StoryStoreActionType = {
     SET_EDGES: "SET_EDGES",
     SET_MODE: "SET_MODE",
     SET_PAGE: "SET_PAGE",
-    SET_TRIGGER: "SET_TRIGGER"
+    SET_TRIGGER: "SET_TRIGGER",
+    SET_UNDO: "SET_UNDO",
+    SET_REDO: "SET_REDO"
 }
 
 const StoryAPI = API.Story;
@@ -33,6 +35,8 @@ function StoryStoreContextProvider(props) {
         nodes: null,
         edges: null,
         triggerNewNode: false,
+        triggerUndo: false,
+        triggerRedo: false
     });
 
     const storeReducer = (action) => {
@@ -49,6 +53,8 @@ function StoryStoreContextProvider(props) {
                     nodes: storyStore.nodes,
                     edges: storyStore.edges,
                     triggerNewNode: false,
+                    triggerUndo: false,
+                    triggerRedo: false
                 })
             }
 
@@ -63,6 +69,8 @@ function StoryStoreContextProvider(props) {
                     nodes: payload,
                     edges: storyStore.edges,
                     triggerNewNode: false,
+                    triggerUndo: false,
+                    triggerRedo: false
                 })
             }
 
@@ -76,6 +84,8 @@ function StoryStoreContextProvider(props) {
                     nodes: storyStore.nodes,
                     edges: payload,
                     triggerNewNode: false,
+                    triggerUndo: false,
+                    triggerRedo: false
                 })
             }
 
@@ -89,6 +99,8 @@ function StoryStoreContextProvider(props) {
                     nodes: storyStore.nodes,
                     edges: storyStore.edges,
                     triggerNewNode: false,
+                    triggerUndo: false,
+                    triggerRedo: false
                 })
             }
 
@@ -102,6 +114,38 @@ function StoryStoreContextProvider(props) {
                     nodes: storyStore.nodes,
                     edges: storyStore.edges,
                     triggerNewNode: payload,
+                    triggerUndo: false,
+                    triggerRedo: false
+                })
+            }
+
+            case StoryStoreActionType.SET_UNDO: {
+                return setStore({
+                    storyId: storyStore.storyId,
+                    mode: storyStore.mode,
+                    elementId: storyStore.elementId,
+                    elementTitle: storyStore.elementTitle,
+                    elementBody: storyStore.elementBody,
+                    nodes: storyStore.nodes,
+                    edges: storyStore.edges,
+                    triggerNewNode: false,
+                    triggerUndo: payload,
+                    triggerRedo: false
+                })
+            }
+
+            case StoryStoreActionType.SET_REDO: {
+                return setStore({
+                    storyId: storyStore.storyId,
+                    mode: storyStore.mode,
+                    elementId: storyStore.elementId,
+                    elementTitle: storyStore.elementTitle,
+                    elementBody: storyStore.elementBody,
+                    nodes: storyStore.nodes,
+                    edges: storyStore.edges,
+                    triggerNewNode: false,
+                    triggerUndo: false,
+                    triggerRedo: payload
                 })
             }
 
@@ -113,6 +157,20 @@ function StoryStoreContextProvider(props) {
         storeReducer({
             type: StoryStoreActionType.SET_TRIGGER,
             payload: !storyStore.triggerNewNode
+        });
+    }
+
+    storyStore.toggleUndo = function () {
+        storeReducer({
+            type: StoryStoreActionType.SET_UNDO,
+            payload: !storyStore.triggerUndo
+        });
+    }
+
+    storyStore.toggleRedo = function () {
+        storeReducer({
+            type: StoryStoreActionType.SET_REDO,
+            payload: !storyStore.triggerRedo
         });
     }
 
