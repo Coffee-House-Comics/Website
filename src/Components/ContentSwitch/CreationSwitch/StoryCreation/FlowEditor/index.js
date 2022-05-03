@@ -200,29 +200,34 @@ export default function FlowEditor() {
             if (transaction.transactionName === transactionTypes.createNode) {
                 setNodes((nodes) => nodes.concat(transaction.before));
             } else if (transaction.transactionName === transactionTypes.createEdge){
+                setEdges((eds) => addEdge(transaction.before, eds))
+            }
+            else if (transaction.transactionName === transactionTypes.deleteNode){
                 const change = {
                     id: transaction.id,
                     type: 'remove'
                 };
-    
-                setEdges((eds) => applyEdgeChanges([change], eds))
-            }
-            else if (transaction.transactionName === transactionTypes.deleteNode){
-                setNodes((nodes) => nodes.concat(transaction.before));
+
+                setNodes((nds) => applyNodeChanges([change], nds));
             }
             else if (transaction.transactionName === transactionTypes.deleteEdge){
-                setEdges((eds) => addEdge(transaction.before, eds))
+                const change = {
+                    id: transaction.id,
+                    type: 'remove'
+                };
+
+                setEdges((eds) => applyEdgeChanges([change], eds))
             }
             else if (transaction.transactionName === transactionTypes.moveNode){
-                setNodes((nds) => applyNodeChanges([transaction.before], nds));
+                setNodes((nds) => applyNodeChanges([transaction.after], nds));
             }
             else {
                 console.log("Unsupported transaction");
             }
 
-            storyStore.toggleUndo();
+            storyStore.toggleRedo();
         }
-    }, [storyStore.triggerUndo]);
+    }, [storyStore.triggerRedo]);
 
 
     // Initial Load
@@ -320,7 +325,7 @@ export default function FlowEditor() {
             connection.style = { strokeWidth: 3 }
             connection.labelBgStyle = { fill: Colors.forest_green_crayola }
             connection.label = "Continue"
-            createTransEntry(transactionTypes.createEdge, connection.id)
+            createTransEntry(transactionTypes.createEdge, connection.id, connection)
             setEdges((eds) => addEdge(connection, eds))
         },
         [setEdges]
