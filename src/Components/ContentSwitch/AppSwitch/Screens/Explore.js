@@ -10,27 +10,67 @@ function Explore() {
     const [recentPosts, setRecentPosts] = useState([]);
     const [popularPosts, setPopularPosts] = useState([]);
 
-    useEffect(() => {
-        async function getExplorePosts() {
-            let resp;
+    async function getPostFromId(id, type) {
+        let resp;
+        try {
             if(store.app === "Comics") {
-                resp = (await API.Comic.explore()).data;
+                resp = (await API.Comic.viewPublished(id));
             }
-
             else {
-                resp = (await API.Story.explore()).data;
+                resp = (await API.Story.viewPublished(id));
             }
-
-            if(resp.error) {
-                store.createModal({
-                    title: "Error fetching explore page",
-                    body: "Explore data could not be retrieved. Please try again.",
-                    action: ""
-                });
+        
+            if(resp.status != 200) {
+                //Post wont be added to post array
+                console.log("Error fetching post from id:", id);
+                console.log(resp.error);
                 return;
             }
 
-            //TODO call async function to get posts based on their ids returned in resp
+            if(type === "recent") {
+                const newRecentPosts = recentPosts.concat(resp.data.content);
+                setRecentPosts(newRecentPosts);
+            }
+
+            else  {
+                const newPopularPosts = popularPosts.concat(resp.data.content);
+                setPopularPosts(newPopularPosts);
+            }
+        }
+
+        catch(err) {
+            console.log(err)
+        }
+    }
+
+    useEffect(() => {
+        async function getExplorePosts() {
+            try {
+                let resp;
+                if(store.app === "Comics") {
+                    resp = (await API.Comic.explore());
+                }
+
+                else {
+                    resp = (await API.Story.explore());
+                }
+
+                if(resp.status != 200) {
+                    store.createModal({
+                        title: "Error fetching explore page",
+                        body: "Explore data could not be retrieved. Please try again.",
+                        action: ""
+                    });
+                    return;
+                }
+
+                resp.data.mostRecent.forEach(recentId => getPostFromId(recentId, "recent"));
+                resp.data.mostLiked.forEach(likedId => getPostFromId(likedId, "liked"));
+            }
+
+            catch(err) {
+                console.log(err);
+            }
         }
         getExplorePosts();
     }, []);

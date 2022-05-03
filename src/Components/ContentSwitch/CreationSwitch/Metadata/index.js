@@ -25,7 +25,7 @@ export default function MetadataEditor() {
     //Set the post on first render
     useEffect(() => {
         async function getPost(id) {
-            let resp = (await API.Comic.viewUnpublished(id)).data
+            let resp = store.app === "Comics" ? (await API.Comic.viewUnpublished(id)).data : (await API.Story.viewUnpublished(id)).data
 
             if (resp.error) {
                 store.reRoute(types.TabType.APP.children.VIEW.fullRoute, id)
@@ -67,7 +67,7 @@ export default function MetadataEditor() {
             action: "Delete"
         }, function () {
             async function deletePost(id) {
-                console.log("Deleting post with id: ", IDBIndex)
+                console.log("Deleting post with id: ", id)
                 if (store.app === "Comics" && await API.Comic.delete(id).status === 200) {
                     alert("Post successfully deleted");
                     store.reRoute(types.TabType.APP.children.PROFILE.fullRoute, store.user.id)
@@ -76,7 +76,7 @@ export default function MetadataEditor() {
                     store.reRoute(types.TabType.APP.children.PROFILE.fullRoute, store.user.id)
                 }
             }
-            deletePost(post._id)
+            deletePost(id)
         });
     }
 
@@ -89,10 +89,10 @@ export default function MetadataEditor() {
             async function publishPost(id, series) {
                 let res = {}
                 if (store.app === "Comics") {
-                    console.log("Save comic changes")
-                    res = await API.Comic.editMetadata(post._id, postTitle, postDescription, imgURL, postSeries)
+                    console.log("Save comic changes:", post)
+                    res = await API.Comic.editMetadata(id, postTitle, postDescription, imgURL, postSeries)
                 } else {
-                    res = await API.Story.editMetadata(post._id, postTitle, postDescription, imgURL, postSeries)
+                    res = await API.Story.editMetadata(id, postTitle, postDescription, imgURL, postSeries)
                 }
 
                 if (res.status && res.status === 200) {
@@ -108,7 +108,7 @@ export default function MetadataEditor() {
                     }
                 }
             }
-            publishPost(post._id, postSeries)
+            publishPost(id, postSeries)
         });
     }
 
@@ -116,12 +116,21 @@ export default function MetadataEditor() {
         let res = {}
         if (store.app === "Comics") {
             res = await API.Comic.editMetadata(post._id, postTitle, postDescription, imgURL, postSeries)
+            if (res.status && res.status === 200) {
+                store.reRoute(types.TabType.CREATION.children.COMIC.fullRoute, id);
+            }
         } else {
-            res = await API.Story.editMetadata(post._id, postTitle, postDescription, imgURL, postSeries)
-        }
-
-        if (res.status && res.status === 200) {
-            store.reRoute(types.TabType.CREATION.children.COMIC.fullRoute, post._id);
+            try {
+                console.log("postid: ", post._id)
+                res = await API.Story.editMetadata(post._id, postTitle, postDescription, imgURL, postSeries)
+                console.log("metadata response: ", res)
+                if (res.status && res.status === 200) {
+                    store.reRoute(types.TabType.CREATION.children.STORY.fullRoute, id);
+                }
+            }
+            catch (err) {
+                console.log("this errrrrr:", err)
+            }
         }
     }
 

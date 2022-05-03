@@ -861,7 +861,7 @@ API.Story.getProfile = function (id) {
 }
 
 //Upload an image
-API.Common.uploadImage = function(formData){
+API.Common.uploadImage = function (formData) {
     return backend.post('/images/upload', formData, {
         headers: {
             "Content-Type": "multipart/form-data"

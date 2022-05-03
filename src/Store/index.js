@@ -14,7 +14,8 @@ const GlobalStoreActionType = {
     CHANGE_MODAL: "CHANGE_MODAL",
     CHANGE_APP: "CHANGE_APP",
     TOGGLE_LOADING: "TOGGLE_LOADING",
-    UPDATE_USER: "UPDATE_USER"
+    UPDATE_USER: "UPDATE_USER",
+    TOGGLE_FORUM: "TOGGLE_FORUM"
 }
 
 // Setting up the Global Store
@@ -23,7 +24,7 @@ function GlobalStoreContextProvider(props) {
 
     // The global store/state
     const [store, setStore] = useState({
-        app: "Comics",
+        app: JSON.parse(window.localStorage.getItem('app')) || "Comics",
         user: null,
         isLoggedIn: false,
         modal: null,
@@ -96,6 +97,24 @@ function GlobalStoreContextProvider(props) {
                 return setStore({
                     app: store.app,
                     user: payload,
+                    isLoggedIn: store.isLoggedIn,
+                    modal: store.modal,
+                    loading: store.loading,
+                    trigger: true,
+                });
+            }
+
+            case GlobalStoreActionType.TOGGLE_FORUM: {
+                const new_user = store.user;
+
+                if (store.app === 'Comics')
+                    new_user.storyForum = payload;
+                else
+                    new_user.comicForum = payload;
+
+                return setStore({
+                    app: store.app,
+                    user: new_user,
                     isLoggedIn: store.isLoggedIn,
                     modal: store.modal,
                     loading: store.loading,
@@ -184,7 +203,7 @@ function GlobalStoreContextProvider(props) {
 
     store.triggerUserRefresh = async function () {
         console.log("Refreshing the user...");
-        
+
         try {
             const response = await AuthAPI.currentProfile();
 
@@ -252,8 +271,27 @@ function GlobalStoreContextProvider(props) {
             });
         }
         else {
-            console.log("Not supporting stories yet");
-            store.reRoute(types.TabType.CREATION.children.STORY.fullRoute, "SHADOW-IS-CUTE");
+            console.log("Creating a Story");
+
+            try {
+                // Get the id via an api call
+                const response = await API.Story.create("Untitled", "A mysterious story this must be...");
+                console.log("response: ", response)
+
+                if (response.status === 200) {
+                    console.log("ID of the new Story:", response.data, response.data.id);
+
+                    store.reRoute(types.TabType.CREATION.children.STORY.fullRoute, response.data.id);
+                    return;
+                }
+            }
+            catch (err) { }
+
+            // Reach here only on error
+            store.createModal({
+                title: "Error!",
+                body: "There was an error creating the story."
+            });
         }
     }
 
@@ -282,10 +320,12 @@ function GlobalStoreContextProvider(props) {
         if (!store.modal)
             return;
 
-        if (store.modal.specialMode && special)
+        if (store.modal.specialMode && special) {
+            window.localStorage.setItem('app', JSON.stringify((store.app === "Comics") ? "Stories" : "Comics"));
             storeReducer({
                 type: GlobalStoreActionType.CHANGE_APP,
             });
+        }
         else
             storeReducer({
                 type: GlobalStoreActionType.CHANGE_MODAL,
@@ -528,8 +568,6 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.changeEmail = async function (newEmail) {
-
-
         try {
             const response = await AuthAPI.changeEmail(newEmail);
 
@@ -552,17 +590,47 @@ function GlobalStoreContextProvider(props) {
         });
     }
 
+    store.toggleForum = async function () {
+        try {
+            let response;
+
+            if (store.app === 'Comics')
+                response = await API.Comic.toggleForum();
+            else
+                response = await API.Story.toggleForum();
+
+            console.log("Toggle forum response: ", response.status, response.data);
+
+            if (response.status === 200) {
+                const response2 = await API.Comic.getProfile(store.user.id)
+
+                if (response2.status === 200) {
+                    store.updateUser(response2.data);
+                    return;
+                }
+            }
+        }
+        catch (err) {
+            console.log("Error trying to toggle forum: ", err);
+        }
+
+        store.createModal({
+            title: "Error toggling forum"
+        });
+    }
+
     store.changeDisplayName = async function (newDisplayName) {
         try {
             const response = await AuthAPI.updateProfile(store.user.profileImage, newDisplayName, store.user.bio)
 
             if (response.status === 200) {
                 try {
-                    const response2 = await AuthAPI.getProfile(store.user.id)
+                    const response2 = await API.Comic.getProfile(store.user.id)
 
-                    if (response2.status === 200)
+                    if (response2.status === 200) {
                         store.updateUser(response2.data);
-                    return;
+                        return;
+                    }
                 }
                 catch (err) {
                     /* Do nothing - pass error down */
@@ -580,7 +648,7 @@ function GlobalStoreContextProvider(props) {
 
             if (response.status === 200) {
                 try {
-                    const response2 = await AuthAPI.getProfile(store.user.id)
+                    const response2 = await API.Comic.getProfile(store.user.id)
 
                     if (response2.status === 200)
                         store.updateUser(response2.data);
@@ -618,6 +686,47 @@ function GlobalStoreContextProvider(props) {
             storyBeans: 0,
             comicBeans: 0,
         });
+    }
+
+    store.fetchForumPosts = async function (id) {
+        console.log("Trying to fetch the forum posts for user with id:", id);
+
+        try {
+            const response = (store.app === 'Comics') ?
+                await API.Comic.getAllForumPosts(id) :
+                await API.Story.getAllForumPosts(id);
+
+            if (response.status === 200) {
+                return response.data;
+            }
+        }
+        catch (err) { }
+
+        store.createModal({
+            title: "Error fetching the forum posts"
+        });
+
+        return null;
+    }
+
+    store.createForumPost = async function (idOfForumOwner, title, body) {
+        console.log("Trying to create forum post:", idOfForumOwner, title, body);
+        
+        try {
+            const res = (store.app === 'Comics') ?
+                await API.Comic.createForumPost(idOfForumOwner, title, body) :
+                await API.Story.createForumPost(idOfForumOwner, title, body);
+
+            if (res.status === 200) {
+                console.log("Success creating forum post");
+                return true;
+            }
+        }
+        catch (err) { }
+
+        console.error("Error creating a forum post");
+
+        return null;
     }
 
 

@@ -26,4 +26,11 @@ Utils.uploadFile = async function(file){
     
 }
 
+Utils.getId = function(obj) {
+    if (!obj) return null;
+    if (obj.id) return obj.id;
+    if (obj._id) return obj._id;
+    return null
+}
+
 export default Utils;

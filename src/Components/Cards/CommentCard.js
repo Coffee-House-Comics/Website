@@ -26,12 +26,10 @@ export default function CommentCard(props) {
   const currentVote = props.currentVote
   const author = props.author
 
-  const onUpvote = function () {
-    console.log("Up Vote");
-  }
+  const onVoteChange = function (newVote) {
+    console.log("On vote change:", newVote);
 
-  const onDownvote = function () {
-    console.log("Down Vote");
+
   }
 
   const onClickAuthor = function () {
@@ -64,7 +62,7 @@ export default function CommentCard(props) {
         </Grid>
       </Grid>
       <Grid item xs="auto">
-        <BeansButtonPanel onUpvote={onUpvote} onDownvote={onDownvote} numBeans={beanCount} currentVote={currentVote}/>
+        <BeansButtonPanel onVoteChange={onVoteChange} numBeans={beanCount} currentVote={currentVote}/>
       </Grid>
     </Grid>
   </Box>)

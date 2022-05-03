@@ -39,7 +39,7 @@ export default function StoryCreation() {
                     defaultSize={600}
                     resizerStyle={styles}
                 >
-                    <TextEditor currPage={pages[0].title}/>
+                    <TextEditor />
                     <FlowEditor />
                 </SplitPane>
             </StoryStoreContextProvider>

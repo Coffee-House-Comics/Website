@@ -18,7 +18,7 @@ export default function View() {
     //Set the post on first render
     useEffect(() => {
         async function getPost(id) {
-            let resp = (await API.Comic.viewPublished(id))
+            let resp = store.app==='Comics'? await API.Comic.viewPublished(id) : await API.Story.viewPublished(id)
 
             console.log("RESP:", resp)
 
@@ -126,7 +126,7 @@ export default function View() {
             float: "right",
             width: "75%"
         }}>
-            <ContentPanel pages={post.pages}/>
+            <ContentPanel pages={post.pages} flowJSON={store.app === "Comics"? "": post.ReactFlowJSON }/>
         </Box>
     </Box>);
 

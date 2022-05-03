@@ -32,11 +32,22 @@ export default function Settings(props) {
         setSettingsTab(tab);
     }
 
+    const toggleForumHook = function (change) {
+        if (change === 'Enabled') {
+            console.log("Trying to enable for ", store.app);
+        }
+        else {
+            console.log("Trying to disable for ", store.app);
+        }
+
+        store.toggleForum();
+    }
+
     let activeSettingsPage = <ProfileSettings />;
     if (settingsTab === SETTINGS_TAB.ACCOUNT)
         activeSettingsPage = <AccountSettings />;
     else if (settingsTab === SETTINGS_TAB.FORUM)
-        activeSettingsPage = <ForumSettings />;
+        activeSettingsPage = <ForumSettings hook={toggleForumHook} />;
 
 
     // Settings tab component

@@ -40,6 +40,7 @@ export default function ForumPost(props) {
 
   const [enabled, setEnabled] = useState(false);
 
+  console.log("Forum post props:", props);
   const heading = props.heading
   const body = props.body
   const beanCount = props.beanCount
@@ -48,12 +49,8 @@ export default function ForumPost(props) {
   const comments = props.comments
 
 
-  const onUpvote = function () {
-    console.log("Up Vote");
-  }
-
-  const onDownvote = function () {
-    console.log("Down Vote");
+  const onVoteChange = function (newCurrent) {
+    console.log("On vote change (forum post):", newCurrent);
   }
 
   const toggleEnable = function () {
@@ -67,11 +64,10 @@ export default function ForumPost(props) {
   const commentsCards = comments.map((comment, index) =>
     //<ForumPost key={index} heading={post.heading} currentVote={post.currentVote} beanCount={post.beanCount} body={post.body} author={post.author} comments={post.comment}>
     //</ForumPost>
-    <CommentCard key={index} author={comment.author} beanCount={comment.beanCount} currentVote={comment.currentVote} body={comment.body}></CommentCard>
+    <CommentCard key={index} author={comment.author} beanCount={comment.beanCount} currentVote={comment.myVote} body={comment.body}></CommentCard>
   );
 
   return (
-
     <div style={{ marginTop: 20 }}>
       <Accordion expanded={enabled} disableGutters={true} onChange={toggleEnable} sx={{
         width: "100%",
@@ -95,7 +91,7 @@ export default function ForumPost(props) {
             <Grid item xs />
             <Grid item xs="auto">
               <div style={{ backgroundColor: Theme.palette.ivory.main, padding: 5, borderRadius: "10px", marginRight: "20px", opacity: "90%", color: Theme.palette.text.main }}>
-                <BeansButtonPanel onUpvote={onUpvote} onDownvote={onDownvote} numBeans={beanCount} currentVote={currentVote} />
+                <BeansButtonPanel onVoteChange={onVoteChange} numBeans={beanCount} currentVote={currentVote} />
               </div>
             </Grid>
           </Grid>

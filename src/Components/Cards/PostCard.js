@@ -9,6 +9,7 @@ import BeansButtonPanel from '../Buttons/BeansButtonPanel';
 
 import { GlobalStoreContext } from '../../Store';
 import types from '../../Common/Types'
+import Utils from '../../Utils';
 
 export const PostCardHeight = 335;
 export default function PostCard(props) {
@@ -32,11 +33,18 @@ export default function PostCard(props) {
     const handleOpenPost = function () {
         console.log("Post was clicked on and post status:", post.isPublished);
 
+        console.log("Post is", post);
+
+        const id = Utils.getId(post);
+
         if (post.isPublished) {
-            store.reRoute(types.TabType.APP.children.VIEW.fullRoute, post.id);
+            console.log("Showing published with id: ", id);
+            store.reRoute(types.TabType.APP.children.VIEW.fullRoute, id);
         }
         else {
-            store.reRoute(types.TabType.CREATION.children.COMIC.fullRoute, post.id);
+            console.log("Showing unpublished with id: ", id);
+            store.app === "Comics"? store.reRoute(types.TabType.CREATION.children.COMIC.fullRoute, id) :
+                store.reRoute(types.TabType.CREATION.children.STORY.fullRoute, id);
         }
     }
 
@@ -56,14 +64,8 @@ export default function PostCard(props) {
         console.log("Series click")
     }
 
-    //TOOD
-    const handleUpvoteClick = function () {
-        console.log("Upvote click")
-    }
-
-    //TODO
-    const handleDownvoteClick = function () {
-        console.log("Downvote click")
+    const onVoteChange = function (newCurrent) {
+        console.log("On vote change (post card):", newCurrent);
     }
 
     console.log("Making card with post:", post)
@@ -107,7 +109,7 @@ export default function PostCard(props) {
             </Grid>
 
             <Grid>
-                <BeansButtonPanel onUpvote={handleUpvoteClick} onDownvote={handleDownvoteClick} currentVote={currentVote} numBeans={numBeans} />
+                <BeansButtonPanel onVoteChange={onVoteChange} currentVote={currentVote} numBeans={numBeans} />
             </Grid>
         </Grid>
 

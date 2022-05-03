@@ -30,18 +30,14 @@ const EnabledColorButton = styled(Button)(({ theme }) => ({
 }));
 
 
-export default function ForumSettings() {
+export default function ForumSettings({ hook }) {
     const { store } = useContext(GlobalStoreContext);
     const theme = useTheme();
 
-    const triggerChange = function () {
-        console.log("I WANT TO REROUTEEE");
-        window.location.reload(false);
-    }
+    const initialState = Boolean((store.app === 'Comics')?  store.user.comicForum : store.user.storyForum);
+    console.log("Forum settings:", initialState);
 
-    const hardCodedInit = true;
-
-    const [forumText, setForumText] = useState((hardCodedInit) ? 'Enabled' : 'Disabled');
+    const [forumText, setForumText] = useState((initialState) ? 'Enabled' : 'Disabled');
 
     let isEnabled = (forumText === 'Enabled');
 
@@ -55,11 +51,13 @@ export default function ForumSettings() {
 
             store.createModal(metadata, function () {
                 setForumText('Disabled');
+                hook('Disabled');
             })
         }
         else {
             // Enabling doesn't require confirmation
             setForumText('Enabled');
+            hook('Enabled');
         }
     }
 

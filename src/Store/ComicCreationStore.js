@@ -148,16 +148,16 @@ function ComicStoreContextProvider(props) {
 
         try {
             mainStore.toggleLoading();
-            const response = await ComicAPI.editMetaData(store.comicId, name, description, coverPhoto, series);
+            const response = store.app === "Comic"? await ComicAPI.editMetaData(store.comicId, name, description, coverPhoto, series):await StoryAPI.editMetaData(store.comicId, name, description, coverPhoto, series);
             mainStore.toggleLoading();
 
             if(response.status === 200) {
-                mainStore.reRoute(types.TabType.CREATION.children.COMIC.fullRoute.slice(0, -3) + store.comicId);
+                mainStore.reRoute(types.TabType.CREATION.children.COMIC.fullRoute, store.comicId);
             }
         }
 
         catch (err) {
-
+            console.log("errrrrrr:",err)
         }
 
         console.log("Couldn't edit metadata :/");
@@ -178,7 +178,7 @@ function ComicStoreContextProvider(props) {
             mainStore.toggleLoading();
 
             if(response.status === 200) {
-                mainStore.reRoute(types.TabType.APP.children.PROFILE.fullRoute.slice(0, -3) + mainStore.user);
+                mainStore.reRoute(types.TabType.APP.children.PROFILE.fullRoute, mainStore.user);
                 mainStore.createModal({
                     title: "Comic published",
                     body: "Your comic has been succesfully published!",
@@ -238,7 +238,7 @@ function ComicStoreContextProvider(props) {
             if(response.status === 200) {
                 store.changeComicId(response.data.id);
                 store.fetchPages(id);
-                mainStore.reRoute(types.TabType.CREATION.children.COMIC.fullRoute.slice(0, -3) + store.comicId);
+                mainStore.reRoute(types.TabType.CREATION.children.COMIC.fullRoute, store.comicId);
                 return;
             }
         }
