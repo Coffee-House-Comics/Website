@@ -32,6 +32,7 @@ export default function FlowEditor() {
 
     let transactions = [];
     let transactionIndex = -1;
+    let transactionsLastIndex = -1;
 
     function createTransEntry(name, id, before, after) {
     const entry = {
@@ -48,18 +49,17 @@ export default function FlowEditor() {
     }
 
     transactions[++transactionIndex] = entry;
+    transactionsLastIndex = transactionIndex;
     } 
 
     function peekTransStack() {
         return transactions[transactionIndex];
     }
 
-    let undoStack = [];
-
     function clearTransactions() {
-        undoStack = [];
         transactions = [];
         transactionIndex = -1;
+        transactionsLastIndex = -1;
     }
 
 
@@ -144,128 +144,11 @@ export default function FlowEditor() {
             if (transactions.length === 0 || transactionIndex < 0)
                 return
     
-            if (transaction.transactionName === transactionTypes.createLine) {
-                const last = peekSerial();
+            if (transaction.transactionName === transactionTypes.createNode) {
     
-                if (!last)
-                    return;
     
-                //console.log("Setting (from undo) to:", undoStack, serialization);
-                if (serialization.length === 0) {
-                    return;
-                }
-    
-                undoStack = [...undoStack, last];
-    
-                //console.log("Setting (from undo) to:", undoStack, serialization);
-    
+        
                 transactionIndex--;
-    
-                setSerialization(serialization.slice(0, -1));
-            }
-            else if (transaction.transactionName === transactionTypes.createImage) {
-                const last = peekSerial();
-    
-                if (!last)
-                    return
-    
-                undoStack = [...undoStack, last];
-                transactionIndex--;
-    
-                setSerialization(serialization.slice(0, -1));
-            }
-            else if (transaction.transactionName === transactionTypes.moveImage) {
-                const id = transaction.id;
-    
-                const before = transaction.before;
-                const after = transaction.after;
-    
-                console.log("before, after:", before, after);
-    
-                const x = before.x;
-                const y = before.y;
-    
-                // const oldX = after.x;
-                // const oldY = after.y;
-    
-                const elem = serialization[id];
-    
-                if (elem) {
-                    elem.data.x = x;
-                    elem.data.y = y;
-    
-                    serialization.splice(id, 1, elem);
-    
-                    transactionIndex--;
-    
-                    setSerialization(serialization.concat());
-                }
-            }
-            else if (transaction.transactionName === transactionTypes.changeBackgroundColor) {
-                const before = transaction.before;
-                // const after = transaction.after;
-    
-                transactionIndex--;
-    
-                setBackgroundColor(before);
-            }
-            else if (transaction.transactionName === transactionTypes.modifyText) {
-                // console.log("Undo modify text with transaction id", transaction.id)
-                const id = transaction.id;
-    
-                const before = transaction.before;
-                const after = transaction.after;
-    
-                console.log("Before: ", before)
-    
-                const elem = serialization[id];
-    
-                if (elem) {
-                    elem.data = { ...before };
-    
-                    serialization.splice(id, 1, elem);
-                    setFontSize(before.fontSize)
-                    setCurrentTextColor(before.color)
-    
-                    transactionIndex--;
-    
-                    setSerialization(serialization.concat());
-                }
-            } else if (transaction.transactionName === transactionTypes.addText) {
-                const last = peekSerial();
-    
-                if (!last)
-                    return;
-    
-                //console.log("Setting (from undo) to:", undoStack, serialization);
-                if (serialization.length === 0) {
-                    return;
-                }
-    
-                undoStack = [...undoStack, last];
-    
-                //console.log("Setting (from undo) to:", undoStack, serialization);
-    
-                transactionIndex--;
-    
-                setSerialization(serialization.slice(0, -1));
-                setTextEditModeOn(false);
-            } else if (transaction.transactionName === transactionTypes.moveText) {
-                const id = transaction.id;
-    
-                const before = transaction.before;
-                const elem = { ...serialization[id] };
-    
-                if (elem) {
-                    elem.data.x = before.x
-                    elem.data.y = before.y
-    
-                    serialization.splice(id, 1, elem);
-    
-                    transactionIndex--;
-    
-                    setSerialization(serialization.concat());
-                }
             }
             else {
                 console.log("Unsupported transaction");
