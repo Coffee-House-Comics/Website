@@ -77,7 +77,10 @@ export default function ContentPanel({ pages, flowJSON }) {
     const { store } = useContext(GlobalStoreContext);
 
     // AKA the current index
-    const [pageNumber, setPageNumber] = useState(store.app == "Comics" ? 0 : 1);
+    const [pageNumber, setPageNumber] = useState(store.app == "Comics" ? 0 : {
+        'curr': 1,
+        'prev': []
+    });
 
     const ColorButton = styled(Button)(({ theme }) => ({
         color: Colors.ivory,
@@ -106,9 +109,9 @@ export default function ContentPanel({ pages, flowJSON }) {
     }
 
     else {
-        page = flowJSON.nodes[pageNumber].data;
+        page = findNodeFromId(pageNumber.curr);
         outgoingEdges = flowJSON.edges.filter((edge) => {
-            return parseInt(edge.source) === pageNumber + 1;
+            return parseInt(edge.source) === pageNumber.curr;
         });
         decisionButtons = outgoingEdges.map((edge, index) => {
             return (
@@ -136,8 +139,32 @@ export default function ContentPanel({ pages, flowJSON }) {
     }
 
     function clickDecision(targetNode) {
-        console.log("Setting page number to", targetNode - 1);
-        setPageNumber(targetNode - 1);
+        console.log("Setting page number to", targetNode);
+        setPageNumber({
+            'curr': parseInt(targetNode),
+            'prev': [...pageNumber.prev, pageNumber.curr]
+        });
+    }
+
+    function findNodeFromId(nodeId) {
+        let newNode;
+        newNode = flowJSON.nodes.find(node => {
+            if(nodeId === parseInt(node.id)) {
+                return true;
+            }
+        });
+
+        console.log("Found node:", newNode);
+
+        return newNode.data;
+    }
+
+    function previousStoryPage() {
+        console.log("Going back to page", pageNumber.prev);
+        setPageNumber({
+            curr: pageNumber.prev.at(-1),
+            prev: pageNumber.prev.slice(0, -1)
+        })
     }
 
     let pageContent = store.app === "Comics" ?
@@ -220,6 +247,13 @@ export default function ContentPanel({ pages, flowJSON }) {
             </Layer>
         </Stage> :
         <Grid container direction="column" justifyContent="flex-start" alignItems="center" sx={{ height: '100%', paddingLeft: 8, paddingRight: 8, paddingTop: 2, paddingBottom: 2 }}>
+            {pageNumber.prev.length > 0? 
+                <Grid item sx={{alignSelf: 'flex-start'}}>
+                    <IconButton onClick={previousStoryPage}>
+                        <ArrowBackIosIcon fontSize='small' />
+                    </IconButton>
+                </Grid> : <div></div>
+            }
             <Grid item>
                 <Typography variant="h6" sx={{padding:"10px"}}>
                     {page.label}
