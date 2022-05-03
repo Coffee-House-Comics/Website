@@ -76,7 +76,6 @@ export const formats = [
     "bold",
     "italic",
     "underline",
-    "align",
     "strike",
     "script",
     "blockquote",
@@ -85,9 +84,7 @@ export const formats = [
     "bullet",
     "indent",
     "link",
-    "image",
     "color",
-    "code-block"
 ];
 
 // Quill Toolbar component
@@ -129,23 +126,13 @@ export const QuillToolbar = () => (
         <span className="ql-formats">
             <button className="ql-script" value="super" />
             <button className="ql-script" value="sub" />
-            <button className="ql-blockquote" />
-            <button className="ql-direction" />
         </span>
         <span className="ql-formats">
-            <select className="ql-align" />
             <select className="ql-color" />
             <select className="ql-background" />
         </span>
         <span className="ql-formats">
             <button className="ql-link" />
-            <button className="ql-image" />
-            <button className="ql-video" />
-        </span>
-        <span className="ql-formats">
-            <button className="ql-formula" />
-            <button className="ql-code-block" />
-            <button className="ql-clean" />
         </span>
         <span className="ql-formats">
             <button className="ql-undo">
