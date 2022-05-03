@@ -50,12 +50,12 @@ export default function View() {
 
     console.log("******POST:", post)
     let activePanel = <MetadataPanel
-        id={post._id}
+        postId={post._id}
         title={post.name}
         description={post.description}
         contentBeanCount={post.beans}
         author={post.author}
-        authorId={post.authorId}
+        authorId={post.authorID}
     />;
     if (contentTab === CONTENT_TABS.COMMENTS)
         activePanel = <CommentsPanel />;

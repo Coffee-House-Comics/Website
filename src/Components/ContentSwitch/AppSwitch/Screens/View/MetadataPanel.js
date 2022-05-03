@@ -36,21 +36,29 @@ export default function MetadataPanel(props) {
     }, function () {
       async function deletePost(id) {
         console.log("Deleting post with id: ", IDBIndex)
-        if (store.app === "Comics" && await API.Comic.delete(id).status === 200) {
-          alert("Post successfully deleted");
-          store.reRoute(types.TabType.APP.children.PROFILE.fullRoute, store.user.id)
-        } else if (await API.Story.delete(id).status === 200) {
-          alert("Post successfully deleted");
-          store.reRoute(types.TabType.APP.children.PROFILE.fullRoute, store.user.id)
+        if (store.app === "Comics") {
+          let res = await API.Comic.delete(id)
+          if(res.status === 200){
+            alert("Post successfully deleted");
+            store.reRoute(types.TabType.APP.children.PROFILE.fullRoute, store.user.id)
+          } else {
+            alert("Failed to delete comic")
+            console.log(res)
+          }
+        } else {
+          let res = await API.Story.delete(id)
+          if(res.status === 200){
+            alert("Post successfully deleted");
+            store.reRoute(types.TabType.APP.children.PROFILE.fullRoute, store.user.id)
+          } else {
+            alert("Failed to delete story")
+            console.log(res)
+          }
         }
       }
       deletePost(postId)
     });
   }
-
-  console.log("Logged in: ", store.isLoggedIn)
-  console.log("User ID: ", store.user.id)
-  console.log("Author ID: ", authorId)
 
   const deleteButton = (store.isLoggedIn && store.user && store.user.id == authorId) ?
     <Grid item>
