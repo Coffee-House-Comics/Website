@@ -1,5 +1,5 @@
 import ReactFlow, { applyEdgeChanges, applyNodeChanges, MiniMap, Controls, updateEdge, addEdge } from 'react-flow-renderer';
-import React, { useCallback, useContext, useEffect } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { StoryStoreContext } from '../../../../../Store/StoryCreationStore';
 import { GlobalStoreContext } from '../../../../../Store';
 import { Colors } from '../../../../../Common/Theme';
@@ -21,8 +21,10 @@ export default function FlowEditor() {
 
     // Host the nodes and edges locally ------------
     const [nodes, setNodes] = React.useState(null);
+    const nodesRef = useRef(nodes);
 
     const [edges, setEdges] = React.useState(null);
+    const edgesRef = useRef(edges);
 
     const transactionTypes = {
         createNode: "createNode",
@@ -64,10 +66,12 @@ export default function FlowEditor() {
     // Push changes up to the store ------------
     useEffect(function () {
         storyStore.changeNodes(nodes);
+        nodesRef.current = nodes
     }, [nodes]);
 
     useEffect(function () {
         storyStore.changeEdges(edges)
+        edgesRef.current = edges
     }, [edges]);
 
     useEffect(function () {
@@ -118,7 +122,7 @@ export default function FlowEditor() {
 
             const newNode = {
                 id: id,
-                data: { label: 'Untitled', payload: '' },
+                data: { label: 'Untitled', payload: '<p></p>' },
                 position: {
                     x: 0 + Math.random() * 100,
                     y: 0 + Math.random() * 100,
@@ -161,6 +165,8 @@ export default function FlowEditor() {
                 transactionIndex--;
             }
             else if (transaction.transactionName === transactionTypes.deleteNode){
+                console.log("transaction", transaction)
+                console.log("nodes", nodes)
                 setNodes((nodes) => nodes.concat(transaction.before));
                 transactionIndex--;
             }
@@ -244,15 +250,16 @@ export default function FlowEditor() {
         setup();
     }, []);
 
-    const onNodeClick = function (event, node) {
+    const onNodeClick = async function (event, node) {
         // console.log("On node click", node);
 
         const targetNode = storyStore.getNode(node.id, nodes)
 
         console.log("On node click", targetNode);
+        await storyStore.closeEditing()
 
         if (node.id === '1') 
-            return storyStore.closeEditing();
+            return
 
         storyStore.loadNode(node.id, targetNode.data.label, targetNode.data.payload);
     }
@@ -284,14 +291,13 @@ export default function FlowEditor() {
         console.log("node Changes", changes)
          changes.forEach(change => {
              if (change.type === 'remove') {
-                createTransEntry(transactionTypes.deleteNode, change.id, storyStore.getNode(change.id, nodes))
+                createTransEntry(transactionTypes.deleteNode, change.id, storyStore.getNode(change.id, nodesRef.current))
              } else if(change.type === 'position' && change.dragging){
-                const currNode = storyStore.getNode(change.id, nodes);
-                //console.log("change.id", change.id)
-                //console.log("currNode", currNode)
-                //console.log("nodes", nodes)
-                //const reverseChange = {...change,position:currNode.position}
-                const reverseChange = null
+                const currNode = storyStore.getNode(change.id, nodesRef.current);
+                const reverseChange = {
+                    ...change,
+                    position:currNode.position
+                }
                 createTransEntry(transactionTypes.moveNode, change.id, reverseChange, change)
              }
           })
@@ -306,11 +312,10 @@ export default function FlowEditor() {
         console.log("edge Changes", changes)
         changes.forEach(change => {
                 if (change.type === 'remove') {
-                   createTransEntry(transactionTypes.deleteEdge, change.id, storyStore.getEdge(change.id, edges))
+                   createTransEntry(transactionTypes.deleteEdge, change.id, storyStore.getEdge(change.id, edgesRef.current))
                 }
            })
-
-            setEdges((eds) => applyEdgeChanges(changes, eds))
+        setEdges((eds) => applyEdgeChanges(changes, eds))
         },
         [setEdges]
     );
@@ -325,6 +330,7 @@ export default function FlowEditor() {
             connection.style = { strokeWidth: 3 }
             connection.labelBgStyle = { fill: Colors.forest_green_crayola }
             connection.label = "Continue"
+            connection.id = 'e' + connection.source + '-' + connection.target
             createTransEntry(transactionTypes.createEdge, connection.id, connection)
             setEdges((eds) => addEdge(connection, eds))
         },
