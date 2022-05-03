@@ -15,6 +15,7 @@ import { useState, useContext } from 'react';
 import { GlobalStoreContext } from '../../../../../Store';
 import useImage from 'use-image';
 import { Colors } from '../../../../../Common/Theme';
+import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
 
 const editorSize = 800;
 
@@ -76,7 +77,7 @@ export default function ContentPanel({ pages, flowJSON }) {
     const { store } = useContext(GlobalStoreContext);
 
     // AKA the current index
-    const [pageNumber, setPageNumber] = useState(store.app=="Comics"? 0:1);
+    const [pageNumber, setPageNumber] = useState(store.app == "Comics" ? 0 : 1);
 
     const ColorButton = styled(Button)(({ theme }) => ({
         color: Colors.ivory,
@@ -98,19 +99,19 @@ export default function ContentPanel({ pages, flowJSON }) {
 
     // Extract the serialization
 
-    if(store.app === "Comics") {
+    if (store.app === "Comics") {
         page = pages[pageNumber].data;
         backgroundColor = page.backgroundColor;
         serialization = page.serialization;
     }
-    
+
     else {
         page = flowJSON.nodes[pageNumber].data;
         outgoingEdges = flowJSON.edges.filter((edge) => {
             return parseInt(edge.source) === pageNumber + 1;
         });
         decisionButtons = outgoingEdges.map((edge, index) => {
-            return(
+            return (
                 <Grid item key={index}>
                     <ColorButton variant="contained" onClick={() => clickDecision(edge.target)}>{edge.label}</ColorButton>
                 </Grid>
@@ -135,11 +136,11 @@ export default function ContentPanel({ pages, flowJSON }) {
     }
 
     function clickDecision(targetNode) {
-        console.log("Setting page number to", targetNode-1);
+        console.log("Setting page number to", targetNode - 1);
         setPageNumber(targetNode - 1);
     }
 
-    let pageContent = store.app === "Comics"? 
+    let pageContent = store.app === "Comics" ?
         <Stage
             width={editorSize}
             height={editorSize}
@@ -217,10 +218,15 @@ export default function ContentPanel({ pages, flowJSON }) {
                     })
                 }
             </Layer>
-        </Stage> : 
-        <Grid container direction="column" justifyContent="space-around" alignItems="center" sx={{height: '100%', paddingLeft: 8, paddingRight: 8, paddingTop: 2, paddingBottom: 2}}>
-            <Grid item xs='auto' sx={{ flexWrap: 'wrap', alignSelf: 'flex-start'}}>
-                {page.payload}
+        </Stage> :
+        <Grid container direction="column" justifyContent="flex-start" alignItems="center" sx={{ height: '100%', paddingLeft: 8, paddingRight: 8, paddingTop: 2, paddingBottom: 2 }}>
+            <Grid item>
+                <Typography variant="h6" sx={{padding:"10px"}}>
+                    {page.label}
+                </Typography>
+            </Grid>
+            <Grid item xs sx={{ flexWrap: 'wrap', alignSelf: 'flex-start', marginTop: "5px"}}>
+                <div>{ReactHtmlParser(page.payload)}</div>
             </Grid>
             <Grid item container direction="row" xs={2} spacing={2} justifyContent="space-evenly" alignItems="center">
                 {decisionButtons}
@@ -234,11 +240,11 @@ export default function ContentPanel({ pages, flowJSON }) {
                 display: "flex",
                 justifyContent: "center"
             }}>
-                <div style={{ backgroundColor: "white", height: editorSize + "px", width: editorSize + "px", border: "3px solid " + theme.palette.olive_drab_7.main, borderRadius: "5px", }}>
+                <div style={{ backgroundColor: "white", height: editorSize + "px", width: editorSize + "px", border: "3px solid " + theme.palette.olive_drab_7.main, borderRadius: "5px", marginBottom: "20px"}}>
                     {pageContent}
                 </div>
             </div>
-            {store.app === "Comics"? 
+            {store.app === "Comics" ?
                 <Grid container direction="row" justifyContent="center" alignItems="center" spacing={1} sx={{ height: "100px" }}>
                     <Grid item>
                         <IconButton onClick={previousPage}>
@@ -253,8 +259,8 @@ export default function ContentPanel({ pages, flowJSON }) {
                             <ArrowForwardIosIcon fontSize='large' />
                         </IconButton>
                     </Grid>
-                </Grid>: 
-                <div/>
+                </Grid> :
+                <div />
             }
         </div>
     )
