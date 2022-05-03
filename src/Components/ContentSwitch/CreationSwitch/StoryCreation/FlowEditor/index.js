@@ -8,6 +8,10 @@ import API from '../../../../../API';
 import { Typography } from '@mui/material';
 
 
+let transactions = [];
+let transactionIndex = -1;
+let transactionsLastIndex = -1;
+
 export default function FlowEditor() {
     const { storyStore } = React.useContext(StoryStoreContext);
 
@@ -25,14 +29,8 @@ export default function FlowEditor() {
         createEdge: "createEdge",
         deleteNode: "deleteNode",
         deleteEdge: "deleteEdge",
-        renameNode: "renameNode",
-        renameEdge: "renameEdge",
         moveNode: "moveNode",
     };
-
-    let transactions = [];
-    let transactionIndex = -1;
-    let transactionsLastIndex = -1;
 
     function createTransEntry(name, id, before, after) {
     const entry = {
@@ -129,13 +127,14 @@ export default function FlowEditor() {
 
             storyStore.toggleTrigger();
 
-            createTransEntry(transactionTypes.createNode, id)
+            createTransEntry(transactionTypes.createNode, id, newNode)
             setNodes((nodes) => nodes.concat(newNode));
         }
     }, [storyStore.triggerNewNode]);
 
     useEffect(function () {
         if(storyStore.triggerUndo){
+            console.log("UNDOING");
             const transaction = peekTransStack();
         
             if (!transaction)
@@ -145,10 +144,77 @@ export default function FlowEditor() {
                 return
     
             if (transaction.transactionName === transactionTypes.createNode) {
+                const change = {
+                    id: transaction.id,
+                    type: 'remove'
+                };
     
-    
-        
+                setNodes((nds) => applyNodeChanges([change], nds));
                 transactionIndex--;
+            } else if (transaction.transactionName === transactionTypes.createEdge){
+                const change = {
+                    id: transaction.id,
+                    type: 'remove'
+                };
+    
+                setEdges((eds) => applyEdgeChanges(changes, eds))
+                transactionIndex--;
+            }
+            else if (transaction.transactionName === transactionTypes.deleteNode){
+                setNodes((nodes) => nodes.concat(transaction.before));
+                transactionIndex--;
+            }
+            else if (transaction.transactionName === transactionTypes.deleteEdge){
+                setEdges((eds) => addEdge(transaction.before, eds))
+                transactionIndex--;
+            }
+            else if (transaction.transactionName === transactionTypes.moveNode){
+                setNodes((nds) => applyNodeChanges([transaction.before], nds));
+                transactionIndex--;
+            }
+            else {
+                console.log("Unsupported transaction");
+            }
+
+            storyStore.toggleUndo();
+        }
+    }, [storyStore.triggerUndo]);
+
+
+    useEffect(function () {
+        if(storyStore.triggerRedo){
+            console.log("REDOING");
+        
+            if (transactionIndex >= transactionsLastIndex)
+                return;
+
+            transactionIndex++;
+            const transaction = peekTransStack();
+
+            if (!transaction)
+                return;
+    
+            if (transactions.length === 0 || transactionIndex < 0)
+                return  
+    
+            if (transaction.transactionName === transactionTypes.createNode) {
+                setNodes((nodes) => nodes.concat(transaction.before));
+            } else if (transaction.transactionName === transactionTypes.createEdge){
+                const change = {
+                    id: transaction.id,
+                    type: 'remove'
+                };
+    
+                setEdges((eds) => applyEdgeChanges(changes, eds))
+            }
+            else if (transaction.transactionName === transactionTypes.deleteNode){
+                setNodes((nodes) => nodes.concat(transaction.before));
+            }
+            else if (transaction.transactionName === transactionTypes.deleteEdge){
+                setEdges((eds) => addEdge(transaction.before, eds))
+            }
+            else if (transaction.transactionName === transactionTypes.moveNode){
+                setNodes((nds) => applyNodeChanges([transaction.before], nds));
             }
             else {
                 console.log("Unsupported transaction");
@@ -216,10 +282,10 @@ export default function FlowEditor() {
                 createTransEntry(transactionTypes.deleteNode, change.id, storyStore.getNode(change.id, nodes))
              } else if(change.type === 'position' && change.dragging){
                 const currNode = storyStore.getNode(change.id, nodes);
-                const reverseChange = {
-                    ...change,
-                    position:currNode.position
-                }
+                //console.log("change.id", change.id)
+                //console.log("currNode", currNode)
+                //console.log("nodes", nodes)
+                //const reverseChange = {...change,position:currNode.position}
                 createTransEntry(transactionTypes.moveNode, change.id, reverseChange, change)
              }
           })
