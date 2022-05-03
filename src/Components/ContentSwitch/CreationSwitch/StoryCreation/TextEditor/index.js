@@ -8,8 +8,8 @@ import { GlobalStoreContext } from '../../../../../Store';
 import types from '../../../../../Common/Types';
 import { useParams } from 'react-router-dom';
 import API from '../../../../../API';
-
-
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 export default function TextEditor() {
     const [editorState, setEditorState] = useState(EditorState.createEmpty());
@@ -103,8 +103,9 @@ export default function TextEditor() {
         />
     </Grid>
 
-    let bodyField = <Grid item>
-        <TextField
+
+    /*
+            <TextField
             onChange={(e) => { storyStore.updateBody(e.target.value) }}
             value={storyStore.elementBody}
             size="small"
@@ -115,6 +116,12 @@ export default function TextEditor() {
                 mr: 1,
                 width: "100%",
             }} />
+    */
+    let bodyField = <Grid item>
+
+        <ReactQuill value={storyStore.elementBody}
+                  onChange={(value) => { storyStore.updateBody(value) }} />
+
     </Grid>
 
     return (
