@@ -157,7 +157,7 @@ export default function FlowEditor() {
                     type: 'remove'
                 };
     
-                setEdges((eds) => applyEdgeChanges(changes, eds))
+                setEdges((eds) => applyEdgeChanges([change], eds))
                 transactionIndex--;
             }
             else if (transaction.transactionName === transactionTypes.deleteNode){
@@ -205,7 +205,7 @@ export default function FlowEditor() {
                     type: 'remove'
                 };
     
-                setEdges((eds) => applyEdgeChanges(changes, eds))
+                setEdges((eds) => applyEdgeChanges([change], eds))
             }
             else if (transaction.transactionName === transactionTypes.deleteNode){
                 setNodes((nodes) => nodes.concat(transaction.before));
@@ -286,6 +286,7 @@ export default function FlowEditor() {
                 //console.log("currNode", currNode)
                 //console.log("nodes", nodes)
                 //const reverseChange = {...change,position:currNode.position}
+                const reverseChange = null
                 createTransEntry(transactionTypes.moveNode, change.id, reverseChange, change)
              }
           })
