@@ -10,6 +10,8 @@ import { useParams } from 'react-router-dom';
 import API from '../../../../../API';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import Editor from "./Editor";
+
 
 export default function TextEditor() {
     const [editorState, setEditorState] = useState(EditorState.createEmpty());
@@ -119,8 +121,7 @@ export default function TextEditor() {
     */
     let bodyField = <Grid item>
 
-        <ReactQuill value={storyStore.elementBody}
-                  onChange={(value) => { storyStore.updateBody(value) }} />
+        <Editor></Editor>
 
     </Grid>
 
