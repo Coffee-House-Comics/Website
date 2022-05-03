@@ -43,7 +43,7 @@ export default function PostCard(props) {
         }
         else {
             console.log("Showing unpublished with id: ", id);
-            store.app === "Comics"? store.reRoute(types.TabType.CREATION.children.COMIC.fullRoute, id) :
+            store.app === "Comics" ? store.reRoute(types.TabType.CREATION.children.COMIC.fullRoute, id) :
                 store.reRoute(types.TabType.CREATION.children.STORY.fullRoute, id);
         }
     }
@@ -130,7 +130,13 @@ export default function PostCard(props) {
                 {/* Cover image */}
                 <Grid item>
                     {/* TODO: Change this to cover image */}
-                    <img src={post.coverPhoto} height="250px" width="200px" style={{ objectFit: "cover" }} />
+
+                    {
+                        (post.isPublished) ?
+                            <img src={post.coverPhoto} height="250px" width="200px" style={{ objectFit: "cover" }} />
+                            :
+                            <img src={"/Images/construction.png"} height="250px" width="200px" style={{ objectFit: "cover", background: `url(${post.coverPhoto})` }} />
+                    }
                 </Grid>
                 <Grid container direction="row" justifyContent="space-between">
                     {/* Metadata panel */}

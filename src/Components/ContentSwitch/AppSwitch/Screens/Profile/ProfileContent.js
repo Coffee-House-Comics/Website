@@ -20,42 +20,38 @@ export default function ProfileContent({ user, seriesArray }) {
         return <Typography>This user has no published content</Typography>
 
 
-    console.log(seriesArray);
+    console.log("SA:", seriesArray);
 
-    const unPublishedContent = seriesArray.filter(elem => {
-        console.log("ELEM:", elem);
-        return !elem.isPublished;
-    });
+    const seriesContent = [];
+    const nonSeriesContentFilter = [];
 
-    console.log(unPublishedContent);
-
-    const seriesContent = seriesArray.filter(elem => {
-        console.log(elem);
-
-        return elem.name !== "";
-    });
-
-    const nonSeriesContentFilter = seriesArray.filter(elem => {
-        return (elem.name === "" || elem.name === null);
+    seriesArray.forEach(elem => {
+        if (elem.name)
+            seriesContent.push(elem);
+        else
+            nonSeriesContentFilter.push(elem);
     });
 
     const nonSeriesContent = (nonSeriesContentFilter.length === 1) ? nonSeriesContentFilter[0].posts : null;
 
-    console.log("RES:", seriesContent, nonSeriesContentFilter, nonSeriesContent);
+    console.log("RES:", seriesContent, nonSeriesContent);
 
     /**
      * Format:
      *    [PostMetadata]
      */
-    // let nonSeriesContent = testStories;
 
     //Build post sections for series
-    let seriesSections = seriesContent.map((series, index) => {
-        console.log("mm:", series)
+    let seriesSections = (seriesContent) ?
+        (
+            seriesContent.map((series, index) => {
+                console.log("mm:", series)
 
-        return <PostsSection key={index} name={series.name} posts={series.posts} />
-    }
-    );
+                return <PostsSection key={index} name={series.name} posts={series.posts} />
+            }
+            )
+        )
+        : "";
 
     //Build section for non-series content
     let nonSeriesSection = (nonSeriesContent) ?
