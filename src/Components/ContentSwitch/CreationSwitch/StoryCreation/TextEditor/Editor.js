@@ -4,6 +4,7 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { StoryStoreContext } from '../../../../../Store/StoryCreationStore';
 import { Quill } from "react-quill";
+import { Typography } from "@mui/material";
 
 // Add sizes to whitelist and register them
 const Size = Quill.import("formats/size");
@@ -127,23 +128,30 @@ export const Editor = () => {
         storyStore.updateBody(value)
     };
 
-    function undoChange() {
+    const undoChange = function () {
+        console.log("Entering undo...");
         console.log("Trying Quill Undo", this.quill.history);
         const myEditor = reactQuillRef.getEditor();
-        this.myEditor.history.undo();
-    }
-    function redoChange() {
-        console.log("Trying Quill Redo", this.quill.history);
-        const myEditor = reactQuillRef.getEditor();
-        this.myEditor.history.redo();
+        console.log("MY EDITOR:", myEditor);
+        myEditor.history.undo();
     }
 
+    const redoChange = function () {
+        console.log("Entering redo...");
+        console.log("Trying Quill Redo", this.quill.history);
+        const myEditor = reactQuillRef.getEditor();
+        myEditor.history.redo();
+    }
+
+    if (!state.value)
+        return (<Typography>Loading...</Typography>);
 
     return (
         <div className="text-editor">
             <QuillToolbar />
             <ReactQuill
-                ref={(el) => { reactQuillRef = el }}
+                // ref={(el) => { reactQuillRef = el }}
+                ref={reactQuillRef}
                 theme="snow"
                 value={state.value}
                 onChange={handleChange}
