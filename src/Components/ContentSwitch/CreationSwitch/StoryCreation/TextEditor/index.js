@@ -33,10 +33,10 @@ export default function TextEditor() {
 
     // console.log("Current mode here:", storyStore.mode);
 
-    const saveHook = function () {
+    const saveHook = async function () {
         console.log("Saving...");
 
-        storyStore.save();
+        await storyStore.save();
         /*if (pageIndex === -1) {
             console.log("Saving sticker...");
 
@@ -60,12 +60,12 @@ export default function TextEditor() {
         pushToServer(pagesData);*/
     }
 
-    const metadataHook = function () {
+    const metadataHook = async function () {
 
         console.log("Trying to access metadata edit page")
 
         //TODO: Set ID
-        saveHook();
+        await saveHook();
         store.reRoute(types.TabType.CREATION.children.METADATA.fullRoute, id);
     }
 
