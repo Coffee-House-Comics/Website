@@ -19,7 +19,7 @@ export const Editor = () => {
             <EditorToolbar />
             <ReactQuill
                 theme="snow"
-                value={state.value}
+                defaultValue={state.value}
                 onChange={handleChange}
                 placeholder={"Type page body here..."}
                 modules={modules}
