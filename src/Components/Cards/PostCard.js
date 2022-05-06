@@ -89,7 +89,7 @@ export default function PostCard(props) {
                 : ""
             }
             {/* TODO: Author */}
-            <AuthorButton onClick={handleAuthorClick} author={{ name: post.author, profileImage: post.coverPhoto }} />
+            <AuthorButton onClick={handleAuthorClick} author={{ name: post.author, profileImage: post.authorImage }} />
         </Grid>
 
     const bookmarkButton = <IconButton onClick={handleBookmarkClick} aria-label="bookmark" size="small">
