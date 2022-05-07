@@ -199,6 +199,52 @@ function GlobalStoreContextProvider(props) {
         store.createModal(metadata, function () {
             store.reRoute("/");
         }, true);
+    };
+
+    store.isUserSubscribed = function (userID) {
+        console.log("Getting if user is subscribed:", userID, store.user.comicSubscriptions, store.user.storySubscriptions);
+
+        if (!store.user || !store.user.comicSubscriptions || !store.user.storySubscriptions)
+            return false;
+
+        console.log("Searching...");
+
+        const whichSub = (store.app === 'Comics')? store.user.comicSubscriptions : store.user.storySubscriptions;
+
+        const reduced = whichSub.filter(elem => {
+            return elem === userID;
+        })
+
+        console.log("RES:", reduced, reduced.length);
+
+        return reduced.length > 0;
+    };
+
+    store.subscribeToUser = async function (subscribed, userID) {
+        if (!store.user)
+            return false;
+
+        try {
+            let res = null;
+            if (store.app === 'Comics') {
+                res = (subscribed) ? await API.Comic.subscribe(userID) : await API.Comic.unsubscribe(userID);
+            }
+            else {
+                res = (subscribed) ? await API.Story.subscribe(userID) : await API.Story.unsubscribe(userID);
+            }
+
+            if (res.status === 200) {
+                const response2 = await AuthAPI.currentProfile(store.user.id)
+
+                if (response2.status === 200) {
+                    store.updateUser(response2.data);
+                    return true;
+                }
+            }
+        }
+        catch (err) { console.error("Error subscribing to user:", err) }
+
+        return false;
     }
 
     store.triggerUserRefresh = async function () {
@@ -625,7 +671,7 @@ function GlobalStoreContextProvider(props) {
 
             if (response.status === 200) {
                 try {
-                    const response2 = await API.Comic.getProfile(store.user.id)
+                    const response2 = await AuthAPI.currentProfile(store.user.id)
 
                     if (response2.status === 200) {
                         store.updateUser(response2.data);
@@ -648,7 +694,7 @@ function GlobalStoreContextProvider(props) {
 
             if (response.status === 200) {
                 try {
-                    const response2 = await API.Comic.getProfile(store.user.id)
+                    const response2 = await AuthAPI.currentProfile(store.user.id)
 
                     if (response2.status === 200)
                         store.updateUser(response2.data);
@@ -711,7 +757,7 @@ function GlobalStoreContextProvider(props) {
 
     store.createForumPost = async function (idOfForumOwner, title, body) {
         console.log("Trying to create forum post:", idOfForumOwner, title, body);
-        
+
         try {
             const res = (store.app === 'Comics') ?
                 await API.Comic.createForumPost(idOfForumOwner, title, body) :

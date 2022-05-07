@@ -26,7 +26,7 @@ export default function PostCard(props) {
     //TOOD
     let numBeans = Math.floor(Math.random() * 1000);
 
-    const imgSrc = "/Images/coffee" + (Math.floor(Math.random() * 6)) + ".jpg"
+    // const imgSrc = "/Images/coffee" + (Math.floor(Math.random() * 6)) + ".jpg"
 
 
     // TODO:
@@ -71,6 +71,8 @@ export default function PostCard(props) {
     console.log("Making card with post:", post)
 
 
+    console.log("Post author image:", post.authorImage);
+
     const metaPanel =
         <Grid container direction="column" justifyContent="space-between" alignItems="flex-start" height="100%">
             {/* Title, Series, and Author */}
@@ -97,8 +99,6 @@ export default function PostCard(props) {
             ? <BookmarkIcon fontSize="small" />
             : <BookmarkBorderIcon fontSize="small" />
             : <BookmarkBorderIcon fontSize="small" sx={{ opacity: 0 }} />
-        }
-        {
         }
     </IconButton>
 

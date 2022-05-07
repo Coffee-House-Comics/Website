@@ -6,6 +6,7 @@ import { useTheme } from '@mui/material/styles';
 import CoffeeIcon from '@mui/icons-material/Coffee';
 import styled from '@emotion/styled';
 import { GlobalStoreContext } from '../../Store';
+import Utils from '../../Utils';
 
 export default function ProfileCard(props) {
     const { user } = props;
@@ -32,8 +33,26 @@ export default function ProfileCard(props) {
         }
     }));
 
+    const onSubscribe = function (subscribed) {
+        console.log("User pressed subscribed:", subscribed);
+
+        store.subscribeToUser(subscribed, Utils.getId(user));
+    }
+
+    const subButton = (store.user) ? (
+        (!store.isUserSubscribed(Utils.getId(user))) ?
+            <SubscribeButton sx={{ width: "100%" }} onClick={() => onSubscribe(true)} variant="contained" color="cg_blue">
+                SUBSCRIBE
+            </SubscribeButton>
+            :
+            <SubscribeButton sx={{ width: "100%" }} onClick={() => onSubscribe(false)} variant="contained" color="forest_green_crayola">
+                UNSUBSCRIBE
+            </SubscribeButton>
+    )
+        : "";
+
     const profileStatistics =
-        <Grid container direction="column" justifyContent="flex-start" alignItems="flex-start" width="100%" sx={{border: "0px solid black", borderRadius:"4px", marginTop: "10px", marginBottom: "10px", padding: "10px"}}>
+        <Grid container direction="column" justifyContent="flex-start" alignItems="flex-start" width="100%" sx={{ border: "0px solid black", borderRadius: "4px", marginTop: "10px", marginBottom: "10px", padding: "10px" }}>
             <Grid item width="100%">
                 <Grid container direction="row" justifyContent="space-evenly" alignItems="center">
                     <Grid item>
@@ -158,9 +177,7 @@ export default function ProfileCard(props) {
                 justifyContent: "center",
                 paddingBottom: "40px",
             }}>
-                <SubscribeButton sx={{width:"100%"}} variant="contained" color="cg_blue">
-                    SUBSCRIBE
-                </SubscribeButton>
+                {subButton}
             </Box>
         </div>
     )
