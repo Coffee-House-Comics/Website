@@ -58,7 +58,7 @@ export default function View() {
         authorId={post.authorID}
     />;
     if (contentTab === CONTENT_TABS.COMMENTS)
-        activePanel = <CommentsPanel />;
+        activePanel = <CommentsPanel postId={post._id} commentsProp={post.comments}/>;
 
     const lineCss = "3px solid " + theme.palette.coffee.main;
 

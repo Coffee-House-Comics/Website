@@ -14,6 +14,7 @@ export default function AddCommentCard({ hook, text, sx }) {
         }
 
         if (hook) {
+            setCurrentText("");
             hook(currentText);
         }
     }
@@ -35,6 +36,7 @@ export default function AddCommentCard({ hook, text, sx }) {
                             <TextField multiline={true}
                                 placeholder={"Enter your text here..."}
                                 onChange={(e) => { setCurrentText(e.target.value) }}
+                                value={currentText}
                                 sx={{
                                     bgcolor: "white",
                                     borderRadius: 1,

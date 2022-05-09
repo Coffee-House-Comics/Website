@@ -15,16 +15,19 @@ import AuthorButton from '../Buttons/AuthorButton';
  *      name: String,
  *  },
  * 
- *  beanCount: Number,
+ *  beans: Number,
  *  currentVote: Number,
- *  body: String
+ *  text: String
  */
 export default function CommentCard(props) {
 
-  const body = props.body
-  const beanCount = props.beanCount
-  const currentVote = props.currentVote
-  const author = props.author
+  const text = props.text
+  const beans = props.beans
+  const currentVote = -1;
+  const author = {
+    _id: props.ownerId,
+    name: props.user 
+  }
 
   const onVoteChange = function (newVote) {
     console.log("On vote change:", newVote);
@@ -56,13 +59,13 @@ export default function CommentCard(props) {
           </Grid>
           <Grid item>
             <Typography>
-              {body}
+              {text}
             </Typography>
           </Grid>
         </Grid>
       </Grid>
       <Grid item xs="auto">
-        <BeansButtonPanel onVoteChange={onVoteChange} numBeans={beanCount} currentVote={currentVote}/>
+        <BeansButtonPanel onVoteChange={onVoteChange} numBeans={beans} currentVote={currentVote}/>
       </Grid>
     </Grid>
   </Box>)
