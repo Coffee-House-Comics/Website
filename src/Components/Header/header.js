@@ -15,6 +15,7 @@ function Header(props) {
 
     const { store } = useContext(GlobalStoreContext);
     const theme = useTheme();
+    const [ searchText, setSearchText ] = useState("")
 
     const appTabs = types.TabType.APP;
     const authTabs = types.TabType.AUTH;
@@ -72,14 +73,18 @@ function Header(props) {
         }
     };
 
-    // TODO:
     const handleSearchButtonClick = function () {
-
+        if(searchText){
+            store.reRoute(types.TabType.APP.children.SEARCH.fullRoute, searchText)
+        }
     }
 
-    // TODO:
-    const handleSearchTextChange = function () {
-
+    const handleSearchTextChange = function (e) {
+        if(e.target.value.includes("\n")){
+            handleSearchButtonClick()
+        } else {
+            setSearchText(e.target.value)
+        }
     }
 
     const handleCreateAppPost = function () {
@@ -191,6 +196,7 @@ function Header(props) {
             onChange={handleSearchTextChange}
             size="small"
             variant="outlined"
+            value={searchText}
             sx={{
                 width: "100%",
                 backgroundColor: "rgba(255,255,255,0.2)",

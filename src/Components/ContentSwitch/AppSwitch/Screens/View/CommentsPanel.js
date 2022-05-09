@@ -7,77 +7,48 @@ import {
 import { useTheme } from '@mui/material/styles';
 import CommentCard from '../../../../Cards/CommentCard';
 import AddCommentCard from '../../../../Cards/AddCommentCard';
+import API from '../../../../../API';
+import { GlobalStoreContext } from '../../../../../Store';
+import types from '../../../../../Common/Types';
 
-export default function CommentsPanel() {
+export default function CommentsPanel({postId, commentsProp}) {
 
   const theme = useTheme();
 
-  //TODO get comments
-   const comments = [
-    {author: {
-      _id: 123,
-      name: "Shangela"
-    }, 
-    beanCount: 8000,
-    currentVote: 0,
-    body: "Slay the house down, Krtek"},
-    {author: {
-      _id: 456,
-      name: "Ben De La Creme"
-    }, 
-    beanCount: 457,
-    currentVote: 0,
-    body: "This is not a serve"},
-    {author: {
-      _id: 789,
-      name: "Trixie"
-    }, 
-    beanCount: 332,
-    currentVote: 1,
-    body: "Krtek is trade"},
-    {author: {
-      _id: 123,
-      name: "Shangela"
-    }, 
-    beanCount: 8000,
-    currentVote: 0,
-    body: "Slay the house down, Krtek"},
-    {author: {
-      _id: 456,
-      name: "Ben De La Creme"
-    }, 
-    beanCount: 457,
-    currentVote: 0,
-    body: "This is not a serve"},
-    {author: {
-      _id: 789,
-      name: "Trixie"
-    }, 
-    beanCount: 332,
-    currentVote: 1,
-    body: "Krtek is trade"},
-    {author: {
-      _id: 123,
-      name: "Shangela"
-    }, 
-    beanCount: 8000,
-    currentVote: 0,
-    body: "Slay the house down, Krtek"},
-    {author: {
-      _id: 456,
-      name: "Ben De La Creme"
-    }, 
-    beanCount: 457,
-    currentVote: 0,
-    body: "This is not a serve"},
-    {author: {
-      _id: 789,
-      name: "Trixie"
-    }, 
-    beanCount: 332,
-    currentVote: 1,
-    body: "Krtek is trade"}
-  ]
+  const [comments, setComments] = React.useState(commentsProp);
+
+  const {store} = React.useContext(GlobalStoreContext);
+
+  const submitCommentHook = async function(commentText) {
+    try {
+      const id = postId;
+      const res = store.app == "Comics"? await API.Comic.comment(id, commentText) : await API.Story.comment(id, commentText);
+
+      if(res.status === 200) {
+        console.log("Comment submitted", commentText);
+
+        let res2 = store.app==='Comics'? await API.Comic.viewPublished(id) : await API.Story.viewPublished(id);
+        if(res2.error) {
+          store.reRoute(types.TabType.APP.children.VIEW.fullRoute, id);
+        }
+
+        setComments(res2.data.content.comments);
+      }
+
+      else {
+        console.log("Failed to submit comment. Error:", res.error);
+        store.createModal({
+          title: "Error submitting comment",
+          body: "Comment could not be submitted. Please try again.",
+          action: ""
+        });
+      }
+    }
+
+    catch (err) {
+      console.log(err);
+    }
+  }
 
   const commentComponents = comments.map((comment, index) => {
     return(<Grid item key={index}>
@@ -95,7 +66,7 @@ export default function CommentsPanel() {
           </Grid>
         </div>
       </div>
-      <AddCommentCard/>
+      <AddCommentCard hook={submitCommentHook}/>
     </div>
   )
 }
