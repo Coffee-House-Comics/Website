@@ -14,6 +14,7 @@ import {
     Explore,
     Profile,
     Subscriptions,
+    Search,
     View
 } from './AppSwitch';
 
@@ -41,6 +42,7 @@ function ContentSwitch() {
                 <Route path={types.TabType.APP.route}>
                     <Route path={appChildren.EXPLORE.route} element={<Explore />} />
                     <Route path={appChildren.SUBSCRIPTIONS.route} element={<Subscriptions />} />
+                    <Route path={appChildren.SEARCH.route} element={<Search/>}/>
                     <Route path={appChildren.VIEW.route} element={<View />} />
                     <Route path={appChildren.PROFILE.route} element={<Profile />} />
                 </Route>
