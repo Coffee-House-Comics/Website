@@ -16,16 +16,12 @@ import API from '../../../../../API'
 
 
 export default function MetadataPanel(props) {
-    const { postId, title, description, contentBeanCount, author, authorId } = props;
+    const { postId, title, description, contentBeanCount, author, authorId, myVote} = props;
     const theme = useTheme();
     const { store } = useContext(GlobalStoreContext);
 
     //TODO get proper values
     let userBeanCount = 25;
-
-    //TODO change values
-    let currentVote = 0;
-    let numBeans = 8;
 
   const handleDeleteButtonClick = function () {
     console.log("Delete button clicked");
@@ -69,6 +65,11 @@ export default function MetadataPanel(props) {
 
     const onVoteChange = function (newCurrent) {
         console.log("Con vote Change (metadata panel):", newCurrent);
+        if (store.app === "Comics") {
+          API.Comic.vote(postId, newCurrent);
+        }else{
+          API.Story.vote(postId, newCurrent);
+        }
     }
 
     return (
@@ -88,7 +89,7 @@ export default function MetadataPanel(props) {
                     <Typography sx={{ marginTop: '10px' }}>{description}</Typography>
                 </Grid>
                 <Grid item>
-                    <BeansButtonPanel onVoteChange={onVoteChange} numBeans={contentBeanCount} currentVote={currentVote} />
+                    <BeansButtonPanel onVoteChange={onVoteChange} numBeans={contentBeanCount} currentVote={myVote} />
                 </Grid>
                 <Grid item>
                     {deleteButton}
