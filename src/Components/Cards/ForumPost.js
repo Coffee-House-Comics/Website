@@ -64,7 +64,7 @@ export default function ForumPost(props) {
   const commentsCards = comments.map((comment, index) =>
     //<ForumPost key={index} heading={post.heading} currentVote={post.currentVote} beanCount={post.beanCount} body={post.body} author={post.author} comments={post.comment}>
     //</ForumPost>
-    <CommentCard key={index} author={comment.author} beanCount={comment.beanCount} currentVote={comment.myVote} body={comment.body}></CommentCard>
+    <CommentCard key={index} user={comment.user} _id={comment._id} beans={comment.beans} currentVote={comment.myVote} text={comment.text}></CommentCard>
   );
 
   return (

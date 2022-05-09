@@ -52,7 +52,7 @@ export default function CommentsPanel({postId, commentsProp}) {
 
   const commentComponents = comments.map((comment, index) => {
     return(<Grid item key={index}>
-      <CommentCard {...comment}></CommentCard>
+      <CommentCard {...comment} postId={postId}></CommentCard>
       <hr style={{color:"gray", marginInline: 10}}/>
     </Grid>)
   });
