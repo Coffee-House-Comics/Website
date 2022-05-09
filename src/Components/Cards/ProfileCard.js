@@ -20,8 +20,8 @@ export default function ProfileCard(props) {
     let displayName = user.displayName;
     let comicBeans = user.comicBeans;
     let storyBeans = user.storyBeans;
-    let comicSubscribers = user.comicSubscribers;
-    let storySubscribers = user.storySubscribers;
+    // let comicSubscribers = user.comicSubscribers;
+    // let storySubscribers = user.storySubscribers;
     let description = user.bio;
     let profileImage = user.profileImage;
 
@@ -72,7 +72,7 @@ export default function ProfileCard(props) {
                                     </Grid>
                                 </Grid>
                             </Grid>
-                            <Grid item>
+                            {/* <Grid item>
                                 <Grid container direction="row" justifyContent="center" alignItems="center">
                                     <Grid item>
                                         <PersonIcon />
@@ -81,7 +81,7 @@ export default function ProfileCard(props) {
                                         <Typography variant="caption">{comicSubscribers}</Typography>
                                     </Grid>
                                 </Grid>
-                            </Grid>
+                            </Grid> */}
                         </Grid>
                     </Grid>
                 </Grid>
@@ -105,7 +105,7 @@ export default function ProfileCard(props) {
                                     </Grid>
                                 </Grid>
                             </Grid>
-                            <Grid item>
+                            {/* <Grid item>
                                 <Grid container direction="row" justifyContent="center" alignItems="center">
                                     <Grid item>
                                         <PersonIcon />
@@ -114,7 +114,7 @@ export default function ProfileCard(props) {
                                         <Typography variant="caption">{storySubscribers}</Typography>
                                     </Grid>
                                 </Grid>
-                            </Grid>
+                            </Grid> */}
                         </Grid>
                     </Grid>
                 </Grid>

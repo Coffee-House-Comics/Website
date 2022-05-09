@@ -56,6 +56,7 @@ export default function View() {
         contentBeanCount={post.beans}
         author={post.author}
         authorId={post.authorID}
+        myVote={post.myVote}
     />;
     if (contentTab === CONTENT_TABS.COMMENTS)
         activePanel = <CommentsPanel postId={post._id} commentsProp={post.comments}/>;
