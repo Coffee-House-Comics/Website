@@ -61,7 +61,7 @@ types.TabType = {
             },
             SEARCH: {
                 name: "Search",
-                route:"search",
+                route:"search/:id",
                 fullRoute: "/app/search/:id" //NOTE: This ":id" is not actually an ID, it is the search query string
             },
             // Used for viewing a published story or comic
