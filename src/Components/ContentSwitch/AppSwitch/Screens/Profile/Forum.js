@@ -84,6 +84,7 @@ export default function Forum(props) {
                     key={index}
                     id={post.id}
                     title={post.title}
+                    profileId={user.id}
                     currentVote={post.myVote}
                     beans={post.beans}
                     ownerId={post.ownerId}
