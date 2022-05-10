@@ -17,11 +17,13 @@ function Search() {
     const [searchedAuthors, setSearchedAuthors] = useState([]);
     const searchString = id;
 
-    useEffect(() => {
+    console.log("Loading again...");
+
+    const execSearch = function () {
         async function doSearch() {
             try {
                 let resp;
-                if(store.app === "Comics") {
+                if (store.app === "Comics") {
                     resp = (await API.Comic.search(searchString));
                 }
 
@@ -29,7 +31,7 @@ function Search() {
                     resp = (await API.Story.search(searchString));
                 }
 
-                if(resp.status != 200) {
+                if (resp.status != 200) {
                     store.createModal({
                         title: "Error fetching explore page",
                         body: "Explore data could not be retrieved. Please try again.",
@@ -38,22 +40,22 @@ function Search() {
                     return;
                 }
 
-                // resp.data.posts.forEach(postId => getPostFromId(postId));
-                // resp.data.authors.forEach(authorId => getAuthorFromId(authorId));
-
                 setSearchedPosts(resp.data.posts);
                 setSearchedAuthors(resp.data.authors);
             }
 
-            catch(err) {
+            catch (err) {
                 console.log(err);
             }
         }
         doSearch();
-    }, []);
+    }
+
+    useEffect(execSearch, []);
+    useEffect(execSearch, [ useParams ]);
 
     return (
-        <div style={{padding: 40, paddingInline: 25}}>
+        <div style={{ padding: 40, paddingInline: 25 }}>
             <Grid container direction="row">
 
                 {/* Authors */}
@@ -61,9 +63,9 @@ function Search() {
                     <Grid container direction="row">
                         {searchedAuthors.map((author) => {
                             return (
-                            <Grid item>
-                                <AuthorCard name={author.name} img={author.profileImage}/>
-                            </Grid>
+                                <Grid item>
+                                    <AuthorCard name={author.name} img={author.profileImage} />
+                                </Grid>
                             )
                         })}
                     </Grid>
@@ -76,7 +78,7 @@ function Search() {
                             console.log("Search post from map: ", post)
                             return (
                                 <Grid item>
-                                    <PostCard post={post}/>
+                                    <PostCard post={post} />
                                 </Grid>
                             )
                         })}
