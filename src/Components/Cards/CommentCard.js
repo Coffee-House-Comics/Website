@@ -18,6 +18,8 @@ export default function CommentCard(props) {
 
   const { store } = useContext(GlobalStoreContext);
 
+  console.log("Comment card props", props);
+
   const id = props.id;
   const text = props.text
   const beans = props.beans
@@ -28,17 +30,30 @@ export default function CommentCard(props) {
   }
 
   const postId = props.postId;
+  const commentType = props.commentType;
+  const postOwnerId = props.postOwnerId;
 
-  const onVoteChange = async function (newVote) {
-    console.log("On vote change:", newVote);
-    console.log("Vote request for comment with id, vote, postid:", id, newVote, postId);
+  const onVoteChange = commentType === "post"? 
+    async function (newVote) {
+      console.log("On vote change:", newVote);
+      console.log("Vote request for comment with id, vote, postid:", id, newVote, postId);
 
-    if (store.app === "Comics") {
-      await API.Comic.voteComment(id, newVote, postId);
-    }else{
-      await API.Story.voteComment(id, newVote, postId);
+      if (store.app === "Comics") {
+        await API.Comic.voteComment(id, newVote, postId);
+      }else{
+        await API.Story.voteComment(id, newVote, postId);
+      }
+    } :
+    async function (newVote) {
+      console.log("On vote change:", newVote);
+      console.log("Vote request for comment with id, vote, postid, forumOwnerId:", id, newVote, postId, postOwnerId);
+
+      if (store.app === "Comics") {
+        await API.Comic.voteCommentOnForumPost(id, newVote, postId, postOwnerId);
+      }else{
+        await API.Story.voteCommentOnForumPost(id, newVote, postId, postOwnerId);
+      }
     }
-  }
 
   const onClickAuthor = function () {
     console.log("Clicked on" + author.name)
