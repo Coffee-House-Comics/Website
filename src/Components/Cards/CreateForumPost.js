@@ -11,7 +11,7 @@ export default function CreateForumPost({ hook }) {
     const [currentTitle, setCurrentTitle] = useState("");
     const [currentText, setCurrentText] = useState("");
 
-    const handleSubmit = function (event) {
+    const handleSubmit =  function (event) {
         if (event.stopPropagation) {
             event.stopPropagation();
         }
@@ -19,6 +19,10 @@ export default function CreateForumPost({ hook }) {
         if (hook) {
             hook(currentTitle, currentText);
         }
+
+        console.log("RESET NEW FORUM POST")
+        setCurrentTitle("")
+        setCurrentText("")
     }
 
     return (
@@ -28,7 +32,8 @@ export default function CreateForumPost({ hook }) {
                 border: "4px solid " + Colors.coffee,
                 borderRadius: "10px",
                 padding: "20px",
-                backgroundColor: "rgba(119, 89, 64, 0.75)"
+                backgroundColor: "rgba(119, 89, 64, 0.75)",
+                marginTop: "20px"
             }}
         >
             <Grid container spacing={3}
