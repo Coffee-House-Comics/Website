@@ -33,12 +33,14 @@ function Search() {
 
                 if (resp.status != 200) {
                     store.createModal({
-                        title: "Error fetching explore page",
-                        body: "Explore data could not be retrieved. Please try again.",
+                        title: "Error fetching search page",
+                        body: "Search data could not be retrieved. Please try again.",
                         action: ""
                     });
                     return;
                 }
+                console.log("Searched posts: ", resp.data.posts)
+                console.log("Searched authors: ", resp.data.authors)
 
                 setSearchedPosts(resp.data.posts);
                 setSearchedAuthors(resp.data.authors);
@@ -50,28 +52,18 @@ function Search() {
         }
         doSearch();
     }
-    execSearch();
+
+    useEffect(execSearch, [searchString, sortBy])
+
+
+    const handleSortChange = function (e) {
+        console.log("Sort change:", e)
+        setSortBy(e.target.value)
+    }
 
     return (
         <div style={{ padding: 40, paddingInline: 25 }}>
             <Grid container direction="row" spacing={10}>
-                <Grid item xs />
-                <Grid item xs="auto">
-                    <FormControl fullWidth>
-                        <InputLabel id="sort-by-label">Sort Posts By</InputLabel>
-                        <Select
-                            labelId="sort-by-label"
-                            id="sort-by"
-                            value={sortBy}
-                            label="Sort Posts By"
-                            onChange={setSortBy}
-                        >
-                            <MenuItem value={"publishedDate"}>Date Published</MenuItem>
-                            <MenuItem value={"beans"}>Beans</MenuItem>
-                        </Select>
-                    </FormControl>
-                </Grid>
-
                 {/* Authors */}
                 <Grid item xs={12}>
                     <Typography variant="h4" marginBottom="5px">
@@ -90,12 +82,33 @@ function Search() {
 
                 {/* Posts */}
                 <Grid item xs={12}>
-                    <Typography variant="h4" marginBottom="5px">
-                        Posts
-                    </Typography>
+                    <Grid container direction="row">
+                        <Grid item>
+                            <Typography variant="h4" marginBottom="5px">
+                                Posts
+                            </Typography>
+                        </Grid>
+                        <Grid item xs />
+                        <Grid item xs="auto">
+                            <FormControl fullWidth>
+                                <InputLabel id="sort-by-label">Sort Posts</InputLabel>
+                                <Select
+                                    labelId="sort-by-label"
+                                    id="sort-by"
+                                    value={sortBy}
+                                    label="Sort Posts"
+                                    onChange={handleSortChange}
+                                >
+                                    <MenuItem value={"publishedDate"}>Date Published</MenuItem>
+                                    <MenuItem value={"beans"}>Beans</MenuItem>
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                    </Grid>
+
                     <Grid container direction="row" justifyContent="flex-start" spacing={2}>
                         {searchedPosts.map((post) => {
-                            console.log("Search post from map: ", post)
+                            // console.log("Search post from map: ", post)
                             return (
                                 <Grid item>
                                     <PostCard post={post} />
