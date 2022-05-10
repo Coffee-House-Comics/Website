@@ -23,9 +23,6 @@ export default function PostCard(props) {
     //TODO
     let currentVote = Math.floor(Math.random() * 3) - 1;
 
-    //TOOD
-    let numBeans = Math.floor(Math.random() * 1000);
-
     // const imgSrc = "/Images/coffee" + (Math.floor(Math.random() * 6)) + ".jpg"
 
 
@@ -103,13 +100,13 @@ export default function PostCard(props) {
     </IconButton>
 
     const buttonPanel =
-        <Grid container direction="column" justifyContent="space-between" alignItems="flex-end" height="100%">
+        <Grid container direction="column" justifyContent="space-between" alignItems="center" height="100%">
             <Grid item>
                 {bookmarkButton}
             </Grid>
 
             <Grid>
-                <BeansButtonPanel onVoteChange={onVoteChange} currentVote={currentVote} numBeans={numBeans} />
+                <BeansButtonPanel onVoteChange={onVoteChange} currentVote={currentVote} numBeans={post.beans} />
             </Grid>
         </Grid>
 
@@ -141,13 +138,8 @@ export default function PostCard(props) {
                 <Grid container direction="row" justifyContent="space-between">
                     {/* Metadata panel */}
                     <Grid item xs="auto">
-                        <div style={{ paddingLeft: 8, height: "100%", width: "100%" }}>
+                        <div style={{ paddingLeft: 8, height: "100%", width:"100%"}}>
                             {metaPanel}
-                        </div>
-                    </Grid>
-                    <Grid item>
-                        <div style={{ paddingRight: 2, height: "100%", width: "100%" }}>
-                            {buttonPanel}
                         </div>
                     </Grid>
                 </Grid>
@@ -155,3 +147,10 @@ export default function PostCard(props) {
         </div>
     )
 }
+/**
+ *                     <Grid item>
+                        <div style={{ paddingRight: 2, height: "100%", width:"70px"}}>
+                            {buttonPanel}
+                        </div>
+                    </Grid>
+ */
