@@ -10,6 +10,7 @@ import BeansButtonPanel from '../Buttons/BeansButtonPanel';
 import { GlobalStoreContext } from '../../Store';
 import types from '../../Common/Types'
 import Utils from '../../Utils';
+import BeansIcon from '../Icons/BeansIcon';
 
 export const PostCardHeight = 335;
 export default function PostCard(props) {
