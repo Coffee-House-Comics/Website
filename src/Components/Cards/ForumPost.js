@@ -2,11 +2,13 @@ import { Accordion, AccordionSummary, Typography, AccordionDetails, Box, Grid } 
 import React from 'react';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import BeansButtonPanel from '../Buttons/BeansButtonPanel';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import AuthorButton from '../Buttons/AuthorButton';
 import CommentCard from './CommentCard';
 import AddCommentCard from './AddCommentCard';
 import { Theme } from '../../Common/Theme';
+import { GlobalStoreContext } from '../../Store';
+import API from '../../API';
 
 
 /**
@@ -40,17 +42,28 @@ export default function ForumPost(props) {
 
   const [enabled, setEnabled] = useState(false);
 
+  const { store } = useContext(GlobalStoreContext);
+
   console.log("Forum post props:", props);
-  const heading = props.heading
+  const heading = props.title
   const body = props.body
-  const beanCount = props.beanCount
+  const beanCount = props.beans
   const currentVote = props.currentVote
   const author = props.author
   const comments = props.comments
+  const ownerId = props.ownerId
+  const id = props.id
 
 
-  const onVoteChange = function (newCurrent) {
-    console.log("On vote change (forum post):", newCurrent);
+  const onVoteChange = async function (newVote) {
+    console.log("On vote change (forum post):", newVote);
+    console.log("Vote request for forum with id, vote, ownerId:", id, newVote, ownerId);
+
+    if (store.app === "Comics") {
+      await API.Comic.voteOnForumPost(id, newVote, ownerId);
+    }else{
+      await API.Story.voteOnForumPost(id, newVote, ownerId);
+    }
   }
 
   const toggleEnable = function () {
