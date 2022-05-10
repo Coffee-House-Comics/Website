@@ -65,10 +65,10 @@ export default function PostCard(props) {
         console.log("On vote change (post card):", newCurrent);
     }
 
-    console.log("Making card with post:", post)
+    // console.log("Making card with post:", post)
 
 
-    console.log("Post author image:", post.authorImage);
+    // console.log("Post author image:", post.authorImage);
 
     const metaPanel =
         <Grid container direction="column" justifyContent="space-between" alignItems="flex-start" height="100%">
