@@ -531,9 +531,7 @@ API.Story.search = function (searchCriteria) {
            searchCriteria: String[]
        }
    */
-    return backend.get('/story/search', {
-        searchCriteria: searchCriteria
-    });
+    return backend.get(`/story/search/${searchCriteria}`, {})
 }
 
 API.Story.create = function (name, description) {

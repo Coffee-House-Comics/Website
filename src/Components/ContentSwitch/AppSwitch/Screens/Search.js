@@ -17,58 +17,6 @@ function Search() {
     const [searchedAuthors, setSearchedAuthors] = useState([]);
     const searchString = id;
 
-    async function getPostFromId(id) {
-        let resp;
-        try {
-            if(store.app === "Comics") {
-                resp = (await API.Comic.viewPublished(id));
-            }
-            else {
-                resp = (await API.Story.viewPublished(id));
-            }
-        
-            if(resp.status != 200) {
-                //Post wont be added to post array
-                console.log("Error fetching post from id:", id);
-                console.log(resp.error);
-                return;
-            }
-
-            const newSearchedPosts = searchedPosts.concat(resp.data.content);
-            setSearchedPosts(newSearchedPosts);
-        }
-
-        catch(err) {
-            console.log(err)
-        }
-    }
-
-    async function getAuthorFromId(id) {
-        let resp;
-        try {
-            if(store.app === "Comics") {
-                resp = (await API.Comic.viewProfile(id));
-            }
-            else {
-                resp = (await API.Story.viewProfile(id));
-            }
-        
-            if(resp.status != 200) {
-                //Author wont be added to author array
-                console.log("Error fetching author from id:", id);
-                console.log(resp.error);
-                return;
-            }
-
-            const newSearchedAuthors = searchedAuthors.concat(resp.data.content);
-            setSearchedAuthors(newSearchedAuthors);
-        }
-
-        catch(err) {
-            console.log(err)
-        }
-    }
-
     useEffect(() => {
         async function doSearch() {
             try {
