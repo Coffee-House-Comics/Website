@@ -71,15 +71,14 @@ function Search() {
 
     useEffect(() => {
         async function doSearch() {
-            console.log("Search string:", searchString)
             try {
                 let resp;
                 if(store.app === "Comics") {
-                    resp = (await API.Comic.search(searchString.split(',')));
+                    resp = (await API.Comic.search(searchString));
                 }
 
                 else {
-                    resp = (await API.Story.search(searchString.split(',')));
+                    resp = (await API.Story.search(searchString));
                 }
 
                 if(resp.status != 200) {
@@ -104,9 +103,6 @@ function Search() {
 
     return (
         <div style={{padding: 40, paddingInline: 25}}>
-            <Typography>
-                MUI FTW
-            </Typography>
             <Grid container direction="row">
 
                 {/* Authors */}
@@ -126,6 +122,7 @@ function Search() {
                 <Grid item xs={12}>
                     <Grid container direction="row">
                         {searchedPosts.map((post) => {
+                            console.log("Search post from map: ", post)
                             return (
                                 <Grid item>
                                     <PostCard post={post}/>

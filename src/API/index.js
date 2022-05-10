@@ -163,9 +163,7 @@ API.Comic.search = function (searchCriteria) {
            searchCriteria: String[]
        }
    */
-    return backend.get('/comic/search', {
-        searchCriteria: searchCriteria
-    });
+    return backend.get('/comic/search/' + searchCriteria, {});
 }
 
 API.Comic.create = function (name, description) {
