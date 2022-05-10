@@ -82,9 +82,12 @@ export default function Forum(props) {
             <Grid item key={index} xs={12}>
                 <ForumPost
                     key={index}
-                    heading={post.title}
+                    id={post.id}
+                    title={post.title}
+                    profileId={user.id}
                     currentVote={post.myVote}
-                    beanCount={post.beans}
+                    beans={post.beans}
+                    ownerId={post.ownerId}
                     body={post.body}
                     author={post.user}
                     comments={post.comments}>
@@ -102,9 +105,12 @@ export default function Forum(props) {
             width: "100%"
         }}>
             {ret}
-            <Grid item xs={12} sx={{ width: "100%" }}>
+
+            {store.isLoggedIn ?
+            <Grid item xs={12} sx={{ width: "100%"}}>
                 <CreateForumPost hook={addForumPostHook} />
             </Grid>
+            : ""}
         </Grid>
     )
 

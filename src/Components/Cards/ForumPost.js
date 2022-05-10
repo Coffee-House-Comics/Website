@@ -2,11 +2,14 @@ import { Accordion, AccordionSummary, Typography, AccordionDetails, Box, Grid } 
 import React from 'react';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import BeansButtonPanel from '../Buttons/BeansButtonPanel';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import AuthorButton from '../Buttons/AuthorButton';
 import CommentCard from './CommentCard';
 import AddCommentCard from './AddCommentCard';
 import { Theme } from '../../Common/Theme';
+import { GlobalStoreContext } from '../../Store';
+import API from '../../API';
+import types from '../../Common/Types';
 
 
 /**
@@ -39,18 +42,30 @@ import { Theme } from '../../Common/Theme';
 export default function ForumPost(props) {
 
   const [enabled, setEnabled] = useState(false);
+  const [comments, setComments] = useState(props.comments);
+
+  const { store } = useContext(GlobalStoreContext);
 
   console.log("Forum post props:", props);
-  const heading = props.heading
+  const heading = props.title
   const body = props.body
-  const beanCount = props.beanCount
+  const beanCount = props.beans
   const currentVote = props.currentVote
   const author = props.author
-  const comments = props.comments
+  const ownerId = props.ownerId
+  const id = props.id
+  const profileId = props.profileId
 
 
-  const onVoteChange = function (newCurrent) {
-    console.log("On vote change (forum post):", newCurrent);
+  const onVoteChange = async function (newVote) {
+    console.log("On vote change (forum post):", newVote);
+    console.log("Vote request for forum with id, vote, ownerId:", id, newVote, ownerId);
+
+    if (store.app === "Comics") {
+      await API.Comic.voteOnForumPost(id, newVote, ownerId);
+    }else{
+      await API.Story.voteOnForumPost(id, newVote, ownerId);
+    }
   }
 
   const toggleEnable = function () {
@@ -59,6 +74,40 @@ export default function ForumPost(props) {
 
   const onClickAuthor = function () {
     console.log("Clicked on" + author.name)
+  }
+
+  const submitForumComment = async function (commentText) {
+    console.log("Submitting comment:", commentText);
+
+    try {
+      const res = store.app == "Comics"? await API.Comic.commentOnForumPost(id, commentText, ownerId) 
+        : await API.Story.commentOnForumPost(id, commentText, ownerId);
+
+      if(res.status === 200) {
+        console.log("Comment submitted", commentText);
+
+        let res2 = await store.fetchForumPosts(profileId);
+        if(res2.error) {
+          store.reRoute(types.TabType.APP.children.PROFILE.fullRoute, profileId);
+        }
+
+        const thisPost = res2.forumPosts.filter(forumPost => forumPost.id === id);
+        setComments(thisPost[0].comments);
+      }
+
+      else {
+        console.log("Failed to submit forum comment. Error:", res.error);
+        store.createModal({
+          title: "Error submitting comment",
+          body: "Comment could not be submitted. Please try again.",
+          action: ""
+        });
+      }
+    }
+
+    catch (err) {
+
+    }
   }
 
   const commentsCards = comments.map((comment, index) =>
@@ -112,7 +161,7 @@ export default function ForumPost(props) {
               {commentsCards}
             </Box>
 
-            <AddCommentCard></AddCommentCard>
+            <AddCommentCard hook={submitForumComment}></AddCommentCard>
 
           </Box>
         </AccordionDetails>
