@@ -238,6 +238,7 @@ function GlobalStoreContextProvider(props) {
 
                 if (response2.status === 200) {
                     store.updateUser(response2.data);
+                    store.reRoute(types.TabType.APP.children.SUBSCRIPTIONS.fullRoute);
                     return true;
                 }
             }
