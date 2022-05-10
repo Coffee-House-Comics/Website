@@ -7,6 +7,7 @@ import { useParams } from "react-router-dom";
 import PostCard from "../../../Cards/PostCard";
 import { Grid, Typography } from "@mui/material";
 import AuthorCard from "../../../Cards/AuthorCard";
+import types from "../../../../Common/Types";
 
 function Search() {
     console.log("You are NOT a dumbass :)")
@@ -56,15 +57,15 @@ function Search() {
 
     return (
         <div style={{ padding: 40, paddingInline: 25 }}>
-            <Grid container direction="row">
+            <Grid container direction="row" spacing={10}>
 
                 {/* Authors */}
                 <Grid item xs={12}>
-                    <Grid container direction="row">
+                    <Grid container direction="row" justifyContent="space-evenly">
                         {searchedAuthors.map((author) => {
                             return (
                                 <Grid item>
-                                    <AuthorCard name={author.name} img={author.profileImage} />
+                                    <AuthorCard name={author.name} img={author.profileImage} onClick={()=>{store.reRoute(types.TabType.APP.children.PROFILE.fullRoute, author.id)}}/>
                                 </Grid>
                             )
                         })}
@@ -73,7 +74,7 @@ function Search() {
 
                 {/* Posts */}
                 <Grid item xs={12}>
-                    <Grid container direction="row">
+                    <Grid container direction="row" justifyContent="space-evenly">
                         {searchedPosts.map((post) => {
                             console.log("Search post from map: ", post)
                             return (
