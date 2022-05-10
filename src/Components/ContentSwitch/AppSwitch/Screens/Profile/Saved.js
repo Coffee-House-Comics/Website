@@ -28,7 +28,7 @@ export default function Saved(props) {
 
     return (
         <div style={{ padding: 40, paddingInline: 25 }}>
-            <Grid container spacing={4} >
+            <Grid container spacing={2} >
                 {toShow.map((post, index) => {
                     return (
                         <Grid item>
