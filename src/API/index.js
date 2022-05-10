@@ -358,18 +358,18 @@ API.Comic.voteOnForumPost = function (id, type, forumOwnerId) {
     });
 }
 
-API.Comic.commentOnForumPost = function (id, text, forumOwnerId) {
+API.Comic.commentOnForumPost = function (id, text, forumUserId) {
     /* Comment on Comic forum posts------------
        method: post
        route: /comic/comment/forumPost/${id}
        Request body: {
            text, String,
-           forumOwnerId, Id
+           forumUserId, Id
        }
    */
     return backend.post(`/comic/comment/forumPost/${id}`, {
         text: text,
-        forumOwnerId: forumOwnerId
+        forumUserId: forumUserId
     });
 }
 
@@ -703,7 +703,7 @@ API.Story.voteOnForumPost = function (id, type, forumOwnerId) {
     });
 }
 
-API.Story.commentOnForumPost = function (id, text, forumOwnerId) {
+API.Story.commentOnForumPost = function (id, text, forumUserId) {
     /* Comment on Story forum posts------------
        method: post
        route: /story/comment/forumPost/${id}
@@ -714,7 +714,7 @@ API.Story.commentOnForumPost = function (id, text, forumOwnerId) {
    */
     return backend.post(`/story/comment/forumPost/${id}`, {
         text: text,
-        forumOwnerId: forumOwnerId
+        forumUserId: forumUserId
     });
 }
 

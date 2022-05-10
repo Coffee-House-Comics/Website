@@ -9,6 +9,7 @@ import AddCommentCard from './AddCommentCard';
 import { Theme } from '../../Common/Theme';
 import { GlobalStoreContext } from '../../Store';
 import API from '../../API';
+import types from '../../Common/Types';
 
 
 /**
@@ -41,6 +42,7 @@ import API from '../../API';
 export default function ForumPost(props) {
 
   const [enabled, setEnabled] = useState(false);
+  const [comments, setComments] = useState(props.comments);
 
   const { store } = useContext(GlobalStoreContext);
 
@@ -50,9 +52,9 @@ export default function ForumPost(props) {
   const beanCount = props.beans
   const currentVote = props.currentVote
   const author = props.author
-  const comments = props.comments
   const ownerId = props.ownerId
   const id = props.id
+  const profileId = props.profileId
 
 
   const onVoteChange = async function (newVote) {
@@ -72,6 +74,40 @@ export default function ForumPost(props) {
 
   const onClickAuthor = function () {
     console.log("Clicked on" + author.name)
+  }
+
+  const submitForumComment = async function (commentText) {
+    console.log("Submitting comment:", commentText);
+
+    try {
+      const res = store.app == "Comics"? await API.Comic.commentOnForumPost(id, commentText, ownerId) 
+        : await API.Story.commentOnForumPost(id, commentText, ownerId);
+
+      if(res.status === 200) {
+        console.log("Comment submitted", commentText);
+
+        let res2 = await store.fetchForumPosts(profileId);
+        if(res2.error) {
+          store.reRoute(types.TabType.APP.children.PROFILE.fullRoute, profileId);
+        }
+
+        const thisPost = res2.forumPosts.filter(forumPost => forumPost.id === id);
+        setComments(thisPost[0].comments);
+      }
+
+      else {
+        console.log("Failed to submit forum comment. Error:", res.error);
+        store.createModal({
+          title: "Error submitting comment",
+          body: "Comment could not be submitted. Please try again.",
+          action: ""
+        });
+      }
+    }
+
+    catch (err) {
+
+    }
   }
 
   const commentsCards = comments.map((comment, index) =>
@@ -125,7 +161,7 @@ export default function ForumPost(props) {
               {commentsCards}
             </Box>
 
-            <AddCommentCard></AddCommentCard>
+            <AddCommentCard hook={submitForumComment}></AddCommentCard>
 
           </Box>
         </AccordionDetails>
