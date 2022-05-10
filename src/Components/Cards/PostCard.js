@@ -12,7 +12,7 @@ import types from '../../Common/Types'
 import Utils from '../../Utils';
 import BeansIcon from '../Icons/BeansIcon';
 
-export const PostCardHeight = 335;
+export const PostCardHeight = 355;
 export default function PostCard(props) {
     const { store } = React.useContext(GlobalStoreContext);
 
