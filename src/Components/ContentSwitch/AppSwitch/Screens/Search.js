@@ -5,7 +5,7 @@ import { GlobalStoreContext } from "../../../../Store";
 import API from "../../../../API";
 import { useParams } from "react-router-dom";
 import PostCard from "../../../Cards/PostCard";
-import { Grid, Typography } from "@mui/material";
+import { FormControl, Grid, InputLabel, MenuItem, Select, Typography } from "@mui/material";
 import AuthorCard from "../../../Cards/AuthorCard";
 import types from "../../../../Common/Types";
 
