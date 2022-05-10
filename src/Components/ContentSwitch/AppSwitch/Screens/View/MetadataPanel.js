@@ -4,7 +4,8 @@ import {
     Typography,
     Grid,
     Box,
-    Button
+    Button, 
+    IconButton
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useTheme } from '@mui/material/styles';
@@ -13,10 +14,12 @@ import BeansIcon from '../../../../Icons/BeansIcon';
 import { GlobalStoreContext } from '../../../../../Store';
 import types from '../../../../../Common/Types'
 import API from '../../../../../API'
+import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
+import BookmarkIcon from '@mui/icons-material/Bookmark';
 
 
 export default function MetadataPanel(props) {
-    const { postId, title, description, contentBeanCount, author, authorId, myVote} = props;
+    const { postId, title, description, contentBeanCount, author, authorId, myVote, isBookmarked, handleBookmarkClick} = props;
     const theme = useTheme();
     const { store } = useContext(GlobalStoreContext);
 
@@ -72,11 +75,19 @@ export default function MetadataPanel(props) {
         }
     }
 
+    const bookmarkButton = <IconButton onClick={handleBookmarkClick} aria-label="bookmark" size="small">
+    {store.isLoggedIn ? (isBookmarked)
+        ? <BookmarkIcon fontSize="small" />
+        : <BookmarkBorderIcon fontSize="small" />
+        : <BookmarkBorderIcon fontSize="small" sx={{ opacity: 0 }} />
+    }
+    </IconButton>
+
     return (
         <div style={{ overflow: "hidden", width: "100%", height: "100%", display: "flex", justifyContent: "center" }}>
             <Grid container direction="column" justifyContent="flex-start" alignItems="center" spacing={2} width="250px" marginBottom="10px">
                 <Grid item sx={{ paddingLeft: 1, paddingRight: 1 }}>
-                    <Typography variant="h6" sx={{ fontWeight: 'bold', marginTop: '10px' }}>{title}</Typography>
+                    <Typography variant="h6" sx={{ fontWeight: 'bold', marginTop: '10px' }}>{title} {bookmarkButton}</Typography>
                 </Grid>
                 <Grid item>
                     <Typography variant="body2" sx={{ fontWeight: "bold" }}>{"By: @" + author}</Typography>

@@ -285,7 +285,7 @@ API.Comic.bookmark = function (id) {
        route: /comic/bookmark/${id}
        Request body: {}
    */
-    return backend.post(`/comic/bookmark${id}`, {});
+    return backend.post(`/comic/bookmark/${id}`, {});
 }
 
 API.Comic.saved = function () {
@@ -628,7 +628,7 @@ API.Story.bookmark = function (id) {
        route: /story/bookmark/${id}
        Request body: {}
    */
-    return backend.post(`/story/bookmark${id}`, {});
+    return backend.post(`/story/bookmark/${id}`, {});
 }
 
 API.Story.saved = function () {
