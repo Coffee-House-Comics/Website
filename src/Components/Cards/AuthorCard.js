@@ -9,7 +9,7 @@ export default function AuthorCard(props) {
     return (
         <div style={{backgroundColor: "#FFFFFF", border: "2px solid black", borderRadius: "10px", padding: "20px", cursor:"pointer"}}>
             <Grid direction="column" justifyContent="center" alignItems="center">
-                <Grid item width="100%">
+                <Grid item>
                     <Avatar src={imgURL} sx={{ width: "100px", height: "100px" }} />
                 </Grid>
                 <Grid item>
