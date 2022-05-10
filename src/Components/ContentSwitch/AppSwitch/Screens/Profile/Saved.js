@@ -12,7 +12,7 @@ export default function Saved(props) {
         async function getSaved() {
             let resp = store.app==='Comics'? await API.Comic.saved() : await API.Story.saved()
 
-            console.log("Saved Page Ids:", resp2.data.content)
+            console.log("Saved Page Ids:", resp.data.content)
         }
         getSaved();
     }, [])
