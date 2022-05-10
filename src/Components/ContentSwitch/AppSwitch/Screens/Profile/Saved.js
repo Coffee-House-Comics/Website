@@ -8,15 +8,6 @@ export default function Saved(props) {
     
     const { user } = props;
 
-    useEffect(() => {
-        async function getSaved() {
-            let resp = store.app==='Comics'? await API.Comic.saved() : await API.Story.saved()
-
-            console.log("Saved Page Ids:", resp.data.content)
-        }
-        getSaved();
-    }, [])
-
     return <Typography>Community Implementation not done.</Typography>
     
     //TODO
