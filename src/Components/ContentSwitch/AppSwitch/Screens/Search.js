@@ -91,8 +91,11 @@ function Search() {
                     return;
                 }
 
-                resp.data.posts.forEach(postId => getPostFromId(postId));
-                resp.data.authors.forEach(authorId => getAuthorFromId(authorId));
+                // resp.data.posts.forEach(postId => getPostFromId(postId));
+                // resp.data.authors.forEach(authorId => getAuthorFromId(authorId));
+
+                setSearchedPosts(resp.data.posts);
+                setSearchedAuthors(resp.data.authors);
             }
 
             catch(err) {
