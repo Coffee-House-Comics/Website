@@ -19,7 +19,7 @@ export default function View() {
     //Set the post on first render
     useEffect(() => {
         async function getPost(id) {
-            let resp = store.app==='Comics'? await API.Comic.viewPublished(id) : await API.Story.viewPublished(id)
+            let resp = store.app === 'Comics' ? await API.Comic.viewPublished(id) : await API.Story.viewPublished(id)
 
             console.log("RESP:", resp)
 
@@ -29,7 +29,7 @@ export default function View() {
 
             setPost(resp.data.content)
 
-            let resp2 = store.app==='Comics'? await API.Comic.saved() : await API.Story.saved()
+            let resp2 = store.app === 'Comics' ? await API.Comic.saved() : await API.Story.saved()
 
             console.log("RESP2:", resp2)
             console.log("ID:", id)
@@ -43,21 +43,21 @@ export default function View() {
     const handleBookmarkClick = async function () {
         let res = null
         if (store.app === "Comics") {
-            if(isBookmarked){
+            if (isBookmarked) {
                 res = await API.Comic.unsave(id)
-            }else{
+            } else {
                 res = await API.Comic.bookmark(id)
             }
-        }else {
-            if(isBookmarked){
+        } else {
+            if (isBookmarked) {
                 res = await API.Story.unsave(id)
-            }else{
+            } else {
                 res = await API.Story.bookmark(id)
             }
         }
         console.log("bookmark res", res)
         setBookmarked(!isBookmarked)
-      }
+    }
 
     console.log("post:", post);
 
@@ -66,6 +66,29 @@ export default function View() {
         COMMENTS: 1
     }
     const [contentTab, setContentTab] = useState(CONTENT_TABS.VIEW);
+
+    useEffect(function () {
+        async function getPost(id) {
+            let resp = store.app === 'Comics' ? await API.Comic.viewPublished(id) : await API.Story.viewPublished(id)
+
+            console.log("RESP:", resp)
+
+            if (resp.error) {
+                store.reRoute("/")
+            }
+
+            setPost(resp.data.content)
+
+            let resp2 = store.app === 'Comics' ? await API.Comic.saved() : await API.Story.saved()
+
+            console.log("RESP2:", resp2)
+            console.log("ID:", id)
+            console.log("Includes:", resp2.data.content.includes(id))
+
+            setBookmarked(resp2.data.content.includes(id))
+        }
+        getPost(id);
+    }, [contentTab]);
 
     function changeTab(tab) {
         console.log("Changing to..:", tab);
@@ -89,7 +112,7 @@ export default function View() {
         handleBookmarkClick={handleBookmarkClick}
     />;
     if (contentTab === CONTENT_TABS.COMMENTS)
-        activePanel = <CommentsPanel postId={post._id} commentsProp={post.comments}/>;
+        activePanel = <CommentsPanel postId={post._id} commentsProp={post.comments} />;
 
     const lineCss = "3px solid " + theme.palette.coffee.main;
 
@@ -157,7 +180,7 @@ export default function View() {
             float: "right",
             width: "75%"
         }}>
-            <ContentPanel pages={post.pages} flowJSON={store.app === "Comics"? "": post.ReactFlowJSON }/>
+            <ContentPanel pages={post.pages} flowJSON={store.app === "Comics" ? "" : post.ReactFlowJSON} />
         </Box>
     </Box>);
 
