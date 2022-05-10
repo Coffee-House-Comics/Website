@@ -28,20 +28,15 @@ export default function Saved(props) {
 
     return (
         <div style={{ padding: 40, paddingInline: 25 }}>
-            <Grid container direction="row" spacing={10}>
-                {/* Posts */}
-                <Grid item xs={12}>
-                    <Grid container direction="row" justifyContent="space-evenly">
-                        {toShow.map((post, index) => {
-                            return (
-                                <Grid item>
-                                    <PostCard key={index} post={post} />
-                                </Grid>
-                            )
-                        })}
-                    </Grid>
-                </Grid>
+            <Grid container spacing={4} >
+                {toShow.map((post, index) => {
+                    return (
+                        <Grid item>
+                            <PostCard key={index} post={post} />
+                        </Grid>
+                    )
+                })}
             </Grid>
-        </div>
+        </div >
     );
 }
