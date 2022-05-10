@@ -387,7 +387,7 @@ function GlobalStoreContextProvider(props) {
     store.updateLocalUser = async function () {
         console.log("Updating local user...");
         try {
-            const response2 = await AuthAPI.getProfile(store.user.id)
+            const response2 = await AuthAPI.currentProfile(store.user.id)
 
             if (response2.status === 200) {
                 store.updateUser(response2.data);
@@ -408,7 +408,7 @@ function GlobalStoreContextProvider(props) {
 
             if (response.status === 200) {
                 try {
-                    const response2 = await AuthAPI.getProfile(store.user.id)
+                    const response2 = await AuthAPI.currentProfile(store.user.id)
 
                     if (response2.status === 200)
                         store.updateUser(response2.data);
