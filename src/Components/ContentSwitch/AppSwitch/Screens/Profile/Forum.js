@@ -104,9 +104,12 @@ export default function Forum(props) {
             width: "100%"
         }}>
             {ret}
-            <Grid item xs={12} sx={{ width: "100%" }}>
+
+            {store.isLoggedIn ?
+            <Grid item xs={12} sx={{ width: "100%"}}>
                 <CreateForumPost hook={addForumPostHook} />
             </Grid>
+            : ""}
         </Grid>
     )
 
