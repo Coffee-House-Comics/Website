@@ -10,15 +10,13 @@ import AuthorCard from "../../../Cards/AuthorCard";
 import types from "../../../../Common/Types";
 
 function Search() {
-    console.log("You are NOT a dumbass :)")
-
     const { store } = useContext(GlobalStoreContext);
     const { id } = useParams(); //This "ID" is actually the search string
     const [searchedPosts, setSearchedPosts] = useState([]);
     const [searchedAuthors, setSearchedAuthors] = useState([]);
     const searchString = id;
 
-    console.log("Loading again...");
+    console.log("Loading again. Search string:", searchString);
 
     const execSearch = function () {
         async function doSearch() {
@@ -51,9 +49,7 @@ function Search() {
         }
         doSearch();
     }
-
-    useEffect(execSearch, []);
-    useEffect(execSearch, [ useParams ]);
+    execSearch();
 
     return (
         <div style={{ padding: 40, paddingInline: 25 }}>
@@ -61,11 +57,14 @@ function Search() {
 
                 {/* Authors */}
                 <Grid item xs={12}>
-                    <Grid container direction="row" justifyContent="space-evenly">
+                    <Typography variant="h4" marginBottom="5px">
+                        Authors
+                    </Typography>
+                    <Grid container direction="row" justifyContent="flex-start" spacing={2}>
                         {searchedAuthors.map((author) => {
                             return (
-                                <Grid item>
-                                    <AuthorCard name={author.name} img={author.profileImage} onClick={()=>{store.reRoute(types.TabType.APP.children.PROFILE.fullRoute, author.id)}}/>
+                                <Grid item onClick={()=>{store.reRoute(types.TabType.APP.children.PROFILE.fullRoute, author.id)}}>
+                                    <AuthorCard name={author.name} img={author.profileImage}/>
                                 </Grid>
                             )
                         })}
@@ -74,7 +73,10 @@ function Search() {
 
                 {/* Posts */}
                 <Grid item xs={12}>
-                    <Grid container direction="row" justifyContent="space-evenly">
+                    <Typography variant="h4" marginBottom="5px">
+                        Posts
+                    </Typography>
+                    <Grid container direction="row" justifyContent="flex-start" spacing={2}>
                         {searchedPosts.map((post) => {
                             console.log("Search post from map: ", post)
                             return (

@@ -76,6 +76,8 @@ function Header(props) {
     const handleSearchButtonClick = function () {
         if(searchText){
             store.reRoute(types.TabType.APP.children.SEARCH.fullRoute, searchText)
+        } else {
+            store.reRoute(types.TabType.APP.children.SEARCH.fullRoute, "")
         }
     }
 
