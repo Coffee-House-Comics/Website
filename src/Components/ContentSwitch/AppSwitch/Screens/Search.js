@@ -14,20 +14,21 @@ function Search() {
     const { id } = useParams(); //This "ID" is actually the search string
     const [searchedPosts, setSearchedPosts] = useState([]);
     const [searchedAuthors, setSearchedAuthors] = useState([]);
+    const [sortBy, setSortBy] = useState("beans")
     const searchString = id;
 
-    console.log("Loading again. Search string:", searchString);
+    console.log("Loading search. Search string: %s, Sort by: %s", searchString, sortBy);
 
     const execSearch = function () {
         async function doSearch() {
             try {
                 let resp;
                 if (store.app === "Comics") {
-                    resp = (await API.Comic.search(searchString));
+                    resp = (await API.Comic.search(searchString, sortBy));
                 }
 
                 else {
-                    resp = (await API.Story.search(searchString));
+                    resp = (await API.Story.search(searchString, sortBy));
                 }
 
                 if (resp.status != 200) {
@@ -54,6 +55,22 @@ function Search() {
     return (
         <div style={{ padding: 40, paddingInline: 25 }}>
             <Grid container direction="row" spacing={10}>
+                <Grid item xs />
+                <Grid item xs="auto">
+                    <FormControl fullWidth>
+                        <InputLabel id="sort-by-label">Sort Posts By</InputLabel>
+                        <Select
+                            labelId="sort-by-label"
+                            id="sort-by"
+                            value={sortBy}
+                            label="Sort Posts By"
+                            onChange={setSortBy}
+                        >
+                            <MenuItem value={"publishedDate"}>Date Published</MenuItem>
+                            <MenuItem value={"beans"}>Beans</MenuItem>
+                        </Select>
+                    </FormControl>
+                </Grid>
 
                 {/* Authors */}
                 <Grid item xs={12}>
@@ -63,8 +80,8 @@ function Search() {
                     <Grid container direction="row" justifyContent="flex-start" spacing={2}>
                         {searchedAuthors.map((author) => {
                             return (
-                                <Grid item onClick={()=>{store.reRoute(types.TabType.APP.children.PROFILE.fullRoute, author.id)}}>
-                                    <AuthorCard name={author.name} img={author.profileImage}/>
+                                <Grid item onClick={() => { store.reRoute(types.TabType.APP.children.PROFILE.fullRoute, author.id) }}>
+                                    <AuthorCard name={author.name} img={author.profileImage} />
                                 </Grid>
                             )
                         })}
