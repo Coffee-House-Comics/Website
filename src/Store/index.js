@@ -395,7 +395,7 @@ function GlobalStoreContextProvider(props) {
             }            
         }
         catch (err){
-            console.log("ulu:", updateLocalUser);
+            console.log("ulu:", err);
         }
         
         console.log("Error updating local user");
