@@ -43,6 +43,7 @@ export default function CommentCard(props) {
       }else{
         await API.Story.voteComment(id, newVote, postId);
       }
+      store.updateLocalUser();
     } :
     async function (newVote) {
       console.log("On vote change:", newVote);
@@ -53,6 +54,7 @@ export default function CommentCard(props) {
       }else{
         await API.Story.voteCommentOnForumPost(id, newVote, postId, postOwnerId);
       }
+      store.updateLocalUser();
     }
 
   const onClickAuthor = function () {
