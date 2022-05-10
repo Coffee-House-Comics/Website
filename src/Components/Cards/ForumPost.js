@@ -63,8 +63,10 @@ export default function ForumPost(props) {
 
     if (store.app === "Comics") {
       await API.Comic.voteOnForumPost(id, newVote, ownerId);
+      store.updateLocalUser();
     }else{
       await API.Story.voteOnForumPost(id, newVote, ownerId);
+      store.updateLocalUser();
     }
   }
 
