@@ -14,6 +14,7 @@ export default function View() {
     const theme = useTheme();
     const { store } = useContext(GlobalStoreContext);
     const [post, setPost] = useState(null)
+    const [isBookmarked, setBookmarked] = useState(false)
 
     //Set the post on first render
     useEffect(() => {
@@ -27,9 +28,36 @@ export default function View() {
             }
 
             setPost(resp.data.content)
+
+            let resp2 = store.app==='Comics'? await API.Comic.saved() : await API.Story.saved()
+
+            console.log("RESP2:", resp2)
+            console.log("ID:", id)
+            console.log("Includes:", resp2.data.content.includes(id))
+
+            setBookmarked(resp2.data.content.includes(id))
         }
         getPost(id);
     }, [])
+
+    const handleBookmarkClick = async function () {
+        let res = null
+        if (store.app === "Comics") {
+            if(isBookmarked){
+                res = await API.Comic.unsave(id)
+            }else{
+                res = await API.Comic.bookmark(id)
+            }
+        }else {
+            if(isBookmarked){
+                res = await API.Story.unsave(id)
+            }else{
+                res = await API.Story.bookmark(id)
+            }
+        }
+        console.log("bookmark res", res)
+        setBookmarked(!isBookmarked)
+      }
 
     console.log("post:", post);
 
@@ -57,6 +85,8 @@ export default function View() {
         author={post.author}
         authorId={post.authorID}
         myVote={post.myVote}
+        isBookmarked={isBookmarked}
+        handleBookmarkClick={handleBookmarkClick}
     />;
     if (contentTab === CONTENT_TABS.COMMENTS)
         activePanel = <CommentsPanel postId={post._id} commentsProp={post.comments}/>;
