@@ -147,8 +147,6 @@ function GlobalStoreContextProvider(props) {
                     });
 
                     // Allow the route to wherever we wanted to go
-
-                    //store.reRoute(types.TabType.APP.children.EXPLORE.fullRoute);
                     return;
                 }
             }
@@ -209,7 +207,7 @@ function GlobalStoreContextProvider(props) {
 
         console.log("Searching...");
 
-        const whichSub = (store.app === 'Comics')? store.user.comicSubscriptions : store.user.storySubscriptions;
+        const whichSub = (store.app === 'Comics') ? store.user.comicSubscriptions : store.user.storySubscriptions;
 
         const reduced = whichSub.filter(elem => {
             return elem === userID;
@@ -385,6 +383,21 @@ function GlobalStoreContextProvider(props) {
             type: GlobalStoreActionType.TOGGLE_LOADING,
         });
     }
+
+    store.updateLocalUser = async function () {
+        try {
+            const response2 = await AuthAPI.getProfile(store.user.id)
+
+            if (response2.status === 200) {
+                store.updateUser(response2.data);
+                return;
+            }            
+        }
+        catch (err){}
+        
+        console.log("Error updating local user");
+    }
+
 
     store.changeProfileImage = async function (image) {
         try {
