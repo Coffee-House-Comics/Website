@@ -385,6 +385,7 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.updateLocalUser = async function () {
+        console.log("Updating local user...");
         try {
             const response2 = await AuthAPI.getProfile(store.user.id)
 
@@ -393,7 +394,9 @@ function GlobalStoreContextProvider(props) {
                 return;
             }            
         }
-        catch (err){}
+        catch (err){
+            console.log("ulu:", updateLocalUser);
+        }
         
         console.log("Error updating local user");
     }
