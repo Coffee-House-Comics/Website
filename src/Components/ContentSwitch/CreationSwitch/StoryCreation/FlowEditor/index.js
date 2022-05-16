@@ -26,6 +26,10 @@ export default function FlowEditor() {
     const [edges, setEdges] = React.useState(null);
     const edgesRef = useRef(edges);
 
+    let startDrag = false;
+    let lastPosition;
+    let firstPosition;
+
     const transactionTypes = {
         createNode: "createNode",
         createEdge: "createEdge",
@@ -139,6 +143,7 @@ export default function FlowEditor() {
     useEffect(function () {
         if(storyStore.triggerUndo){
             console.log("UNDOING");
+            console.log(transactions)
             const transaction = peekTransStack();
         
             if (!transaction)
@@ -190,7 +195,8 @@ export default function FlowEditor() {
     useEffect(function () {
         if(storyStore.triggerRedo){
             console.log("REDOING");
-        
+            console.log(transactions)
+
             if (transactionIndex >= transactionsLastIndex)
                 return;
 
@@ -292,13 +298,23 @@ export default function FlowEditor() {
          changes.forEach(change => {
              if (change.type === 'remove') {
                 createTransEntry(transactionTypes.deleteNode, change.id, storyStore.getNode(change.id, nodesRef.current))
-             } else if(change.type === 'position' && change.dragging){
-                const currNode = storyStore.getNode(change.id, nodesRef.current);
-                const reverseChange = {
-                    ...change,
-                    position:currNode.position
+             } else if(change.type === 'position'){
+                
+                if(change.dragging && !startDrag){
+                    startDrag = true;
+                    const currNode = storyStore.getNode(change.id, nodesRef.current);
+                    firstPosition = {
+                        ...change,
+                        position:currNode.position
+                    }
+                } else if (!change.dragging && startDrag){
+                    startDrag = false;
+                    createTransEntry(transactionTypes.moveNode, change.id, firstPosition, {
+                        ...change,
+                        position:lastPosition
+                    })
                 }
-                createTransEntry(transactionTypes.moveNode, change.id, reverseChange, change)
+                lastPosition = change.position
              }
           })
 
