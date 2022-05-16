@@ -79,11 +79,11 @@ export default function ForumPost(props) {
   }
 
   const submitForumComment = async function (commentText) {
-    console.log("Submitting comment:", commentText);
+    console.log("Submitting comment:", commentText, "id, text, ownerId:", id, commentText, profileId);
 
     try {
-      const res = store.app == "Comics"? await API.Comic.commentOnForumPost(id, commentText, ownerId) 
-        : await API.Story.commentOnForumPost(id, commentText, ownerId);
+      const res = store.app == "Comics"? await API.Comic.commentOnForumPost(id, commentText, profileId) 
+        : await API.Story.commentOnForumPost(id, commentText, profileId);
 
       if(res.status === 200) {
         console.log("Comment submitted", commentText);
