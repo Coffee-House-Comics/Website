@@ -303,7 +303,7 @@ function GlobalStoreContextProvider(props) {
                 if (response.status === 200) {
                     console.log("ID of the new Comic:", response.data, response.data.id);
 
-                    store.reRoute(types.TabType.CREATION.children.COMIC.fullRoute, response.data.id);
+                    store.reRoute(types.TabType.CREATION.children.METADATA.fullRoute, response.data.id);
                     return;
                 }
             }
@@ -326,7 +326,7 @@ function GlobalStoreContextProvider(props) {
                 if (response.status === 200) {
                     console.log("ID of the new Story:", response.data, response.data.id);
 
-                    store.reRoute(types.TabType.CREATION.children.STORY.fullRoute, response.data.id);
+                    store.reRoute(types.TabType.CREATION.children.METADATA.fullRoute, response.data.id);
                     return;
                 }
             }
