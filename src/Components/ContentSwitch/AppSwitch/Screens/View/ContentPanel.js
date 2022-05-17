@@ -34,6 +34,11 @@ const URLImage = ({ image, onDragMove, onDragEnd, draggable }) => {
         height = editorSize;
     }
 
+    if (image.isUploadedSticker) {
+        width = 128;
+        height = 128;
+    }
+
     return (
         <Image
             width={width}
