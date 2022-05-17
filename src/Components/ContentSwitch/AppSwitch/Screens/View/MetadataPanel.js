@@ -19,12 +19,11 @@ import BookmarkIcon from '@mui/icons-material/Bookmark';
 
 
 export default function MetadataPanel(props) {
-    const { postId, title, description, contentBeanCount, author, authorId, myVote, isBookmarked, handleBookmarkClick} = props;
+    const { postId, title, description, contentBeanCount, author, authorComicBeans, authorStoryBeans, authorId, myVote, isBookmarked, handleBookmarkClick} = props;
     const theme = useTheme();
     const { store } = useContext(GlobalStoreContext);
 
-    //TODO get proper values
-    let userBeanCount = 25;
+    let userBeanCount = (store.app==="Comics") ? authorComicBeans : authorStoryBeans;
 
   const handleDeleteButtonClick = function () {
     console.log("Delete button clicked");

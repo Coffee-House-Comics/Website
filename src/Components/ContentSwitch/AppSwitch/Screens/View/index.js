@@ -77,7 +77,7 @@ export default function View() {
                 store.reRoute("/")
             }
 
-            setPost(resp.data.content)
+            setPost(resp.data.content) 
 
             let resp2 = store.app === 'Comics' ? await API.Comic.saved() : await API.Story.saved()
 
@@ -106,6 +106,8 @@ export default function View() {
         description={post.description}
         contentBeanCount={post.beans}
         author={post.author}
+        authorComicBeans = {post.authorComicBeans}
+        authorStoryBeans = {post.authorStoryBeans}
         authorId={post.authorID}
         myVote={post.myVote}
         isBookmarked={isBookmarked}
