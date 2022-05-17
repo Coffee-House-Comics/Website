@@ -62,10 +62,10 @@ export default function ForumPost(props) {
     console.log("Vote request for forum with id, vote, ownerId:", id, newVote, ownerId);
 
     if (store.app === "Comics") {
-      await API.Comic.voteOnForumPost(id, newVote, ownerId);
+      await API.Comic.voteOnForumPost(id, newVote, profileId);
       store.updateLocalUser();
     }else{
-      await API.Story.voteOnForumPost(id, newVote, ownerId);
+      await API.Story.voteOnForumPost(id, newVote, profileId);
       store.updateLocalUser();
     }
   }
@@ -115,7 +115,7 @@ export default function ForumPost(props) {
   const commentsCards = comments.map((comment, index) =>
     //<ForumPost key={index} heading={post.heading} currentVote={post.currentVote} beanCount={post.beanCount} body={post.body} author={post.author} comments={post.comment}>
     //</ForumPost>
-    <CommentCard key={index} user={comment.user} id={comment.id} profileImage={comment.userProfileImage} ownerId={comment.ownerId} beans={comment.beans} myVote={comment.myVote} text={comment.text} commentType={"forum"} postId={id} postOwnerId={ownerId}></CommentCard>
+    <CommentCard key={index} user={comment.user} id={comment.id} profileImage={comment.userProfileImage} ownerId={comment.ownerId} beans={comment.beans} myVote={comment.myVote} text={comment.text} commentType={"forum"} postId={id} postOwnerId={profileId}></CommentCard>
   );
 
   return (
