@@ -203,7 +203,7 @@ API.Comic.saveContent = function (id, pages) {
     });
 }
 
-API.Comic.saveSticker = function (sticker) {
+API.Comic.saveSticker = function (sticker, isUploadedSticker) {
     /* Save Sticker ------------
        method: post
        route: /comic/content/saveSticker
@@ -212,7 +212,8 @@ API.Comic.saveSticker = function (sticker) {
        }
    */
     return backend.post(`/comic/content/saveSticker`, {
-        sticker: sticker
+        sticker: sticker,
+        isUploadedSticker
     });
 }
 
