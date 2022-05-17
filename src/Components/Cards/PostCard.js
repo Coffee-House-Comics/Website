@@ -140,7 +140,7 @@ export default function PostCard(props) {
                         (post.isPublished) ?
                             <img src={post.coverPhoto} height="250px" width="200px" style={{ objectFit: "cover" }} />
                             :
-                            <img src={"/Images/construction.png"} height="250px" width="200px" style={{ objectFit: "cover", background: `url(${post.coverPhoto})` }} />
+                            <img src={"/Images/construction.png"} height="250px" width="200px" style={{ objectFit: "cover", background: `url(${post.coverPhoto})`, backgroundSize: "cover" }} />
                     }
                 </Grid>
                 <Grid container direction="row" justifyContent="space-between">
