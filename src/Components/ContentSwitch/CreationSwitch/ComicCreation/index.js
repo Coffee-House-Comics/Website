@@ -1080,7 +1080,7 @@ export default function ComicCreationScreen() {
 
     const prefabContent = prefabs.map(function (img, i) {
         return (
-            <Grid item key={i}>
+            <Grid item key={i} xs={12}>
                 <img
                     alt={img.name}
                     src={img.src}
@@ -1097,7 +1097,7 @@ export default function ComicCreationScreen() {
 
     const stickersContent = stickers.map(function (img, i) {
         return (
-            <Grid item key={i}>
+            <Grid item key={i} xs={12}>
                 <div style={{
                     backgroundColor: "white",
                     border: "1px solid black",
