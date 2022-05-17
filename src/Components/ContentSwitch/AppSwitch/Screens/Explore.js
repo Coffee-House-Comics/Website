@@ -10,38 +10,38 @@ function Explore() {
     const [recentPosts, setRecentPosts] = useState([]);
     const [popularPosts, setPopularPosts] = useState([]);
 
-    async function getPostFromId(id, type) {
-        let resp;
-        try {
-            if (store.app === "Comics") {
-                resp = (await API.Comic.viewPublished(id));
-            }
-            else {
-                resp = (await API.Story.viewPublished(id));
-            }
+    // async function getPostFromId(id, type) {
+    //     let resp;
+    //     try {
+    //         if (store.app === "Comics") {
+    //             resp = (await API.Comic.viewPublished(id));
+    //         }
+    //         else {
+    //             resp = (await API.Story.viewPublished(id));
+    //         }
 
-            if (resp.status != 200) {
-                //Post wont be added to post array
-                console.log("Error fetching post from id:", id);
-                console.log(resp.error);
-                return;
-            }
+    //         if (resp.status != 200) {
+    //             //Post wont be added to post array
+    //             console.log("Error fetching post from id:", id);
+    //             console.log(resp.error);
+    //             return;
+    //         }
 
-            if (type === "recent") {
-                // const newRecentPosts = recentPosts.concat(resp.data.content);
-                setRecentPosts([...recentPosts, resp.data.content]);
-            }
+    //         if (type === "recent") {
+    //             // const newRecentPosts = recentPosts.concat(resp.data.content);
+    //             setRecentPosts([...recentPosts, resp.data.content]);
+    //         }
 
-            else {
-                const newPopularPosts = popularPosts.concat(resp.data.content);
-                setPopularPosts(newPopularPosts);
-            }
-        }
+    //         else {
+    //             const newPopularPosts = popularPosts.concat(resp.data.content);
+    //             setPopularPosts(newPopularPosts);
+    //         }
+    //     }
 
-        catch (err) {
-            console.log(err)
-        }
-    }
+    //     catch (err) {
+    //         console.log(err)
+    //     }
+    // }
 
     useEffect(() => {
         async function getExplorePosts() {

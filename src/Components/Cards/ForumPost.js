@@ -75,7 +75,7 @@ export default function ForumPost(props) {
   }
 
   const onClickAuthor = function () {
-    console.log("Clicked on" + author.name)
+    store.reRoute(types.TabType.APP.children.PROFILE.fullRoute, author._id);
   }
 
   const submitForumComment = async function (commentText) {
@@ -115,7 +115,7 @@ export default function ForumPost(props) {
   const commentsCards = comments.map((comment, index) =>
     //<ForumPost key={index} heading={post.heading} currentVote={post.currentVote} beanCount={post.beanCount} body={post.body} author={post.author} comments={post.comment}>
     //</ForumPost>
-    <CommentCard key={index} user={comment.user} id={comment.id} ownerId={comment.ownerId} beans={comment.beans} myVote={comment.myVote} text={comment.text} commentType={"forum"} postId={id} postOwnerId={ownerId}></CommentCard>
+    <CommentCard key={index} user={comment.user} id={comment.id} profileImage={comment.userProfileImage} ownerId={comment.ownerId} beans={comment.beans} myVote={comment.myVote} text={comment.text} commentType={"forum"} postId={id} postOwnerId={ownerId}></CommentCard>
   );
 
   return (

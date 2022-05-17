@@ -1,12 +1,6 @@
 import React from 'react';
-import { Grid, Image, Typography, IconButton, Button, ThemeProvider } from '@mui/material';
-import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
-import BookmarkIcon from '@mui/icons-material/Bookmark';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-
+import { Grid, Typography } from '@mui/material';
 import AuthorButton from '../Buttons/AuthorButton';
-import BeansButtonPanel from '../Buttons/BeansButtonPanel';
-
 import { GlobalStoreContext } from '../../Store';
 import types from '../../Common/Types'
 import Utils from '../../Utils';
@@ -18,11 +12,11 @@ export default function PostCard(props) {
 
     const post = props.post;
 
-    //TODO
-    let isBookmarked = false;
+    // //TODO
+    // let isBookmarked = false;
 
-    //TODO
-    let currentVote = Math.floor(Math.random() * 3) - 1;
+    // //TODO
+    // let currentVote = Math.floor(Math.random() * 3) - 1;
 
     // const imgSrc = "/Images/coffee" + (Math.floor(Math.random() * 6)) + ".jpg"
 
@@ -46,15 +40,9 @@ export default function PostCard(props) {
         }
     }
 
-
-    //TODO
-    const handleBookmarkClick = function () {
-
-    }
-
-    //TODO
-    const handleAuthorClick = function () {
-        console.log("Author click");
+    const handleAuthorClick = function (e) {
+        e.preventDefault();
+        store.reRoute(types.TabType.APP.children.PROFILE.fullRoute,post.authorId);
     }
 
     //TODO
@@ -65,11 +53,6 @@ export default function PostCard(props) {
     const onVoteChange = function (newCurrent) {
         console.log("On vote change (post card):", newCurrent);
     }
-
-    // console.log("Making card with post:", post)
-
-
-    // console.log("Post author image:", post.authorImage);
 
     const metaPanel =
         <Grid container direction="column" justifyContent="space-between" alignItems="flex-start" height="100%">
@@ -88,7 +71,7 @@ export default function PostCard(props) {
                 </div>
                 : ""
             }
-            {/* TODO: Author */}
+            {/* Author */}
             <AuthorButton onClick={handleAuthorClick} author={{ name: post.author, profileImage: post.authorImage }} />
             {/* Beans */}
             <Grid container direction="row" justifyContent="flex-start" alignItems="flex-start">
@@ -99,24 +82,24 @@ export default function PostCard(props) {
             </Grid>
         </Grid>
 
-    const bookmarkButton = <IconButton onClick={handleBookmarkClick} aria-label="bookmark" size="small">
-        {store.isLoggedIn ? (isBookmarked)
-            ? <BookmarkIcon fontSize="small" />
-            : <BookmarkBorderIcon fontSize="small" />
-            : <BookmarkBorderIcon fontSize="small" sx={{ opacity: 0 }} />
-        }
-    </IconButton>
+    // const bookmarkButton = <IconButton onClick={handleBookmarkClick} aria-label="bookmark" size="small">
+    //     {store.isLoggedIn ? (isBookmarked)
+    //         ? <BookmarkIcon fontSize="small" />
+    //         : <BookmarkBorderIcon fontSize="small" />
+    //         : <BookmarkBorderIcon fontSize="small" sx={{ opacity: 0 }} />
+    //     }
+    // </IconButton>
 
-    const buttonPanel =
-        <Grid container direction="column" justifyContent="space-between" alignItems="center" height="100%">
-            <Grid item>
-                {bookmarkButton}
-            </Grid>
+    // const buttonPanel =
+    //     <Grid container direction="column" justifyContent="space-between" alignItems="center" height="100%">
+    //         <Grid item>
+    //             {bookmarkButton}
+    //         </Grid>
 
-            <Grid>
-                <BeansButtonPanel onVoteChange={onVoteChange} currentVote={currentVote} numBeans={post.beans} />
-            </Grid>
-        </Grid>
+    //         <Grid>
+    //             <BeansButtonPanel onVoteChange={onVoteChange} currentVote={currentVote} numBeans={post.beans} />
+    //         </Grid>
+    //     </Grid>
 
     return (
         <div

@@ -58,6 +58,10 @@ export default function MetadataPanel(props) {
     });
   }
 
+  const handleAuthorClick = function(){
+    store.reRoute(types.TabType.APP.children.PROFILE.fullRoute, authorId);
+  }
+
   const deleteButton = (store.isLoggedIn && store.user && store.user.id == authorId) ?
     <Grid item>
       <Button variant="text" color="red" startIcon={<DeleteIcon />} onClick={handleDeleteButtonClick}>
@@ -89,7 +93,7 @@ export default function MetadataPanel(props) {
                     <Typography variant="h6" sx={{ fontWeight: 'bold', marginTop: '10px' }}>{title} {bookmarkButton}</Typography>
                 </Grid>
                 <Grid item>
-                    <Typography variant="body2" sx={{ fontWeight: "bold" }}>{"By: @" + author}</Typography>
+                    <Typography variant="body2" sx={{ fontWeight: "bold", cursor: "pointer" }} onClick = {handleAuthorClick}>{"By: @" + author}</Typography>
                     <Typography variant="body2" sx={{ display: "flex", justifyContent: "center" }}>
                         <BeansIcon />
                         {userBeanCount}

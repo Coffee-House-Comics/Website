@@ -118,7 +118,7 @@ export default function View() {
 
     const lineCss = "3px solid " + theme.palette.coffee.main;
 
-    let mode = "Comic"; // TODO comic or story depending on store
+    let mode = (store.app==="Comics") ? "Comic" : "Story"; // TODO comic or story depending on store
 
     function backgroundCSS(tab) {
         return {

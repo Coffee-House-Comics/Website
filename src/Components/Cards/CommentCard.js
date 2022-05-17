@@ -6,6 +6,7 @@ import { useState, useContext } from 'react';
 import AuthorButton from '../Buttons/AuthorButton';
 import { GlobalStoreContext } from '../../Store';
 import API from '../../API';
+import types from '../../Common/Types';
 
 
 /**
@@ -26,7 +27,8 @@ export default function CommentCard(props) {
   const currentVote = props.myVote;
   const author = {
     _id: props.ownerId,
-    name: props.user 
+    name: props.user,
+    profileImage: props.profileImage 
   }
 
   const postId = props.postId;
@@ -58,7 +60,7 @@ export default function CommentCard(props) {
     }
 
   const onClickAuthor = function () {
-    console.log("Clicked on" + author.name)
+    store.reRoute(types.TabType.APP.children.PROFILE.fullRoute, author._id);
   }
 
   return (<Box sx={{
