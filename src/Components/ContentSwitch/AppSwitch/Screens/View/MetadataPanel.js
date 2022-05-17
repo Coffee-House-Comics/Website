@@ -78,6 +78,8 @@ export default function MetadataPanel(props) {
         }
     }
 
+    console.log("We bookmarked?", store.isLoggedIn, isBookmarked);
+
     const bookmarkButton = <IconButton onClick={handleBookmarkClick} aria-label="bookmark" size="small">
     {store.isLoggedIn ? (isBookmarked)
         ? <BookmarkIcon fontSize="small" />
