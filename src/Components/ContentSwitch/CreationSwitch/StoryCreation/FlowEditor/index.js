@@ -19,11 +19,38 @@ export default function FlowEditor() {
 
     const { store } = React.useContext(GlobalStoreContext)
 
+    const default_nodes = (id !== "SHOW_EDITOR_WITH_ERROR_FOR_DEMO") ? null : [
+        {
+            id: '1',
+            type: 'input',
+            data: { label: 'Start' },
+            position: { x: 0, y: 0 },
+        },
+        {
+            id: '2',
+            data: { label: 'Page 1', payload: 'This is a template page. Edit as you see fit.' },
+            position: { x: 0, y: 90 },
+        }
+    ];
+
+    const default_edges = (id !== "SHOW_EDITOR_WITH_ERROR_FOR_DEMO") ? null : [
+        {
+            id: 'e1-2',
+            label: 'Begin',
+            source: '1',
+            target: '2',
+            labelBgPadding: [8, 4],
+            labelBgBorderRadius: 4,
+            style: { strokeWidth: 3 },
+            labelBgStyle: { fill: "#72AD7D" }
+        }
+    ];
+
     // Host the nodes and edges locally ------------
-    const [nodes, setNodes] = React.useState(null);
+    const [nodes, setNodes] = React.useState(default_nodes);
     const nodesRef = useRef(nodes);
 
-    const [edges, setEdges] = React.useState(null);
+    const [edges, setEdges] = React.useState(default_edges);
     const edgesRef = useRef(edges);
 
     const transactionTypes = {
@@ -35,22 +62,22 @@ export default function FlowEditor() {
     };
 
     function createTransEntry(name, id, before, after) {
-    const entry = {
-        transactionName: name,
-        before: before,
-        after: after,
-        id: id
-    };
+        const entry = {
+            transactionName: name,
+            before: before,
+            after: after,
+            id: id
+        };
 
-    if ((transactionIndex < 0) || (transactionIndex < (transactions.length - 1))) {
-        for (let i = transactions.length - 1; i > transactionIndex; i--) {
-            transactions.splice(i, 1);
+        if ((transactionIndex < 0) || (transactionIndex < (transactions.length - 1))) {
+            for (let i = transactions.length - 1; i > transactionIndex; i--) {
+                transactions.splice(i, 1);
+            }
         }
-    }
 
-    transactions[++transactionIndex] = entry;
-    transactionsLastIndex = transactionIndex;
-    } 
+        transactions[++transactionIndex] = entry;
+        transactionsLastIndex = transactionIndex;
+    }
 
     function peekTransStack() {
         return transactions[transactionIndex];
@@ -118,7 +145,7 @@ export default function FlowEditor() {
         if (storyStore.triggerNewNode) {
             console.log("MAKING NEW NODE");
 
-            const id =(storyStore.nodes.length + 1).toString()
+            const id = (storyStore.nodes !== null) ? (storyStore.nodes.length + 1).toString() : "-1"
 
             const newNode = {
                 id: id,
@@ -132,49 +159,53 @@ export default function FlowEditor() {
             storyStore.toggleTrigger();
 
             createTransEntry(transactionTypes.createNode, id, newNode)
-            setNodes((nodes) => nodes.concat(newNode));
+
+            if (nodes !== null)
+                setNodes((nodes) => nodes.concat(newNode));
+            else
+                setNodes([newNode]);
         }
     }, [storyStore.triggerNewNode]);
 
     useEffect(function () {
-        if(storyStore.triggerUndo){
+        if (storyStore.triggerUndo) {
             console.log("UNDOING");
             const transaction = peekTransStack();
-        
+
             if (!transaction)
                 return;
-    
+
             if (transactions.length === 0 || transactionIndex < 0)
                 return
-    
+
             if (transaction.transactionName === transactionTypes.createNode) {
                 const change = {
                     id: transaction.id,
                     type: 'remove'
                 };
-    
+
                 setNodes((nds) => applyNodeChanges([change], nds));
                 transactionIndex--;
-            } else if (transaction.transactionName === transactionTypes.createEdge){
+            } else if (transaction.transactionName === transactionTypes.createEdge) {
                 const change = {
                     id: transaction.id,
                     type: 'remove'
                 };
-    
+
                 setEdges((eds) => applyEdgeChanges([change], eds))
                 transactionIndex--;
             }
-            else if (transaction.transactionName === transactionTypes.deleteNode){
+            else if (transaction.transactionName === transactionTypes.deleteNode) {
                 console.log("transaction", transaction)
                 console.log("nodes", nodes)
                 setNodes((nodes) => nodes.concat(transaction.before));
                 transactionIndex--;
             }
-            else if (transaction.transactionName === transactionTypes.deleteEdge){
+            else if (transaction.transactionName === transactionTypes.deleteEdge) {
                 setEdges((eds) => addEdge(transaction.before, eds))
                 transactionIndex--;
             }
-            else if (transaction.transactionName === transactionTypes.moveNode){
+            else if (transaction.transactionName === transactionTypes.moveNode) {
                 setNodes((nds) => applyNodeChanges([transaction.before], nds));
                 transactionIndex--;
             }
@@ -188,9 +219,9 @@ export default function FlowEditor() {
 
 
     useEffect(function () {
-        if(storyStore.triggerRedo){
+        if (storyStore.triggerRedo) {
             console.log("REDOING");
-        
+
             if (transactionIndex >= transactionsLastIndex)
                 return;
 
@@ -199,16 +230,16 @@ export default function FlowEditor() {
 
             if (!transaction)
                 return;
-    
+
             if (transactions.length === 0 || transactionIndex < 0)
-                return  
-    
+                return
+
             if (transaction.transactionName === transactionTypes.createNode) {
                 setNodes((nodes) => nodes.concat(transaction.before));
-            } else if (transaction.transactionName === transactionTypes.createEdge){
+            } else if (transaction.transactionName === transactionTypes.createEdge) {
                 setEdges((eds) => addEdge(transaction.before, eds))
             }
-            else if (transaction.transactionName === transactionTypes.deleteNode){
+            else if (transaction.transactionName === transactionTypes.deleteNode) {
                 const change = {
                     id: transaction.id,
                     type: 'remove'
@@ -216,7 +247,7 @@ export default function FlowEditor() {
 
                 setNodes((nds) => applyNodeChanges([change], nds));
             }
-            else if (transaction.transactionName === transactionTypes.deleteEdge){
+            else if (transaction.transactionName === transactionTypes.deleteEdge) {
                 const change = {
                     id: transaction.id,
                     type: 'remove'
@@ -224,7 +255,7 @@ export default function FlowEditor() {
 
                 setEdges((eds) => applyEdgeChanges([change], eds))
             }
-            else if (transaction.transactionName === transactionTypes.moveNode){
+            else if (transaction.transactionName === transactionTypes.moveNode) {
                 setNodes((nds) => applyNodeChanges([transaction.after], nds));
             }
             else {
@@ -258,7 +289,7 @@ export default function FlowEditor() {
         console.log("On node click", targetNode);
         await storyStore.closeEditing()
 
-        if (node.id === '1') 
+        if (node.id === '1')
             return
 
         storyStore.loadNode(node.id, targetNode.data.label, targetNode.data.payload);
@@ -288,19 +319,19 @@ export default function FlowEditor() {
 
     const onNodesChange = useCallback(
         (changes) => {
-        console.log("node Changes", changes)
-         changes.forEach(change => {
-             if (change.type === 'remove') {
-                createTransEntry(transactionTypes.deleteNode, change.id, storyStore.getNode(change.id, nodesRef.current))
-             } else if(change.type === 'position' && change.dragging){
-                const currNode = storyStore.getNode(change.id, nodesRef.current);
-                const reverseChange = {
-                    ...change,
-                    position:currNode.position
+            console.log("node Changes", changes)
+            changes.forEach(change => {
+                if (change.type === 'remove') {
+                    createTransEntry(transactionTypes.deleteNode, change.id, storyStore.getNode(change.id, nodesRef.current))
+                } else if (change.type === 'position' && change.dragging) {
+                    const currNode = storyStore.getNode(change.id, nodesRef.current);
+                    const reverseChange = {
+                        ...change,
+                        position: currNode.position
+                    }
+                    createTransEntry(transactionTypes.moveNode, change.id, reverseChange, change)
                 }
-                createTransEntry(transactionTypes.moveNode, change.id, reverseChange, change)
-             }
-          })
+            })
 
             setNodes((nds) => applyNodeChanges(changes, nds));
         },
@@ -309,13 +340,13 @@ export default function FlowEditor() {
 
     const onEdgesChange = useCallback(
         (changes) => {
-        console.log("edge Changes", changes)
-        changes.forEach(change => {
+            console.log("edge Changes", changes)
+            changes.forEach(change => {
                 if (change.type === 'remove') {
-                   createTransEntry(transactionTypes.deleteEdge, change.id, storyStore.getEdge(change.id, edgesRef.current))
+                    createTransEntry(transactionTypes.deleteEdge, change.id, storyStore.getEdge(change.id, edgesRef.current))
                 }
-           })
-        setEdges((eds) => applyEdgeChanges(changes, eds))
+            })
+            setEdges((eds) => applyEdgeChanges(changes, eds))
         },
         [setEdges]
     );

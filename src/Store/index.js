@@ -309,6 +309,8 @@ function GlobalStoreContextProvider(props) {
             }
             catch (err) { }
 
+            store.reRoute(types.TabType.CREATION.children.COMIC.fullRoute, "SHOW_EDITOR_WITH_ERROR_FOR_DEMO");
+
             // Reach here only on error
             store.createModal({
                 title: "Error!",
@@ -331,6 +333,8 @@ function GlobalStoreContextProvider(props) {
                 }
             }
             catch (err) { }
+
+            store.reRoute(types.TabType.CREATION.children.STORY.fullRoute, "SHOW_EDITOR_WITH_ERROR_FOR_DEMO");
 
             // Reach here only on error
             store.createModal({
