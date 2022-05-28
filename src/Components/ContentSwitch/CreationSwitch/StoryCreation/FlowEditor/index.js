@@ -19,11 +19,38 @@ export default function FlowEditor() {
 
     const { store } = React.useContext(GlobalStoreContext)
 
+    const default_nodes = (id !== "SHOW_EDITOR_WITH_ERROR_FOR_DEMO") ? null : [
+        {
+            id: '1',
+            type: 'input',
+            data: { label: 'Start' },
+            position: { x: 0, y: 0 },
+        },
+        {
+            id: '2',
+            data: { label: 'Page 1', payload: 'This is a template page. Edit as you see fit.' },
+            position: { x: 0, y: 90 },
+        }
+    ];
+
+    const default_edges = (id !== "SHOW_EDITOR_WITH_ERROR_FOR_DEMO") ? null : [
+        {
+            id: 'e1-2',
+            label: 'Begin',
+            source: '1',
+            target: '2',
+            labelBgPadding: [8, 4],
+            labelBgBorderRadius: 4,
+            style: { strokeWidth: 3 },
+            labelBgStyle: { fill: "#72AD7D" }
+        }
+    ];
+
     // Host the nodes and edges locally ------------
-    const [nodes, setNodes] = React.useState(null);
+    const [nodes, setNodes] = React.useState(default_nodes);
     const nodesRef = useRef(nodes);
 
-    const [edges, setEdges] = React.useState(null);
+    const [edges, setEdges] = React.useState(default_edges);
     const edgesRef = useRef(edges);
 
     let startDrag = false;
