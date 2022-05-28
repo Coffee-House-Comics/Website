@@ -11,5 +11,5 @@ Software for the creation and consumption of Comics and Stories.
 
 ### Where to find
 The original url is https://coffeehousecomics.com    
-The server has been take down, you can find an archive at: https://web.archive.org/web/20220528041828/https://coffeehousecomics.com/    
+The server has been taken down, you can find an archive at: https://web.archive.org/web/20220528162844/https://coffeehousecomics.com/    
 The archive has preserved a lot of the site functionality.
