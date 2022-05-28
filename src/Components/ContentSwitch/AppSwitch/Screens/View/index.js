@@ -16,8 +16,7 @@ export default function View() {
     const [post, setPost] = useState(null)
     const [isBookmarked, setBookmarked] = useState(false)
 
-    //Set the post on first render
-    useEffect(() => {
+    const onLoad = function () {
         async function getPost(id) {
             let resp = store.app === 'Comics' ? await API.Comic.viewPublished(id) : await API.Story.viewPublished(id)
 
@@ -31,14 +30,23 @@ export default function View() {
 
             let resp2 = store.app === 'Comics' ? await API.Comic.saved() : await API.Story.saved()
 
-            console.log("RESP2:", resp2)
+            console.log("RESP2:",  resp2.data.content)
             console.log("ID:", id)
-            console.log("Includes:", resp2.data.content.includes(id))
 
-            setBookmarked(resp2.data.content.includes(id))
+            const filtered = resp2.data.content.filter(elem => {
+                console.log("CMP", elem, id);
+                return (elem.id.toString() === id.toString());
+            });
+
+            console.log("Includes:", filtered)
+
+            setBookmarked(Boolean(filtered[0]))
         }
         getPost(id);
-    }, [])
+    }
+
+    //Set the post on first render
+    useEffect(onLoad, [])
 
     const handleBookmarkClick = async function () {
         let res = null
@@ -67,28 +75,7 @@ export default function View() {
     }
     const [contentTab, setContentTab] = useState(CONTENT_TABS.VIEW);
 
-    useEffect(function () {
-        async function getPost(id) {
-            let resp = store.app === 'Comics' ? await API.Comic.viewPublished(id) : await API.Story.viewPublished(id)
-
-            console.log("RESP:", resp)
-
-            if (resp.error) {
-                store.reRoute("/")
-            }
-
-            setPost(resp.data.content)
-
-            let resp2 = store.app === 'Comics' ? await API.Comic.saved() : await API.Story.saved()
-
-            console.log("RESP2:", resp2)
-            console.log("ID:", id)
-            console.log("Includes:", resp2.data.content.includes(id))
-
-            setBookmarked(resp2.data.content.includes(id))
-        }
-        getPost(id);
-    }, [contentTab]);
+    useEffect(onLoad, [contentTab]);
 
     function changeTab(tab) {
         console.log("Changing to..:", tab);
@@ -106,6 +93,8 @@ export default function View() {
         description={post.description}
         contentBeanCount={post.beans}
         author={post.author}
+        authorComicBeans = {post.authorComicBeans}
+        authorStoryBeans = {post.authorStoryBeans}
         authorId={post.authorID}
         myVote={post.myVote}
         isBookmarked={isBookmarked}
@@ -116,7 +105,7 @@ export default function View() {
 
     const lineCss = "3px solid " + theme.palette.coffee.main;
 
-    let mode = "Comic"; // TODO comic or story depending on store
+    let mode = (store.app==="Comics") ? "Comic" : "Story"; // TODO comic or story depending on store
 
     function backgroundCSS(tab) {
         return {

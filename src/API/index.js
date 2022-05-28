@@ -155,7 +155,7 @@ API.Comic.explore = function () {
     return backend.get('/comic/explore', {});
 }
 
-API.Comic.search = function (searchCriteria, sortBy) {
+API.Comic.search = function (searchCriteria, sortBy, numPerPage, pageNum) {
     /* Search Comics ------------
        method: get
        route: /comic/search
@@ -163,7 +163,7 @@ API.Comic.search = function (searchCriteria, sortBy) {
            searchCriteria: String[]
        }
    */
-    return backend.get(`/comic/search/${searchCriteria}/${sortBy}`, {});
+    return backend.get(`/comic/search/${searchCriteria}/${sortBy}/${numPerPage}/${pageNum}`, {});
 }
 
 API.Comic.create = function (name, description) {
@@ -203,7 +203,7 @@ API.Comic.saveContent = function (id, pages) {
     });
 }
 
-API.Comic.saveSticker = function (sticker) {
+API.Comic.saveSticker = function (sticker, isUploadedSticker) {
     /* Save Sticker ------------
        method: post
        route: /comic/content/saveSticker
@@ -212,7 +212,8 @@ API.Comic.saveSticker = function (sticker) {
        }
    */
     return backend.post(`/comic/content/saveSticker`, {
-        sticker: sticker
+        sticker: sticker,
+        isUploadedSticker
     });
 }
 
@@ -523,7 +524,7 @@ API.Story.explore = function () {
     return backend.get('/story/explore', {});
 }
 
-API.Story.search = function (searchCriteria, sortBy) {
+API.Story.search = function (searchCriteria, sortBy, numPerPage, pageNum) {
     /* Search Stories ------------
        method: get
        route: /story/search
@@ -531,7 +532,7 @@ API.Story.search = function (searchCriteria, sortBy) {
            searchCriteria: String[]
        }
    */
-    return backend.get(`/comic/search/${searchCriteria}/${sortBy}`, {})
+    return backend.get(`/story/search/${searchCriteria}/${sortBy}/${numPerPage}/${pageNum}`, {});
 }
 
 API.Story.create = function (name, description) {

@@ -155,6 +155,11 @@ const URLImage = ({ image, onDragMove, onDragEnd, draggable }) => {
         height = editorHeight;
     }
 
+    if (image.isUploadedSticker) {
+        width = 128;
+        height = 128;
+    }
+
     return (
         <Image
             width={width}
@@ -338,7 +343,8 @@ export default function ComicCreationScreen() {
                 const myStickers = res.data.stickers.map((entry, index) => {
                     return entry = {
                         name: "Sticker #" + index,
-                        src: entry
+                        src: entry.src,
+                        isUploadedSticker: entry.isUploadedSticker
                     };
                 });
 
@@ -440,13 +446,14 @@ export default function ComicCreationScreen() {
                 url = await Utils.uploadFile(dataURItoBlob(img))
 
                 // Upload the sticker
-                res = await API.Comic.saveSticker(url);
+                res = await API.Comic.saveSticker(url, false);
 
                 console.log(url, res.status);
 
                 const entry = {
                     name: "Sticker!",
-                    src: url
+                    src: url,
+                    isUploadedSticker: false
                 };
 
                 setStickers([...stickers, entry]);
@@ -1073,7 +1080,7 @@ export default function ComicCreationScreen() {
 
     const prefabContent = prefabs.map(function (img, i) {
         return (
-            <Grid item key={i}>
+            <Grid item key={i} xs={12}>
                 <img
                     alt={img.name}
                     src={img.src}
@@ -1090,7 +1097,7 @@ export default function ComicCreationScreen() {
 
     const stickersContent = stickers.map(function (img, i) {
         return (
-            <Grid item key={i}>
+            <Grid item key={i} xs={12}>
                 <div style={{
                     backgroundColor: "white",
                     border: "1px solid black",
@@ -1155,6 +1162,40 @@ export default function ComicCreationScreen() {
         });
     }
 
+    const handleUploadSticker = async function (e) {
+        const imgURL = await Utils.uploadFileFromInput(e);
+        if (imgURL) {
+            async function helper(imgURL) {
+                let res = null;
+
+                try {
+                    // Upload the sticker
+                    res = await API.Comic.saveSticker(imgURL, true);
+
+                    console.log(imgURL, res.status);
+
+                    const entry = {
+                        name: "Sticker!",
+                        src: imgURL,
+                        isUploadedSticker: true
+                    };
+
+                    setStickers([...stickers, entry]);
+                    setView(viewType.main);
+
+                }
+                catch (err) {
+                    console.log("Error with api calls");
+                    setView(viewType.main);
+                    return;
+                }
+            }
+
+            helper(imgURL);
+        } else {
+            alert("Image upload failed. Please try again.")
+        }
+    }
 
     const borderSpecs = "2px solid " + Colors.coffee
 
@@ -1210,7 +1251,7 @@ export default function ComicCreationScreen() {
             <Grid item>
                 {stickersTabs}
             </Grid>
-            <Grid item sx={{ height: "calc(100% - 100px)", marginTop: -3, backgroundColor: stickersSectionBackgroundColor, padding: "10px 0px 10px 0px" }}>
+            <Grid item sx={{ height: "calc(100% - 200px)", marginTop: -3, backgroundColor: stickersSectionBackgroundColor, padding: "10px 0px 10px 0px" }}>
                 <div style={{ overflow: "auto", height: "100%", padding: "0px 5px 0px 5px" }}>
                     <Grid container direction="row" justifyContent="center" sx={{ width: "100%" }}>
                         {(stickerTab === STICKER_TAB_TYPE.PREFAB_TAB) ? prefabContent : stickersContent}
@@ -1247,12 +1288,32 @@ export default function ComicCreationScreen() {
                                 </Grid>
                             </Grid>
                         </div>
-                        : <SubmitButton text={"Create Sticker"} onClick={
-                            function () {
-                                saveHook();
-                                setView(viewType.sticker);
-                            }
-                        } />}
+                        : <div> 
+                            <Grid container>
+                                <Grid item xs={6}>
+                                    <SubmitButton text={"Create Sticker"} onClick={
+                                        function () {
+                                            saveHook();
+                                            setView(viewType.sticker);
+                                        }
+                                    } />
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <label
+                                        htmlFor={"profile-submit-sticker"}
+                                        className="button"
+                                    >
+                                        <Typography>Upload a Sticker</Typography>
+                                    </label>
+                                    <input
+                                        id={"profile-submit-sticker"}
+                                        type="file"
+                                        onChange={handleUploadSticker}
+                                        accept=".jpg, .jpeg, .png"
+                                    />
+                                </Grid>
+                            </Grid>
+                        </div>}
                 </div>
             </Grid>
         </Grid>
@@ -1488,10 +1549,19 @@ export default function ComicCreationScreen() {
                 stageRef.current.setPointersPositions(e);
                 // add image
 
+                console.log("DROP STICKER", dragUrl.current);
+
+                const _isUploadedSticker = stickers.filter(({src, isUploadedSticker}) => {
+                    return src.toString() === dragUrl.current.toString()
+                });
+
+                console.log("isUploadedSticker ~>", _isUploadedSticker);
+
                 const entry = constructEntry(supportedShapes.image, {
                     ...stageRef.current.getPointerPosition(),
                     src: dragUrl.current,
-                    isSticker: (stickerTab === STICKER_TAB_TYPE.PREFAB_TAB) ? false : true
+                    isSticker: (stickerTab === STICKER_TAB_TYPE.PREFAB_TAB) ? false : true,
+                    isUploadedSticker: (_isUploadedSticker[0])? _isUploadedSticker[0].isUploadedSticker : false
                 });
 
                 addOp(supportedShapes.image, [...serialization, entry], transactionTypes.createImage, true);

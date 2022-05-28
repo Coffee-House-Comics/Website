@@ -5,6 +5,7 @@ import { useState, useContext, useEffect } from 'react';
 import CreateForumPost from '../../../../Cards/CreateForumPost';
 import { Colors } from "../../../../../Common/Theme";
 import Utils from "../../../../../Utils";
+import { useNavigate, useLocation } from 'react-router-dom';
 
 export default function Forum(props) {
     const { user } = props;
@@ -20,6 +21,8 @@ export default function Forum(props) {
 
 
     const [allPosts, setAllPosts] = useState(null);
+
+    const location = useLocation()
 
     const loadHelper = function () {
         async function helper() {
@@ -42,7 +45,8 @@ export default function Forum(props) {
 
     useEffect(loadHelper, []);
     // Refresh once the user in the store actually refreshes
-    useEffect(loadHelper, [store.user]);
+    useEffect(loadHelper, [store.user, location]);
+
 
 
     if (!Boolean(forum)) {

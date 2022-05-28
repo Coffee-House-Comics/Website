@@ -82,11 +82,7 @@ function Header(props) {
     }
 
     const handleSearchTextChange = function (e) {
-        if(e.target.value.includes("\n")){
-            handleSearchButtonClick()
-        } else {
-            setSearchText(e.target.value)
-        }
+        setSearchText(e.target.value)
     }
 
     const handleCreateAppPost = function () {
@@ -196,6 +192,11 @@ function Header(props) {
     const searchBar =
         <TextField
             onChange={handleSearchTextChange}
+            onKeyPress= {(e) => {
+                if (e.key === 'Enter') {
+                  handleSearchButtonClick();
+                }
+            }}
             size="small"
             variant="outlined"
             value={searchText}

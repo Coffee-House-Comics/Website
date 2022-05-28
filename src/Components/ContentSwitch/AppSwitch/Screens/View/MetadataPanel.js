@@ -19,12 +19,11 @@ import BookmarkIcon from '@mui/icons-material/Bookmark';
 
 
 export default function MetadataPanel(props) {
-    const { postId, title, description, contentBeanCount, author, authorId, myVote, isBookmarked, handleBookmarkClick} = props;
+    const { postId, title, description, contentBeanCount, author, authorComicBeans, authorStoryBeans, authorId, myVote, isBookmarked, handleBookmarkClick} = props;
     const theme = useTheme();
     const { store } = useContext(GlobalStoreContext);
 
-    //TODO get proper values
-    let userBeanCount = 25;
+    let userBeanCount = (store.app==="Comics") ? authorComicBeans : authorStoryBeans;
 
   const handleDeleteButtonClick = function () {
     console.log("Delete button clicked");
@@ -59,6 +58,10 @@ export default function MetadataPanel(props) {
     });
   }
 
+  const handleAuthorClick = function(){
+    store.reRoute(types.TabType.APP.children.PROFILE.fullRoute, authorId);
+  }
+
   const deleteButton = (store.isLoggedIn && store.user && store.user.id == authorId) ?
     <Grid item>
       <Button variant="text" color="red" startIcon={<DeleteIcon />} onClick={handleDeleteButtonClick}>
@@ -75,6 +78,8 @@ export default function MetadataPanel(props) {
         }
     }
 
+    console.log("We bookmarked?", store.isLoggedIn, isBookmarked);
+
     const bookmarkButton = <IconButton onClick={handleBookmarkClick} aria-label="bookmark" size="small">
     {store.isLoggedIn ? (isBookmarked)
         ? <BookmarkIcon fontSize="small" />
@@ -90,7 +95,7 @@ export default function MetadataPanel(props) {
                     <Typography variant="h6" sx={{ fontWeight: 'bold', marginTop: '10px' }}>{title} {bookmarkButton}</Typography>
                 </Grid>
                 <Grid item>
-                    <Typography variant="body2" sx={{ fontWeight: "bold" }}>{"By: @" + author}</Typography>
+                    <Typography variant="body2" sx={{ fontWeight: "bold", cursor: "pointer" }} onClick = {handleAuthorClick}>{"By: @" + author}</Typography>
                     <Typography variant="body2" sx={{ display: "flex", justifyContent: "center" }}>
                         <BeansIcon />
                         {userBeanCount}
